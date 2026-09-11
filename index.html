@@ -136,15 +136,9 @@
   .section-head p{color:var(--muted);max-width:620px;margin:0 auto}
 
   /* ---------- 关于 ---------- */
-  .about-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:52px;align-items:center}
+  .about-text{max-width:760px;margin:0 auto}
   .about-text p{color:var(--muted);margin-bottom:18px}
   .about-text strong{color:var(--text)}
-  .info-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:30px 32px;box-shadow:var(--shadow)}
-  .info-card h3{font-size:1.05rem;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-  .info-row{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px dashed var(--border);font-size:.95rem}
-  .info-row:last-child{border-bottom:none}
-  .info-row .k{color:var(--muted)}
-  .info-row .v{font-weight:600;text-align:right}
 
   /* ---------- 技能 ---------- */
   #skills{background:var(--bg-soft)}
@@ -234,7 +228,6 @@
     .avatar>div{font-size:76px}
     .chip-1{left:-14px}.chip-3{left:-24px}.chip-2{right:-20px}
     .proj-grid{grid-template-columns:1fr}
-    .about-grid{grid-template-columns:1fr;gap:32px}
     section{padding:72px 0}
   }
   @media (max-width:420px){
@@ -314,22 +307,12 @@
         <h2>关于我</h2>
         <p>一个喜欢把想法变成产品的开发者</p>
       </div>
-      <div class="about-grid">
-        <div class="about-text reveal">
+      <div class="about-text reveal">
           <p>你好!我是<strong>ForJiang</strong>,一名住在上海的全栈开发工程师。从大学第一次写下
             <strong>Hello, World</strong> 开始,我就迷上了用代码把想法变成现实的过程。</p>
           <p>过去五年,我参与过<strong>从 0 到 1 的创业项目</strong>,也支撑过<strong>千万级用户的成熟产品</strong>。
             我尤其享受打磨交互细节、优化性能,以及把复杂问题拆解成简单方案时的成就感。</p>
           <p>不写代码的时候,我喜欢摄影、跑步,以及在技术社区分享所学。如果你有有趣的想法,欢迎随时找我聊聊!</p>
-        </div>
-        <div class="info-card reveal" style="--d:.15s">
-          <h3>📋 快速了解</h3>
-          <div class="info-row"><span class="k">坐标</span><span class="v">中国 · 上海</span></div>
-          <div class="info-row"><span class="k">职业</span><span class="v">全栈开发工程师</span></div>
-          <div class="info-row"><span class="k">邮箱</span><span class="v">hi@forjiang.dev</span></div>
-          <div class="info-row"><span class="k">学历</span><span class="v">计算机科学与技术 · 本科</span></div>
-          <div class="info-row"><span class="k">状态</span><span class="v">🟢 开放合作机会</span></div>
-        </div>
       </div>
     </div>
   </section>
