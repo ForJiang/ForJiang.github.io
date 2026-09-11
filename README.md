@@ -20,7 +20,7 @@
 | 职位 / 打字机台词 | `roles = ['全栈开发工程师', ...]`(在底部 `<script>` 中) |
 | 自我介绍 | `关于我` 区块的两段 `<p>` |
 | 技能标签 | `技术栈` 区块的 `.tag` 项 |
-| 项目卡片 | `精选项目` 区块的 `proj-card` |
+| 项目卡片 | `精选项目` 区块的 `proj-card`;封面图替换 `img` 的 `src`(如 `images/xxx.jpg`,支持 jpg/png/webp/svg),不需要时删掉 `cover-emoji` 那行 |
 | 经历时间线 | `我的经历` 区块的 `tl-item` |
 | 邮箱 | `jianghaoda.1@outlook.com` |
 | 哔哩哔哩 | `https://b23.tv/edD6tm9` |

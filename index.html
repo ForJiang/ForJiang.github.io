@@ -171,17 +171,13 @@
     box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s;
   }
   .proj-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
-  .banner{height:150px;display:flex;align-items:center;justify-content:center;font-size:58px}
-  .banner-1{background:linear-gradient(135deg,#6366f1,#8b5cf6)}
-  .banner-2{background:linear-gradient(135deg,#0ea5e9,#22d3ee)}
-  .banner-3{background:linear-gradient(135deg,#f43f5e,#fb923c)}
-  .banner-4{background:linear-gradient(135deg,#10b981,#84cc16)}
-  .proj-body{padding:24px;display:flex;flex-direction:column;gap:12px;flex:1}
+  .proj-cover{position:relative;height:230px;overflow:hidden;margin:0}
+  .proj-cover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s ease}
+  .proj-card:hover .proj-cover img{transform:scale(1.05)}
+  .cover-emoji{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:60px;text-shadow:0 6px 18px rgba(0,0,0,.25)}
+  .proj-body{padding:22px 24px 24px;display:flex;flex-direction:column;gap:10px;flex:1}
   .proj-body h3{font-size:1.12rem}
-  .proj-body p{color:var(--muted);font-size:.94rem;flex:1}
-  .proj-links{display:flex;gap:18px;margin-top:4px}
-  .proj-links a{font-size:.9rem;font-weight:600;color:var(--accent);transition:opacity .2s}
-  .proj-links a:hover{opacity:.7}
+  .proj-body p{color:var(--muted);font-size:.93rem;flex:1}
 
   /* ---------- 经历 ---------- */
   #journey{background:var(--bg-soft)}
@@ -379,48 +375,57 @@
         <p>一些我做过并喜欢的作品</p>
       </div>
       <div class="proj-grid">
+        <!-- 封面图可更换:把 img 的 src 改成你自己的图片(如 images/yuntu.png),支持 jpg / png / webp / svg -->
         <article class="proj-card reveal" style="--d:.05s">
-          <div class="banner banner-1">🗺️</div>
+          <figure class="proj-cover">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 500'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='500' fill='url(%23g)'/%3E%3C/svg%3E" alt="云途 · 旅行规划平台" loading="lazy">
+            <span class="cover-emoji" aria-hidden="true">🗺️</span>
+          </figure>
           <div class="proj-body">
             <h3>云途 · 旅行规划平台</h3>
-            <p>集行程制定、预算管理与同伴协作于一体的旅行规划 SaaS,服务过 5 万+ 用户。</p>
+            <p>一站式旅行规划与同伴协作 SaaS。</p>
             <div class="tags">
               <span class="tag">Vue 3</span><span class="tag">Node.js</span><span class="tag">PostgreSQL</span>
             </div>
-            <div class="proj-links"><a href="#">源码 ↗</a><a href="#">在线演示 ↗</a></div>
           </div>
         </article>
         <article class="proj-card reveal" style="--d:.13s">
-          <div class="banner banner-2">✅</div>
+          <figure class="proj-cover">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 500'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230ea5e9'/%3E%3Cstop offset='1' stop-color='%2322d3ee'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='500' fill='url(%23g)'/%3E%3C/svg%3E" alt="清单 Tick · 待办应用" loading="lazy">
+            <span class="cover-emoji" aria-hidden="true">✅</span>
+          </figure>
           <div class="proj-body">
             <h3>清单 Tick · 待办应用</h3>
-            <p>本地优先的极简待办工具,支持离线使用、快捷键操作与多端同步。</p>
+            <p>本地优先的极简待办,离线可用。</p>
             <div class="tags">
               <span class="tag">React</span><span class="tag">TypeScript</span><span class="tag">IndexedDB</span>
             </div>
-            <div class="proj-links"><a href="#">源码 ↗</a><a href="#">在线演示 ↗</a></div>
           </div>
         </article>
         <article class="proj-card reveal" style="--d:.21s">
-          <div class="banner banner-3">🎨</div>
+          <figure class="proj-cover">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 500'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f43f5e'/%3E%3Cstop offset='1' stop-color='%23fb923c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='500' fill='url(%23g)'/%3E%3C/svg%3E" alt="PixelBoard · 协作白板" loading="lazy">
+            <span class="cover-emoji" aria-hidden="true">🎨</span>
+          </figure>
           <div class="proj-body">
             <h3>PixelBoard · 协作白板</h3>
-            <p>多人实时协作白板,支持笔迹同步、图形绘制与无限撤销重做。</p>
+            <p>多人实时协作白板。</p>
             <div class="tags">
               <span class="tag">Canvas</span><span class="tag">WebSocket</span><span class="tag">Redis</span>
             </div>
-            <div class="proj-links"><a href="#">源码 ↗</a><a href="#">在线演示 ↗</a></div>
           </div>
         </article>
         <article class="proj-card reveal" style="--d:.29s">
-          <div class="banner banner-4">🌿</div>
+          <figure class="proj-cover">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 500'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2310b981'/%3E%3Cstop offset='1' stop-color='%2384cc16'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='500' fill='url(%23g)'/%3E%3C/svg%3E" alt="节气志 · 传统文化站点" loading="lazy">
+            <span class="cover-emoji" aria-hidden="true">🌿</span>
+          </figure>
           <div class="proj-body">
             <h3>节气志 · 传统文化站点</h3>
-            <p>记录二十四节气与传统文化知识的静态站点,诗歌与插画结合,Lighthouse 满分。</p>
+            <p>二十四节气与传统文化小站。</p>
             <div class="tags">
               <span class="tag">Astro</span><span class="tag">Markdown</span><span class="tag">SSG</span>
             </div>
-            <div class="proj-links"><a href="#">源码 ↗</a><a href="#">在线演示 ↗</a></div>
           </div>
         </article>
       </div>
