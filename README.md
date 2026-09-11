@@ -22,7 +22,7 @@
 | 技能标签 | `技术栈` 区块的 `.tag` 项 |
 | 项目卡片 | `精选项目` 区块的 `proj-card` |
 | 经历时间线 | `我的经历` 区块的 `tl-item` |
-| 邮箱 | `hi@forjiang.dev` |
+| 邮箱 | `jianghaoda.1@outlook.com` |
 | 哔哩哔哩 | `https://b23.tv/edD6tm9` |
 | GitHub | `github.com/ForJiang` |
 | 头像 | 找到 `.avatar` 里的 `FJ`,换成你的名字缩写;或改为 `<img>` |
