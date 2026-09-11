@@ -6,7 +6,17 @@
 <title>ForJiang · 个人主页</title>
 <meta name="description" content="ForJiang 的个人主页 —— 全栈开发工程师,热爱构建优雅、高性能的 Web 应用。">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧑‍💻</text></svg>">
-<script>document.documentElement.classList.add('js')</script>
+<script>
+/* 主题必须在 <head> 中尽早确定,避免慢网络下"边下载边渲染"时闪现浅色主题 */
+(function(){
+  try {
+    var saved = localStorage.getItem('theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.dataset.theme = saved || (prefersDark ? 'dark' : 'light');
+  } catch (e) {}
+  document.documentElement.classList.add('js');
+})();
+</script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth;scroll-padding-top:80px}
@@ -37,6 +47,8 @@
     --blob-opacity:.16;
   }
   ::selection{background:#a855f7;color:#fff}
+  html{color-scheme:light}
+  html[data-theme="dark"]{color-scheme:dark}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
     background:var(--bg);color:var(--text);line-height:1.75;
@@ -129,6 +141,7 @@
   .chip-4{bottom:2px;right:-14px;animation-delay:2s}
 
   /* ---------- 通用区块 ---------- */
+  section{transition:background .3s ease}
   section{padding:96px 0}
   .section-head{text-align:center;margin-bottom:56px}
   .eyebrow{display:inline-block;font-size:.85rem;font-weight:700;letter-spacing:.25em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px}
@@ -498,9 +511,6 @@
 
   /* ---------- 主题切换 ---------- */
   const themeBtn = document.getElementById('themeBtn');
-  const saved = localStorage.getItem('theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  root.dataset.theme = saved || (prefersDark ? 'dark' : 'light');
   themeBtn.addEventListener('click', () => {
     root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
     localStorage.setItem('theme', root.dataset.theme);
@@ -520,12 +530,16 @@
   })();
 
   /* ---------- 滚动显现 ---------- */
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
-    });
-  }, { threshold: .12 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  } else {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+      });
+    }, { threshold: .12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  }
 
   /* ---------- 导航状态 ---------- */
   const nav = document.getElementById('nav');
