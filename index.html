@@ -179,19 +179,6 @@
   .proj-body h3{font-size:1.12rem}
   .proj-body p{color:var(--muted);font-size:.93rem;flex:1}
 
-  /* ---------- 经历 ---------- */
-  #journey{background:var(--bg-soft)}
-  .timeline{position:relative;max-width:720px;margin:0 auto;padding-left:36px;border-left:2px solid var(--border);display:flex;flex-direction:column;gap:44px}
-  .tl-item{position:relative}
-  .tl-item::before{
-    content:'';position:absolute;left:-45px;top:7px;width:16px;height:16px;border-radius:50%;
-    background:var(--grad);box-shadow:0 0 0 4px var(--bg-soft);
-  }
-  .tl-item .period{font-size:.85rem;font-weight:700;color:var(--accent)}
-  .tl-item h3{font-size:1.1rem;margin:4px 0 2px}
-  .tl-item .org{color:var(--muted);font-size:.93rem;margin-bottom:8px}
-  .tl-item p{color:var(--muted);font-size:.94rem}
-
   /* ---------- 联系 ---------- */
   .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;margin-bottom:52px}
   .contact-card{
@@ -257,7 +244,6 @@
       <a href="#about">关于</a>
       <a href="#skills">技能</a>
       <a href="#projects">项目</a>
-      <a href="#journey">经历</a>
       <a href="#contact">联系</a>
     </div>
     <div class="nav-actions">
@@ -431,43 +417,6 @@
             </div>
           </div>
         </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= 经历 ================= -->
-  <section id="journey">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="eyebrow">JOURNEY</span>
-        <h2>我的经历</h2>
-        <p>一路走来的工作与学习轨迹</p>
-      </div>
-      <div class="timeline">
-        <div class="tl-item reveal">
-          <span class="period">2023.06 — 至今</span>
-          <h3>高级前端工程师 · 某科技公司</h3>
-          <p class="org">上海</p>
-          <p>负责核心产品前端架构演进,主导性能优化专项,首屏时间降低 60%;搭建团队组件库与 CI 流程。</p>
-        </div>
-        <div class="tl-item reveal" style="--d:.1s">
-          <span class="period">2021.03 — 2023.05</span>
-          <h3>前端工程师 · 某互联网公司</h3>
-          <p class="org">杭州</p>
-          <p>参与电商中台建设,完成营销活动页搭建系统并支撑双 11 大促;推动项目 TypeScript 全量迁移。</p>
-        </div>
-        <div class="tl-item reveal" style="--d:.2s">
-          <span class="period">2020.06 — 2021.02</span>
-          <h3>前端实习生 · 某创业团队</h3>
-          <p class="org">上海</p>
-          <p>从 0 搭建小程序商城,负责活动页面开发与埋点体系设计。</p>
-        </div>
-        <div class="tl-item reveal" style="--d:.3s">
-          <span class="period">2016.09 — 2020.06</span>
-          <h3>计算机科学与技术 · 本科</h3>
-          <p class="org">某大学</p>
-          <p>ACM 校队成员,获省级程序设计竞赛二等奖;沉迷各种奇思妙想的课程项目。</p>
-        </div>
       </div>
     </div>
   </section>
