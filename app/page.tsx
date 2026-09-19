@@ -37,35 +37,35 @@ const SKILLS = [
 
 const PROJECTS = [
   {
-    title: "云途 · 旅行规划平台",
-    titleEn: "YunTu · Travel Planning Platform",
-    desc: "一站式旅行规划与同伴协作 SaaS。",
-    descEn: "All-in-one trip planning & companion collaboration SaaS.",
-    tags: ["Vue 3", "Node.js", "PostgreSQL"],
+    title: "晨光 · 慵懒的清晨",
+    titleEn: "Morning Light · A Lazy Morning",
+    desc: "清晨的阳光洒进房间，初音未来坐在木地板上小憩，城市在天窗外苏醒。",
+    descEn: "Morning sunlight fills the room as Miku sits resting on the wooden floor, the city waking up outside.",
+    tags: ["AI Art", "Illustration", "ComfyUI"],
     cover: "/images/yuntu.jpg",
   },
   {
-    title: "清单 Tick · 待办应用",
-    titleEn: "Tick List · Todo App",
-    desc: "本地优先的极简待办,离线可用。",
-    descEn: "A local-first minimalist todo that works offline.",
-    tags: ["React", "TypeScript", "IndexedDB"],
+    title: "雨天 · 窗边书写",
+    titleEn: "Rainy Day · Writing by the Window",
+    desc: "雨滴顺着玻璃滑落，窗外是川流不息的街道，她在书桌前安静地写着什么。",
+    descEn: "Raindrops slide down the glass over a busy street while she quietly writes at her desk.",
+    tags: ["AI Art", "Illustration", "ComfyUI"],
     cover: "/images/tick.jpg",
   },
   {
-    title: "PixelBoard · 协作白板",
-    titleEn: "PixelBoard · Collaborative Whiteboard",
-    desc: "多人实时协作白板。",
-    descEn: "A real-time collaborative whiteboard.",
-    tags: ["Canvas", "WebSocket", "Redis"],
+    title: "深夜 · 枕边休息",
+    titleEn: "Late Night · At Rest",
+    desc: "深夜的房间里只亮着一盏小灯，她躺在被窝里卸下一天的疲惫。",
+    descEn: "A single lamp glows in the dark room as she lies back, letting the day go.",
+    tags: ["AI Art", "Illustration", "ComfyUI"],
     cover: "/images/pixelboard.jpg",
   },
   {
-    title: "节气志 · 传统文化站点",
-    titleEn: "Solar Terms · Traditional Culture Site",
-    desc: "二十四节气与传统文化小站。",
-    descEn: "A little site for the 24 solar terms and traditional culture.",
-    tags: ["Astro", "Markdown", "SSG"],
+    title: "暮色 · 窗前远眺",
+    titleEn: "Dusk · Gazing at the City",
+    desc: "暮色四合，城市的灯火渐次亮起，她站在落地窗前眺望夜色。",
+    descEn: "As dusk settles and city lights come on, she gazes out at the night from the floor-to-ceiling window.",
+    tags: ["AI Art", "Illustration", "ComfyUI"],
     cover: "/images/solar.jpg",
   },
 ];
@@ -283,13 +283,13 @@ export default function Home() {
             className="text-center mb-16"
           >
             <Badge variant="secondary" className={`inline-flex flex-col items-center gap-0.5 py-2 mb-4 ${SECTION_BADGE}`}>
-              <span>精选项目</span>
-              <span className={EN_SMALL}>Projects</span>
+              <span>AI 绘画</span>
+              <span className={EN_SMALL}>AI Art</span>
             </Badge>
-            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>一些我做过并喜欢的作品</h2>
-            <p className={`mt-2 ${EN_HEADER}`}>Works I&apos;ve made and loved</p>
-            <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>一些作品与实验,持续更新中</p>
-            <p className={`mt-1 ${EN_BODY}`}>Projects and experiments, more coming soon</p>
+            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>一些插画作品</h2>
+            <p className={`mt-2 ${EN_HEADER}`}>Some of my illustrations</p>
+            <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>用 ComfyUI 生成的插画习作，持续更新中</p>
+            <p className={`mt-1 ${EN_BODY}`}>Illustrations generated with ComfyUI, more coming soon</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
