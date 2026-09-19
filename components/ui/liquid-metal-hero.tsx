@@ -56,9 +56,21 @@ export default function LiquidMetalHero({
 
   return (
     <section className="relative isolate min-h-screen flex items-center justify-center overflow-hidden">
-      {/* 着色器背景限定在 Hero 内：preset 参数需展开 .params（0.0.8x 版本的 preset 是 { name, params } 结构） */}
+      {/* 着色器背景限定在 Hero 内：preset 参数需展开 .params（0.0.8x 版本的 preset 是 { name, params } 结构）。
+          在 Backdrop 预设上覆盖参数：深色底 + 单个柔和银色液滴（metaballs），对齐设计参考图 */}
       <LiquidMetal
         {...liquidMetalPresets[2].params}
+        colorBack="#0a0a0c"
+        colorTint="#dfe1e6"
+        shape="metaballs"
+        repetition={1}
+        scale={0.9}
+        softness={0.45}
+        distortion={0.12}
+        contour={0.35}
+        shiftRed={0.15}
+        shiftBlue={0.15}
+        speed={0.7}
         style={{ position: "absolute", inset: 0, zIndex: -10 }}
       />
       
@@ -77,7 +89,7 @@ export default function LiquidMetalHero({
             >
               <Badge 
                 variant="secondary" 
-                className="bg-zinc-950/10 text-zinc-950 border-zinc-950/20 hover:bg-zinc-950/20 transition-colors duration-300 backdrop-blur-sm"
+                className="bg-white/10 text-white border-white/25 hover:bg-white/20 transition-colors duration-300 backdrop-blur-sm"
               >
                 {badge}
               </Badge>
@@ -91,14 +103,14 @@ export default function LiquidMetalHero({
             <motion.h1 
               role="heading" 
               aria-level={1}
-              className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-zinc-950 leading-tight tracking-tight"
+              className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight tracking-tight"
               variants={itemVariants}
             >
               {title}
             </motion.h1>
             
             <motion.p 
-              className="max-w-3xl mx-auto text-xl sm:text-2xl text-zinc-950/80 leading-relaxed"
+              className="max-w-3xl mx-auto text-xl sm:text-2xl text-white/85 leading-relaxed"
               variants={itemVariants}
             >
               {subtitle}
@@ -116,7 +128,7 @@ export default function LiquidMetalHero({
               <Button 
                 onClick={onPrimaryCtaClick}
                 size="lg"
-                className="bg-zinc-950 text-white hover:bg-zinc-950/90 transition-all duration-300 shadow-2xl text-lg px-8 py-6 font-semibold"
+                className="bg-white text-zinc-950 hover:bg-white/90 transition-all duration-300 shadow-2xl text-lg px-8 py-6 font-semibold"
               >
                 {primaryCtaLabel}
               </Button>
@@ -131,7 +143,7 @@ export default function LiquidMetalHero({
                   onClick={onSecondaryCtaClick}
                   variant="outline"
                   size="lg"
-                  className="border-zinc-950/30 text-zinc-950 hover:bg-zinc-950/10 hover:border-zinc-950/50 transition-all duration-300 backdrop-blur-sm text-lg px-8 py-6 font-semibold"
+                  className="border-white/40 bg-white/5 text-white hover:bg-white/15 hover:text-white hover:border-white/60 transition-all duration-300 backdrop-blur-sm text-lg px-8 py-6 font-semibold"
                 >
                   {secondaryCtaLabel}
                 </Button>
@@ -148,7 +160,7 @@ export default function LiquidMetalHero({
                 whileHover={{ y: -4 }}
                 transition={{ duration: 0.3 }}
               >
-                <Card className="bg-white/20 border-white/30 backdrop-blur-md shadow-2xl">
+                <Card className="bg-black/30 border-white/15 backdrop-blur-md shadow-2xl">
                   <div className="p-8">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                       {features.map((feature, index) => (
@@ -162,7 +174,7 @@ export default function LiquidMetalHero({
                             delay: 0.8 + (index * 0.1)
                           }}
                         >
-                          <p className="text-zinc-950/90 font-medium text-lg">
+                          <p className="text-white/90 font-medium text-lg">
                             {feature}
                           </p>
                         </motion.div>
