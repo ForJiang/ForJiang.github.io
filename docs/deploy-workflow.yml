@@ -32,6 +32,12 @@ jobs:
       - name: Build (static export)
         run: npm run build
 
+      # 自动把仓库 Pages 来源切换为 "GitHub Actions"，无需手动去 Settings 修改
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

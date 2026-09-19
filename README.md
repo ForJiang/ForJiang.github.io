@@ -45,12 +45,11 @@ npm run dev
 
 工作流模板已放在 `docs/deploy-workflow.yml`：每次 push 到 `main`，GitHub 云端自动执行 `npm install && npm run build`（静态导出到 `out/`），并发布到 Pages —— **本地不需要安装 Node.js**。
 
-首次启用共两步（都在 GitHub 网页上完成）：
+首次启用只有一步（在 GitHub 网页上完成）：
 
 1. **创建工作流文件**：仓库页面 **Add file → Create new file**，文件名填 `.github/workflows/deploy.yml`，把 `docs/deploy-workflow.yml` 的内容原样粘贴进去，提交到 `main`。（`.github/workflows/` 下的文件需要带 `workflow` 权限的凭证才能通过 git 推送，所以用网页创建最省事）
-2. **切换 Pages 来源**：**Settings → Pages → Build and deployment → Source**，从 `Deploy from a branch` 改为 **`GitHub Actions`**
 
-之后每次 `git push` 自动部署，构建进度见仓库 **Actions** 标签页。
+文件一提交，Actions 自动开跑：构建 → 自动把 Pages 来源切换为 `GitHub Actions` → 部署上线，之后每次 `git push` 自动部署，进度见仓库 **Actions** 标签页。
 
 > 说明：目标仓库是 `ForJiang.github.io`（用户主站），站点挂在根路径，`next.config.js` 无需配置 `basePath`。切换到 Actions 部署后，仓库根目录的旧版 `index.html` 不再被使用，可以删除。
 
