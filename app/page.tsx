@@ -335,7 +335,7 @@ export default function Home() {
       <footer className="py-8 border-t border-border">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} ForJiang · 用 ❤️ 与代码制作
+            © {new Date().getFullYear()} ForJiang
           </p>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => window.open(CONTACTS.github, "_blank")}>
