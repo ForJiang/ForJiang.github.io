@@ -7,13 +7,10 @@ import { motion } from 'framer-motion';
 
 interface LiquidMetalHeroProps {
   badge?: string;
-  badgeEn?: string;
   title: string;
   subtitle?: string;
   primaryCtaLabel: string;
-  primaryCtaEn?: string;
   secondaryCtaLabel?: string;
-  secondaryCtaEn?: string;
   onPrimaryCtaClick: () => void;
   onSecondaryCtaClick?: () => void;
   features?: string[];
@@ -21,13 +18,10 @@ interface LiquidMetalHeroProps {
 
 export default function LiquidMetalHero({
   badge,
-  badgeEn,
   title,
   subtitle,
   primaryCtaLabel,
-  primaryCtaEn,
   secondaryCtaLabel,
-  secondaryCtaEn,
   onPrimaryCtaClick,
   onSecondaryCtaClick,
   features = [],
@@ -77,14 +71,9 @@ export default function LiquidMetalHero({
             >
               <Badge
                 variant="secondary"
-                className="flex flex-col items-center gap-0.5 bg-black/40 px-5 py-2 text-white border-white/25 hover:bg-black/55 transition-colors duration-300 backdrop-blur-sm"
+                className="bg-black/40 px-5 py-2 text-white border-white/25 hover:bg-black/55 transition-colors duration-300 backdrop-blur-sm"
               >
-                <span>{badge}</span>
-                {badgeEn && (
-                  <span className="text-[10px] font-normal tracking-wide text-white/60">
-                    {badgeEn}
-                  </span>
-                )}
+                {badge}
               </Badge>
             </motion.div>
           )}
@@ -123,14 +112,9 @@ export default function LiquidMetalHero({
               <Button
                 onClick={onPrimaryCtaClick}
                 size="lg"
-                className="flex flex-col items-center gap-0.5 bg-white text-zinc-950 hover:bg-white/90 transition-all duration-300 shadow-2xl px-8 py-4 font-semibold"
+                className="bg-white text-zinc-950 hover:bg-white/90 transition-all duration-300 shadow-2xl text-lg px-8 py-6 font-semibold"
               >
-                <span className="text-lg">{primaryCtaLabel}</span>
-                {primaryCtaEn && (
-                  <span className="text-xs font-normal tracking-wide text-zinc-950/60">
-                    {primaryCtaEn}
-                  </span>
-                )}
+                {primaryCtaLabel}
               </Button>
             </motion.div>
             
@@ -143,14 +127,9 @@ export default function LiquidMetalHero({
                   onClick={onSecondaryCtaClick}
                   variant="outline"
                   size="lg"
-                  className="flex flex-col items-center gap-0.5 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60 transition-all duration-300 backdrop-blur-md px-8 py-4 font-semibold"
+                  className="border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60 transition-all duration-300 backdrop-blur-md text-lg px-8 py-6 font-semibold"
                 >
-                  <span className="text-lg">{secondaryCtaLabel}</span>
-                  {secondaryCtaEn && (
-                    <span className="text-xs font-normal tracking-wide text-white/60">
-                      {secondaryCtaEn}
-                    </span>
-                  )}
+                  {secondaryCtaLabel}
                 </Button>
               </motion.div>
             )}

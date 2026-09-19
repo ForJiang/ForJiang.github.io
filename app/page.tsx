@@ -7,66 +7,28 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { Github, Mail, ExternalLink, Menu } from "lucide-react";
-import { useState } from "react";
+import { Github, Mail, ExternalLink, Menu, Languages } from "lucide-react";
+import { useState, useEffect } from "react";
+import { translations, type Lang } from "@/lib/i18n";
 
-const NAV_ITEMS = [
-  { label: "关于", en: "About", id: "about" },
-  { label: "技能", en: "Skills", id: "skills" },
-  { label: "项目", en: "Projects", id: "projects" },
-  { label: "联系", en: "Contact", id: "contact" },
-];
+const NAV_IDS = ["about", "skills", "projects", "contact"] as const;
 
-const SKILLS = [
+const PROJECT_META = [
   {
-    title: "🧭 前端开发",
-    titleEn: "Frontend Development",
-    tags: ["HTML5 / CSS3", "JavaScript", "TypeScript", "Vue 3", "React", "小程序", "响应式设计"],
-  },
-  {
-    title: "⚙️ 后端与数据",
-    titleEn: "Backend & Data",
-    tags: ["Node.js", "Python", "MySQL", "PostgreSQL", "Redis", "RESTful API", "GraphQL"],
-  },
-  {
-    title: "🛠️ 工具与其他",
-    titleEn: "Tools & More",
-    tags: ["Git", "Docker", "Nginx", "Linux", "Figma", "性能优化", "单元测试"],
-  },
-];
-
-const PROJECTS = [
-  {
-    title: "晨光 · 慵懒的清晨",
-    titleEn: "Morning Light · A Lazy Morning",
-    desc: "清晨的阳光洒进房间，初音未来坐在木地板上小憩，城市在天窗外苏醒。",
-    descEn: "Morning sunlight fills the room as Miku sits resting on the wooden floor, the city waking up outside.",
-    tags: ["AI Art", "Illustration", "ComfyUI"],
     cover: "/images/yuntu.jpg",
+    tags: ["AI Art", "Illustration", "ComfyUI"],
   },
   {
-    title: "雨天 · 窗边书写",
-    titleEn: "Rainy Day · Writing by the Window",
-    desc: "雨滴顺着玻璃滑落，窗外是川流不息的街道，她在书桌前安静地写着什么。",
-    descEn: "Raindrops slide down the glass over a busy street while she quietly writes at her desk.",
-    tags: ["AI Art", "Illustration", "ComfyUI"],
     cover: "/images/tick.jpg",
+    tags: ["AI Art", "Illustration", "ComfyUI"],
   },
   {
-    title: "深夜 · 枕边休息",
-    titleEn: "Late Night · At Rest",
-    desc: "深夜的房间里只亮着一盏小灯，她躺在被窝里卸下一天的疲惫。",
-    descEn: "A single lamp glows in the dark room as she lies back, letting the day go.",
-    tags: ["AI Art", "Illustration", "ComfyUI"],
     cover: "/images/pixelboard.jpg",
+    tags: ["AI Art", "Illustration", "ComfyUI"],
   },
   {
-    title: "暮色 · 窗前远眺",
-    titleEn: "Dusk · Gazing at the City",
-    desc: "暮色四合，城市的灯火渐次亮起，她站在落地窗前眺望夜色。",
-    descEn: "As dusk settles and city lights come on, she gazes out at the night from the floor-to-ceiling window.",
-    tags: ["AI Art", "Illustration", "ComfyUI"],
     cover: "/images/solar.jpg",
+    tags: ["AI Art", "Illustration", "ComfyUI"],
   },
 ];
 
@@ -81,19 +43,47 @@ const TEXT_SHADOW = "[text-shadow:0_2px_12px_rgba(0,0,0,0.5)]";
 const BODY_SHADOW = "[text-shadow:0_1px_8px_rgba(0,0,0,0.45)]";
 const GLASS_CARD = "border-white/15 bg-black/40 backdrop-blur-sm";
 const GLASS_TAG = "bg-white/10 text-white/85 border-transparent";
-// 中英双语的英文行样式：小一号、降低不透明度
-const EN_HEADER = `text-base md:text-lg text-white/60 ${BODY_SHADOW}`;
-const EN_BODY = `text-sm md:text-base text-white/55 leading-relaxed ${BODY_SHADOW}`;
-const EN_SMALL = "text-[10px] md:text-[11px] font-normal tracking-wide text-white/55";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [lang, setLang] = useState<Lang>("zh");
+  const t = translations[lang];
+
+  useEffect(() => {
+    const saved = localStorage.getItem("language");
+    const initial: Lang =
+      saved === "en" || saved === "zh"
+        ? saved
+        : navigator.language.toLowerCase().startsWith("zh")
+          ? "zh"
+          : "en";
+    setLang(initial);
+    document.documentElement.lang = initial === "zh" ? "zh-CN" : "en";
+  }, []);
+
+  const toggleLang = () => {
+    const next: Lang = lang === "zh" ? "en" : "zh";
+    setLang(next);
+    localStorage.setItem("language", next);
+    document.documentElement.lang = next === "zh" ? "zh-CN" : "en";
+  };
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
     setMenuOpen(false);
   };
+
+  const langButton = (
+    <button
+      onClick={toggleLang}
+      className="flex items-center gap-1.5 rounded-lg border border-white/25 px-2.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/10"
+      aria-label="Switch language / 切换语言"
+    >
+      <Languages className="h-4 w-4" />
+      {t.langToggle}
+    </button>
+  );
 
   return (
     <main className="relative min-h-screen text-white">
@@ -113,28 +103,25 @@ export default function Home() {
 
             {/* Desktop nav */}
             <div className="hidden md:flex items-center gap-8">
-              {NAV_ITEMS.map((item) => (
+              {NAV_IDS.map((id) => (
                 <button
-                  key={item.id}
-                  onClick={() => scrollTo(item.id)}
-                  className="group flex flex-col items-center gap-0.5"
+                  key={id}
+                  onClick={() => scrollTo(id)}
+                  className="text-sm font-medium text-white/75 hover:text-white transition-colors"
                 >
-                  <span className="text-sm font-medium text-white/75 transition-colors group-hover:text-white">
-                    {item.label}
-                  </span>
-                  <span className="text-[10px] leading-none text-white/45 transition-colors group-hover:text-white/80">
-                    {item.en}
-                  </span>
+                  {t.nav[id]}
                 </button>
               ))}
+              {langButton}
             </div>
 
             {/* Mobile menu button */}
-            <div className="flex items-center md:hidden">
+            <div className="flex items-center gap-3 md:hidden">
+              {langButton}
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="p-2 rounded-lg border border-white/25 text-white hover:bg-white/10 transition-colors"
-                aria-label="Menu"
+                aria-label={t.nav.menu}
               >
                 <Menu className="h-4 w-4" />
               </button>
@@ -150,14 +137,13 @@ export default function Home() {
             className="md:hidden border-t border-white/10 bg-black/70 backdrop-blur-md"
           >
             <div className="container mx-auto px-6 py-4 flex flex-col gap-3">
-              {NAV_ITEMS.map((item) => (
+              {NAV_IDS.map((id) => (
                 <button
-                  key={item.id}
-                  onClick={() => scrollTo(item.id)}
-                  className="flex items-baseline gap-2 py-2 text-left text-sm font-medium text-white/75 hover:text-white transition-colors"
+                  key={id}
+                  onClick={() => scrollTo(id)}
+                  className="text-left text-sm font-medium text-white/75 hover:text-white transition-colors py-2"
                 >
-                  <span>{item.label}</span>
-                  <span className="text-xs font-normal text-white/45">{item.en}</span>
+                  {t.nav[id]}
                 </button>
               ))}
             </div>
@@ -167,14 +153,11 @@ export default function Home() {
 
       {/* Hero Section */}
       <LiquidMetalHero
-        badge="👋 你好,我是"
-        badgeEn="Hello, I'm"
-        title="ForJiang"
-        subtitle="web coding..."
-        primaryCtaLabel="查看我的项目 →"
-        primaryCtaEn="View My Projects →"
-        secondaryCtaLabel="联系我"
-        secondaryCtaEn="Contact Me"
+        badge={t.hero.badge}
+        title={t.hero.title}
+        subtitle={t.hero.subtitle}
+        primaryCtaLabel={t.hero.primaryCta}
+        secondaryCtaLabel={t.hero.secondaryCta}
         onPrimaryCtaClick={() => scrollTo("projects")}
         onSecondaryCtaClick={() => scrollTo("contact")}
       />
@@ -188,40 +171,17 @@ export default function Home() {
             viewport={{ once: true }}
             className={`max-w-3xl mx-auto text-center space-y-6 rounded-3xl px-6 py-10 md:px-12 ${GLASS_CARD}`}
           >
-            <Badge variant="secondary" className={`inline-flex flex-col items-center gap-0.5 py-2 mb-4 ${SECTION_BADGE}`}>
-              <span>关于我</span>
-              <span className={EN_SMALL}>About Me</span>
+            <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+              {t.about.badge}
             </Badge>
             <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>
-              一个喜欢把想法变成产品的开发者
+              {t.about.heading}
             </h2>
-            <p className={EN_HEADER}>A developer who loves turning ideas into products</p>
-            <div className="space-y-2">
-              <p className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}>
-                你好！我是 <strong className="text-white">ForJiang</strong>，一名高中生，也是一个热爱编程的学习者。从第一次写下
-                <strong className="text-white"> Hello, World</strong> 开始，我就迷上了用代码把想法变成现实的过程。
+            {t.about.paragraphs.map((paragraph, idx) => (
+              <p key={idx} className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}>
+                {paragraph}
               </p>
-              <p className={EN_BODY}>
-                Hi! I&apos;m <strong className="text-white/85">ForJiang</strong> — a high school student and a passionate programming learner. Ever since writing my first <strong className="text-white/85">Hello, World</strong>, I&apos;ve been fascinated by turning ideas into reality with code.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <p className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}>
-                过去几年，我一直在学习编程，尝试过<strong className="text-white">前端、后端和一些小项目</strong>，也在不断摸索如何把课堂之外的想法做成真正能运行的东西。
-                我尤其享受打磨交互细节、优化性能，以及把复杂问题拆解成简单方案时的成就感。虽然现在还在学习阶段，但我很期待未来能做出更多有意思的作品。
-              </p>
-              <p className={EN_BODY}>
-                Over the past few years I&apos;ve been learning programming — trying out frontend, backend and some small projects, and exploring how to turn ideas beyond the classroom into things that actually run. I especially enjoy polishing interaction details, optimizing performance, and the satisfaction of breaking complex problems into simple ones. I&apos;m still learning, but I can&apos;t wait to build more interesting things.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <p className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}>
-                不写代码的时候，我喜欢摄影、跑步，以及在技术社区分享自己的学习笔记。如果你有有趣的想法，或者愿意一起交流编程，欢迎随时找我聊聊！
-              </p>
-              <p className={EN_BODY}>
-                When I&apos;m not coding, I enjoy photography, running, and sharing my study notes with the tech community. If you have an interesting idea — or just want to talk code — feel free to reach out!
-              </p>
-            </div>
+            ))}
           </motion.div>
         </div>
       </section>
@@ -235,18 +195,17 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge variant="secondary" className={`inline-flex flex-col items-center gap-0.5 py-2 mb-4 ${SECTION_BADGE}`}>
-              <span>技术栈</span>
-              <span className={EN_SMALL}>Tech Stack</span>
+            <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+              {t.skills.badge}
             </Badge>
-            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>我的技术能力</h2>
-            <p className={`mt-2 ${EN_HEADER}`}>My Skills</p>
-            <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>常用的工具与技术,持续学习中</p>
-            <p className={`mt-1 ${EN_BODY}`}>Tools and technologies I use, always learning</p>
+            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>
+              {t.skills.heading}
+            </h2>
+            <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>{t.skills.subtitle}</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {SKILLS.map((skill, idx) => (
+            {t.skills.groups.map((group, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
@@ -256,12 +215,11 @@ export default function Home() {
               >
                 <Card className={`h-full hover:shadow-lg transition-shadow ${GLASS_CARD}`}>
                   <CardHeader>
-                    <CardTitle className="text-white">{skill.title}</CardTitle>
-                    <p className={`text-xs font-normal ${EN_SMALL}`}>{skill.titleEn}</p>
+                    <CardTitle className="text-white">{group.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
-                      {skill.tags.map((tag) => (
+                      {group.tags.map((tag) => (
                         <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
                       ))}
                     </div>
@@ -282,53 +240,51 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge variant="secondary" className={`inline-flex flex-col items-center gap-0.5 py-2 mb-4 ${SECTION_BADGE}`}>
-              <span>AI 绘画</span>
-              <span className={EN_SMALL}>AI Art</span>
+            <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+              {t.projects.badge}
             </Badge>
-            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>一些插画作品</h2>
-            <p className={`mt-2 ${EN_HEADER}`}>Some of my illustrations</p>
-            <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>用 ComfyUI 生成的插画习作，持续更新中</p>
-            <p className={`mt-1 ${EN_BODY}`}>Illustrations generated with ComfyUI, more coming soon</p>
+            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>
+              {t.projects.heading}
+            </h2>
+            <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>{t.projects.subtitle}</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-            {PROJECTS.map((project, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.08 }}
-              >
-                <Card className={`group h-full flex flex-col overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
-                  {/* 封面图放在 public/images/ 下，替换同名文件即可 */}
-                  <div className="relative h-52 overflow-hidden shrink-0">
-                    <img
-                      src={project.cover}
-                      alt={project.title}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="text-white">{project.title}</CardTitle>
-                    <p className={`text-xs font-normal ${EN_SMALL}`}>{project.titleEn}</p>
-                  </CardHeader>
-                  <CardContent className="flex-1 flex flex-col gap-4">
-                    <div className="flex-1 space-y-1">
-                      <p className={`text-white/75 ${BODY_SHADOW}`}>{project.desc}</p>
-                      <p className={`text-sm text-white/55 ${BODY_SHADOW}`}>{project.descEn}</p>
+            {t.projects.cards.map((card, idx) => {
+              const meta = PROJECT_META[idx];
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.08 }}
+                >
+                  <Card className={`group h-full flex flex-col overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
+                    {/* 封面图放在 public/images/ 下，替换同名文件即可 */}
+                    <div className="relative h-52 overflow-hidden shrink-0">
+                      <img
+                        src={meta.cover}
+                        alt={card.title}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {project.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                    <CardHeader>
+                      <CardTitle className="text-white">{card.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1 flex flex-col gap-4">
+                      <p className={`text-white/75 flex-1 ${BODY_SHADOW}`}>{card.desc}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {meta.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -342,30 +298,23 @@ export default function Home() {
             viewport={{ once: true }}
             className="max-w-3xl mx-auto text-center space-y-6"
           >
-            <Badge variant="secondary" className={`inline-flex flex-col items-center gap-0.5 py-2 mb-4 ${SECTION_BADGE}`}>
-              <span>联系我</span>
-              <span className={EN_SMALL}>Contact Me</span>
+            <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+              {t.contact.badge}
             </Badge>
             <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>
-              无论是项目合作、技术交流,还是单纯打个招呼,都欢迎!
+              {t.contact.heading}
             </h2>
-            <p className={EN_HEADER}>
-              Project collaboration, tech chats, or just saying hi — everyone&apos;s welcome!
-            </p>
             <p className={`text-lg text-white/80 ${BODY_SHADOW}`}>
-              有想法?最快的方式是直接给我写邮件 🚀
-            </p>
-            <p className={EN_BODY}>
-              Got an idea? The fastest way is to email me directly 🚀
+              {t.contact.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Button
                 size="lg"
-                className="flex flex-col items-center gap-0.5 bg-white text-zinc-950 hover:bg-white/90"
+                className="gap-2 bg-white text-zinc-950 hover:bg-white/90"
                 onClick={() => window.location.href = `mailto:${CONTACTS.email}`}
               >
-                <span>发送邮件</span>
-                <span className="text-xs font-normal text-zinc-950/60">Email Me</span>
+                <Mail className="h-4 w-4" />
+                {t.contact.emailCta}
               </Button>
               <Button
                 variant="outline"
@@ -379,14 +328,11 @@ export default function Home() {
               <Button
                 variant="outline"
                 size="lg"
-                className="flex flex-col items-center gap-0.5 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+                className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
                 onClick={() => window.open(CONTACTS.bilibili, "_blank")}
               >
-                <span className="flex items-center gap-2">
-                  <ExternalLink className="h-4 w-4" />
-                  哔哩哔哩
-                </span>
-                <span className="text-xs font-normal text-white/60">Bilibili</span>
+                <ExternalLink className="h-4 w-4" />
+                {t.contact.bilibiliCta}
               </Button>
             </div>
           </motion.div>
