@@ -60,7 +60,7 @@ npm run dev
 | Hero 标语 / 按钮文字 | `app/page.tsx` 中 `<LiquidMetalHero>` 的 props |
 | 自我介绍 | `app/page.tsx` 「关于我」区块 |
 | 技能标签 | `app/page.tsx` 顶部 `SKILLS` 数组 |
-| 项目卡片 / 封面图 | `app/page.tsx` 顶部 `PROJECTS` 数组（`gradient` 换成 `<img>` 即可用真实截图） |
+| 项目卡片 / 封面图 | `app/page.tsx` 顶部 `PROJECTS` 数组；封面图放 `public/images/` 下替换同名文件 |
 | 鼠标轨迹开关 / 配色 | `components/mouse-trail.tsx` |
 | 邮箱 / GitHub / 哔哩哔哩 | `app/page.tsx` 顶部 `CONTACTS` |
 | 网页标题 / 描述 / favicon | `app/layout.tsx` 的 `metadata` |

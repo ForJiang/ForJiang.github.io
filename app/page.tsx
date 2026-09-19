@@ -37,29 +37,25 @@ const PROJECTS = [
     title: "云途 · 旅行规划平台",
     desc: "一站式旅行规划与同伴协作 SaaS。",
     tags: ["Vue 3", "Node.js", "PostgreSQL"],
-    gradient: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-    emoji: "🗺️",
+    cover: "/images/yuntu.jpg",
   },
   {
     title: "清单 Tick · 待办应用",
     desc: "本地优先的极简待办,离线可用。",
     tags: ["React", "TypeScript", "IndexedDB"],
-    gradient: "linear-gradient(135deg, #0ea5e9, #22d3ee)",
-    emoji: "✅",
+    cover: "/images/tick.jpg",
   },
   {
     title: "PixelBoard · 协作白板",
     desc: "多人实时协作白板。",
     tags: ["Canvas", "WebSocket", "Redis"],
-    gradient: "linear-gradient(135deg, #f43f5e, #fb923c)",
-    emoji: "🎨",
+    cover: "/images/pixelboard.jpg",
   },
   {
     title: "节气志 · 传统文化站点",
     desc: "二十四节气与传统文化小站。",
     tags: ["Astro", "Markdown", "SSG"],
-    gradient: "linear-gradient(135deg, #10b981, #84cc16)",
-    emoji: "🌿",
+    cover: "/images/solar.jpg",
   },
 ];
 
@@ -239,7 +235,7 @@ export default function Home() {
           >
             <Badge variant="secondary" className={`mb-4 ${SECTION_BADGE}`}>精选项目</Badge>
             <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>一些我做过并喜欢的作品</h2>
-            <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>封面图可在 PROJECTS 数组中换成自己的截图</p>
+            <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>一些作品与实验,持续更新中</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -251,13 +247,15 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.08 }}
               >
-                <Card className={`h-full flex flex-col overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
-                  {/* 封面:把 div 换成 <img src="..."> 即可使用真实截图 */}
-                  <div
-                    className="relative h-52 flex items-center justify-center shrink-0"
-                    style={{ background: project.gradient }}
-                  >
-                    <span className="text-6xl drop-shadow-lg" aria-hidden="true">{project.emoji}</span>
+                <Card className={`group h-full flex flex-col overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
+                  {/* 封面图放在 public/images/ 下，替换同名文件即可 */}
+                  <div className="relative h-52 overflow-hidden shrink-0">
+                    <img
+                      src={project.cover}
+                      alt={project.title}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
                   </div>
                   <CardHeader>
                     <CardTitle className="text-white">{project.title}</CardTitle>
