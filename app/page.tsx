@@ -72,7 +72,7 @@ const CONTACTS = {
 const SECTION_BADGE = "bg-white/10 text-white border-white/25";
 const TEXT_SHADOW = "[text-shadow:0_2px_12px_rgba(0,0,0,0.5)]";
 const BODY_SHADOW = "[text-shadow:0_1px_8px_rgba(0,0,0,0.45)]";
-const GLASS_CARD = "border-white/15 bg-black/40 backdrop-blur-md";
+const GLASS_CARD = "border-white/15 bg-black/40 backdrop-blur-sm";
 const GLASS_TAG = "bg-white/10 text-white/85 border-transparent";
 
 export default function Home() {
@@ -93,7 +93,7 @@ export default function Home() {
       <MouseTrail />
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/50 backdrop-blur-xl">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/50 backdrop-blur-md">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <div className="flex items-center justify-between h-16">
             <div className="text-xl font-bold tracking-tight">
@@ -131,7 +131,7 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="md:hidden border-t border-white/10 bg-black/70 backdrop-blur-xl"
+            className="md:hidden border-t border-white/10 bg-black/70 backdrop-blur-md"
           >
             <div className="container mx-auto px-6 py-4 flex flex-col gap-3">
               {NAV_ITEMS.map((item) => (
