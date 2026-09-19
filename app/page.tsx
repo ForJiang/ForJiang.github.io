@@ -1,13 +1,14 @@
 "use client";
 
 import LiquidMetalHero from "@/components/ui/liquid-metal-hero";
+import LiquidMetalBackground from "@/components/liquid-metal-background";
 import MouseTrail from "@/components/mouse-trail";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { Github, Mail, ExternalLink, Menu, Sun, Moon } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Github, Mail, ExternalLink, Menu } from "lucide-react";
+import { useState } from "react";
 
 const NAV_ITEMS = [
   { label: "关于", id: "about" },
@@ -68,24 +69,14 @@ const CONTACTS = {
   bilibili: "https://b23.tv/edD6tm9",
 };
 
+const SECTION_BADGE = "bg-white/10 text-white border-white/25";
+const TEXT_SHADOW = "[text-shadow:0_2px_12px_rgba(0,0,0,0.5)]";
+const BODY_SHADOW = "[text-shadow:0_1px_8px_rgba(0,0,0,0.45)]";
+const GLASS_CARD = "border-white/15 bg-black/40 backdrop-blur-md";
+const GLASS_TAG = "bg-white/10 text-white/85 border-transparent";
+
 export default function Home() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initial = saved === "dark" || (!saved && prefersDark) ? "dark" : "light";
-    setTheme(initial);
-    document.documentElement.classList.toggle("dark", initial === "dark");
-  }, []);
-
-  const toggleTheme = () => {
-    const next = theme === "light" ? "dark" : "light";
-    setTheme(next);
-    localStorage.setItem("theme", next);
-    document.documentElement.classList.toggle("dark", next === "dark");
-  };
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -94,16 +85,19 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="relative min-h-screen text-white">
+      {/* 全站液态金属固定背景 */}
+      <LiquidMetalBackground />
+
       {/* 蔚蓝档案风格的鼠标流光轨迹 */}
       <MouseTrail />
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/50 backdrop-blur-xl">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <div className="flex items-center justify-between h-16">
             <div className="text-xl font-bold tracking-tight">
-              ForJiang<span className="text-primary">.</span>
+              ForJiang<span className="text-white/60">.</span>
             </div>
 
             {/* Desktop nav */}
@@ -112,32 +106,18 @@ export default function Home() {
                 <button
                   key={item.id}
                   onClick={() => scrollTo(item.id)}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm font-medium text-white/75 hover:text-white transition-colors"
                 >
                   {item.label}
                 </button>
               ))}
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-lg border border-border hover:bg-accent transition-colors"
-                aria-label="Toggle theme"
-              >
-                {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-              </button>
             </div>
 
             {/* Mobile menu button */}
-            <div className="flex items-center gap-3 md:hidden">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-lg border border-border hover:bg-accent transition-colors"
-                aria-label="Toggle theme"
-              >
-                {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-              </button>
+            <div className="flex items-center md:hidden">
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="p-2 rounded-lg border border-border hover:bg-accent transition-colors"
+                className="p-2 rounded-lg border border-white/25 text-white hover:bg-white/10 transition-colors"
                 aria-label="Menu"
               >
                 <Menu className="h-4 w-4" />
@@ -151,14 +131,14 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="md:hidden border-t border-border bg-background/95 backdrop-blur-xl"
+            className="md:hidden border-t border-white/10 bg-black/70 backdrop-blur-xl"
           >
             <div className="container mx-auto px-6 py-4 flex flex-col gap-3">
               {NAV_ITEMS.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => scrollTo(item.id)}
-                  className="text-left text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
+                  className="text-left text-sm font-medium text-white/75 hover:text-white transition-colors py-2"
                 >
                   {item.label}
                 </button>
@@ -188,19 +168,19 @@ export default function Home() {
             viewport={{ once: true }}
             className="max-w-3xl mx-auto text-center space-y-6"
           >
-            <Badge variant="secondary" className="mb-4">关于我</Badge>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+            <Badge variant="secondary" className={`mb-4 ${SECTION_BADGE}`}>关于我</Badge>
+            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>
               一个喜欢把想法变成产品的开发者
             </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              你好!我是 <strong className="text-foreground">ForJiang</strong>,一名住在上海的全栈开发工程师。从大学第一次写下
-              <strong className="text-foreground"> Hello, World</strong> 开始,我就迷上了用代码把想法变成现实的过程。
+            <p className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}>
+              你好!我是 <strong className="text-white">ForJiang</strong>,一名住在上海的全栈开发工程师。从大学第一次写下
+              <strong className="text-white"> Hello, World</strong> 开始,我就迷上了用代码把想法变成现实的过程。
             </p>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              过去五年,我参与过<strong className="text-foreground">从 0 到 1 的创业项目</strong>,也支撑过<strong className="text-foreground">千万级用户的成熟产品</strong>。
+            <p className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}>
+              过去五年,我参与过<strong className="text-white">从 0 到 1 的创业项目</strong>,也支撑过<strong className="text-white">千万级用户的成熟产品</strong>。
               我尤其享受打磨交互细节、优化性能,以及把复杂问题拆解成简单方案时的成就感。
             </p>
-            <p className="text-lg text-muted-foreground leading-relaxed">
+            <p className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}>
               不写代码的时候,我喜欢摄影、跑步,以及在技术社区分享所学。如果你有有趣的想法,欢迎随时找我聊聊!
             </p>
           </motion.div>
@@ -208,7 +188,7 @@ export default function Home() {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="py-24 bg-muted/30 scroll-mt-16">
+      <section id="skills" className="py-24 bg-black/25 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -216,9 +196,9 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge variant="secondary" className="mb-4">技术栈</Badge>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">我的技术能力</h2>
-            <p className="mt-3 text-muted-foreground">常用的工具与技术,持续学习中</p>
+            <Badge variant="secondary" className={`mb-4 ${SECTION_BADGE}`}>技术栈</Badge>
+            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>我的技术能力</h2>
+            <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>常用的工具与技术,持续学习中</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -230,14 +210,14 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
               >
-                <Card className="h-full hover:shadow-lg transition-shadow">
+                <Card className={`h-full hover:shadow-lg transition-shadow ${GLASS_CARD}`}>
                   <CardHeader>
-                    <CardTitle>{skill.title}</CardTitle>
+                    <CardTitle className="text-white">{skill.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
                       {skill.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary">{tag}</Badge>
+                        <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
                       ))}
                     </div>
                   </CardContent>
@@ -257,9 +237,9 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge variant="secondary" className="mb-4">精选项目</Badge>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">一些我做过并喜欢的作品</h2>
-            <p className="mt-3 text-muted-foreground">封面图可在 PROJECTS 数组中换成自己的截图</p>
+            <Badge variant="secondary" className={`mb-4 ${SECTION_BADGE}`}>精选项目</Badge>
+            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>一些我做过并喜欢的作品</h2>
+            <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>封面图可在 PROJECTS 数组中换成自己的截图</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -271,7 +251,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.08 }}
               >
-                <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all">
+                <Card className={`h-full flex flex-col overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
                   {/* 封面:把 div 换成 <img src="..."> 即可使用真实截图 */}
                   <div
                     className="relative h-52 flex items-center justify-center shrink-0"
@@ -280,13 +260,13 @@ export default function Home() {
                     <span className="text-6xl drop-shadow-lg" aria-hidden="true">{project.emoji}</span>
                   </div>
                   <CardHeader>
-                    <CardTitle>{project.title}</CardTitle>
+                    <CardTitle className="text-white">{project.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="flex-1 flex flex-col gap-4">
-                    <p className="text-muted-foreground flex-1">{project.desc}</p>
+                    <p className={`text-white/75 flex-1 ${BODY_SHADOW}`}>{project.desc}</p>
                     <div className="flex flex-wrap gap-2">
                       {project.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary">{tag}</Badge>
+                        <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
                       ))}
                     </div>
                   </CardContent>
@@ -298,7 +278,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-24 bg-muted/30 scroll-mt-16">
+      <section id="contact" className="py-24 bg-black/25 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -306,23 +286,37 @@ export default function Home() {
             viewport={{ once: true }}
             className="max-w-3xl mx-auto text-center space-y-6"
           >
-            <Badge variant="secondary" className="mb-4">联系我</Badge>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+            <Badge variant="secondary" className={`mb-4 ${SECTION_BADGE}`}>联系我</Badge>
+            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>
               无论是项目合作、技术交流,还是单纯打个招呼,都欢迎!
             </h2>
-            <p className="text-lg text-muted-foreground">
+            <p className={`text-lg text-white/80 ${BODY_SHADOW}`}>
               有想法?最快的方式是直接给我写邮件 🚀
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button size="lg" className="gap-2" onClick={() => window.location.href = `mailto:${CONTACTS.email}`}>
+              <Button
+                size="lg"
+                className="gap-2 bg-white text-zinc-950 hover:bg-white/90"
+                onClick={() => window.location.href = `mailto:${CONTACTS.email}`}
+              >
                 <Mail className="h-4 w-4" />
                 发送邮件
               </Button>
-              <Button variant="outline" size="lg" className="gap-2" onClick={() => window.open(CONTACTS.github, "_blank")}>
+              <Button
+                variant="outline"
+                size="lg"
+                className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+                onClick={() => window.open(CONTACTS.github, "_blank")}
+              >
                 <Github className="h-4 w-4" />
                 GitHub
               </Button>
-              <Button variant="outline" size="lg" className="gap-2" onClick={() => window.open(CONTACTS.bilibili, "_blank")}>
+              <Button
+                variant="outline"
+                size="lg"
+                className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+                onClick={() => window.open(CONTACTS.bilibili, "_blank")}
+              >
                 <ExternalLink className="h-4 w-4" />
                 哔哩哔哩
               </Button>
@@ -332,19 +326,19 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 border-t border-border">
+      <footer className="py-8 border-t border-white/10">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-white/60">
             © {new Date().getFullYear()} ForJiang
           </p>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => window.open(CONTACTS.github, "_blank")}>
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.github, "_blank")}>
               <Github className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => window.open(CONTACTS.bilibili, "_blank")}>
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.bilibili, "_blank")}>
               <ExternalLink className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => window.location.href = `mailto:${CONTACTS.email}`}>
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.location.href = `mailto:${CONTACTS.email}`}>
               <Mail className="h-4 w-4" />
             </Button>
           </div>

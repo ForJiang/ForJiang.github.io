@@ -1,6 +1,5 @@
 "use client";
 
-import { LiquidMetal, liquidMetalPresets } from '@paper-design/shaders-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -55,26 +54,8 @@ export default function LiquidMetalHero({
   };
 
   return (
-    <section className="relative isolate min-h-screen flex items-center justify-center overflow-hidden">
-      {/* 着色器背景限定在 Hero 内：preset 参数需展开 .params（0.0.8x 版本的 preset 是 { name, params } 结构）。
-          在 Backdrop 预设上覆盖参数：深色底 + 单个柔和银色液滴（metaballs），对齐设计参考图 */}
-      <LiquidMetal
-        {...liquidMetalPresets[2].params}
-        colorBack="#0a0a0c"
-        colorTint="#ced2da"
-        shape="metaballs"
-        repetition={1}
-        scale={0.75}
-        offsetY={0.18}
-        softness={0.45}
-        distortion={0.12}
-        contour={0.35}
-        shiftRed={0.15}
-        shiftBlue={0.15}
-        speed={0.7}
-        style={{ position: "absolute", inset: 0, zIndex: -10 }}
-      />
-      
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* 液态金属背景已上移为全站固定层 components/liquid-metal-background.tsx */}
       <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
         <motion.div 
           className="text-center space-y-8"

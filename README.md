@@ -6,9 +6,9 @@
 
 ## 功能
 
-- 🌊 液态金属着色器背景（`@paper-design/shaders-react`）
+- 🌊 液态金属着色器做全站固定背景（`@paper-design/shaders-react`），滚动全程可见
 - 🖱️ 蔚蓝档案风格鼠标流光轨迹特效（深浅色主题自适应，遵循 `prefers-reduced-motion`）
-- 🌗 深色 / 浅色模式切换，自动跟随系统并记住选择
+- 🪟 全站深色玻璃拟态面板，白色文字系统，任意液滴位置下保持可读
 - 🧭 固定导航栏 + 移动端汉堡菜单，平滑滚动定位
 - ✨ Framer Motion 入场 / 滚动显现动画
 - 🖼️ 项目卡片带渐变封面图（可替换为真实截图）
@@ -64,4 +64,4 @@ npm run dev
 | 鼠标轨迹开关 / 配色 | `components/mouse-trail.tsx` |
 | 邮箱 / GitHub / 哔哩哔哩 | `app/page.tsx` 顶部 `CONTACTS` |
 | 网页标题 / 描述 / favicon | `app/layout.tsx` 的 `metadata` |
-| 主题配色 | `app/globals.css` 的 CSS 变量 |
+| 液态金属背景参数 | `components/liquid-metal-background.tsx` |
