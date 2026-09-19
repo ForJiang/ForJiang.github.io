@@ -156,35 +156,35 @@ export default function Home() {
       />
 
       {/* About Section */}
-      <section id="about" className="py-24 scroll-mt-16">
+      <section id="about" className="bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="max-w-3xl mx-auto text-center space-y-6"
+            className={`max-w-3xl mx-auto text-center space-y-6 rounded-3xl px-6 py-10 md:px-12 ${GLASS_CARD}`}
           >
             <Badge variant="secondary" className={`mb-4 ${SECTION_BADGE}`}>关于我</Badge>
             <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>
               一个喜欢把想法变成产品的开发者
             </h2>
             <p className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}>
-              你好!我是 <strong className="text-white">ForJiang</strong>,一名住在上海的全栈开发工程师。从大学第一次写下
-              <strong className="text-white"> Hello, World</strong> 开始,我就迷上了用代码把想法变成现实的过程。
+              你好！我是 <strong className="text-white">ForJiang</strong>，一名高中生，也是一个热爱编程的学习者。从第一次写下
+              <strong className="text-white"> Hello, World</strong> 开始，我就迷上了用代码把想法变成现实的过程。
             </p>
             <p className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}>
-              过去五年,我参与过<strong className="text-white">从 0 到 1 的创业项目</strong>,也支撑过<strong className="text-white">千万级用户的成熟产品</strong>。
-              我尤其享受打磨交互细节、优化性能,以及把复杂问题拆解成简单方案时的成就感。
+              过去几年，我一直在学习编程，尝试过<strong className="text-white">前端、后端和一些小项目</strong>，也在不断摸索如何把课堂之外的想法做成真正能运行的东西。
+              我尤其享受打磨交互细节、优化性能，以及把复杂问题拆解成简单方案时的成就感。虽然现在还在学习阶段，但我很期待未来能做出更多有意思的作品。
             </p>
             <p className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}>
-              不写代码的时候,我喜欢摄影、跑步,以及在技术社区分享所学。如果你有有趣的想法,欢迎随时找我聊聊!
+              不写代码的时候，我喜欢摄影、跑步，以及在技术社区分享自己的学习笔记。如果你有有趣的想法，或者愿意一起交流编程，欢迎随时找我聊聊！
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="py-24 bg-black/25 scroll-mt-16">
+      <section id="skills" className="bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -225,7 +225,7 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-24 scroll-mt-16">
+      <section id="projects" className="bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -276,7 +276,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-24 bg-black/25 scroll-mt-16">
+      <section id="contact" className="bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
