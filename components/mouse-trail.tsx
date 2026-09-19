@@ -97,7 +97,7 @@ export default function MouseTrail() {
       start();
     };
 
-    function frame(now: number) {
+    const frame = (now: number): void => {
       const w = window.innerWidth;
       const h = window.innerHeight;
       const dark = isDark();
