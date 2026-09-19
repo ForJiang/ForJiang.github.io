@@ -61,10 +61,11 @@ export default function LiquidMetalHero({
       <LiquidMetal
         {...liquidMetalPresets[2].params}
         colorBack="#0a0a0c"
-        colorTint="#dfe1e6"
+        colorTint="#ced2da"
         shape="metaballs"
         repetition={1}
-        scale={0.9}
+        scale={0.75}
+        offsetY={0.18}
         softness={0.45}
         distortion={0.12}
         contour={0.35}
@@ -89,7 +90,7 @@ export default function LiquidMetalHero({
             >
               <Badge 
                 variant="secondary" 
-                className="bg-white/10 text-white border-white/25 hover:bg-white/20 transition-colors duration-300 backdrop-blur-sm"
+                className="bg-black/40 text-white border-white/25 hover:bg-black/55 transition-colors duration-300 backdrop-blur-sm"
               >
                 {badge}
               </Badge>
@@ -103,14 +104,14 @@ export default function LiquidMetalHero({
             <motion.h1 
               role="heading" 
               aria-level={1}
-              className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight tracking-tight"
+              className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight tracking-tight [text-shadow:0_2px_16px_rgba(0,0,0,0.45)]"
               variants={itemVariants}
             >
               {title}
             </motion.h1>
             
             <motion.p 
-              className="max-w-3xl mx-auto text-xl sm:text-2xl text-white/85 leading-relaxed"
+              className="max-w-3xl mx-auto text-xl sm:text-2xl text-white/85 leading-relaxed [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]"
               variants={itemVariants}
             >
               {subtitle}
@@ -143,7 +144,7 @@ export default function LiquidMetalHero({
                   onClick={onSecondaryCtaClick}
                   variant="outline"
                   size="lg"
-                  className="border-white/40 bg-white/5 text-white hover:bg-white/15 hover:text-white hover:border-white/60 transition-all duration-300 backdrop-blur-sm text-lg px-8 py-6 font-semibold"
+                  className="border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60 transition-all duration-300 backdrop-blur-md text-lg px-8 py-6 font-semibold"
                 >
                   {secondaryCtaLabel}
                 </Button>
@@ -160,7 +161,7 @@ export default function LiquidMetalHero({
                 whileHover={{ y: -4 }}
                 transition={{ duration: 0.3 }}
               >
-                <Card className="bg-black/30 border-white/15 backdrop-blur-md shadow-2xl">
+                <Card className="bg-black/40 border-white/15 backdrop-blur-md shadow-2xl">
                   <div className="p-8">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                       {features.map((feature, index) => (
