@@ -23,9 +23,9 @@ interface TrailPoint {
 const LIFE = 260; // 轨迹拖尾存续时长(毫秒)
 
 /**
- * 蔚蓝档案(Blue Archive)风格的鼠标流光轨迹。
- * 深色主题:蓝白发光流光 + 水晶碎粒(叠加发光混合);
- * 浅色主题:蓝色墨水笔触(普通混合,保证可见)。
+ * 白色鼠标流光轨迹。
+ * 白色光晕 + 白色亮芯 + 水晶碎粒，全部使用叠加发光混合（lighter），
+ * 在深色液态金属背景上呈现纯净的白色流光。
  */
 export default function MouseTrail() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -52,8 +52,6 @@ export default function MouseTrail() {
     let last: TrailPoint | null = null;
     let raf = 0;
     let running = false;
-
-    const isDark = () => document.documentElement.classList.contains("dark");
 
     const diamond = (x: number, y: number, size: number, rot: number, fill: string) => {
       ctx.save();
@@ -100,32 +98,27 @@ export default function MouseTrail() {
     const frame = (now: number): void => {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      const dark = isDark();
       ctx.clearRect(0, 0, w, h);
       while (pts.length && now - pts[0].t > LIFE) pts.shift();
+      ctx.globalCompositeOperation = "lighter";
 
       if (pts.length > 1) {
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
-        if (dark) ctx.globalCompositeOperation = "lighter";
         for (let i = 1; i < pts.length; i++) {
           const p0 = pts[i - 1];
           const p1 = pts[i];
           const fade = 1 - (now - p1.t) / LIFE;
           if (fade <= 0) continue;
           /* 光晕层 */
-          ctx.strokeStyle = dark
-            ? `rgba(96,205,255,${(0.22 * fade).toFixed(3)})`
-            : `rgba(59,130,246,${(0.26 * fade).toFixed(3)})`;
+          ctx.strokeStyle = `rgba(255,255,255,${(0.16 * fade).toFixed(3)})`;
           ctx.lineWidth = 11 * fade;
           ctx.beginPath();
           ctx.moveTo(p0.x, p0.y);
           ctx.lineTo(p1.x, p1.y);
           ctx.stroke();
           /* 亮芯层 */
-          ctx.strokeStyle = dark
-            ? `rgba(255,255,255,${(0.9 * fade).toFixed(3)})`
-            : `rgba(23,94,210,${(0.55 * fade).toFixed(3)})`;
+          ctx.strokeStyle = `rgba(255,255,255,${(0.85 * fade).toFixed(3)})`;
           ctx.lineWidth = 2.6 * fade;
           ctx.beginPath();
           ctx.moveTo(p0.x, p0.y);
@@ -135,19 +128,13 @@ export default function MouseTrail() {
         /* 头部光点 */
         const head = pts[pts.length - 1];
         const g = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 24);
-        if (dark) {
-          g.addColorStop(0, "rgba(255,255,255,.85)");
-          g.addColorStop(0.35, "rgba(125,211,252,.35)");
-          g.addColorStop(1, "rgba(125,211,252,0)");
-        } else {
-          g.addColorStop(0, "rgba(37,99,235,.35)");
-          g.addColorStop(1, "rgba(37,99,235,0)");
-        }
+        g.addColorStop(0, "rgba(255,255,255,.9)");
+        g.addColorStop(0.4, "rgba(255,255,255,.3)");
+        g.addColorStop(1, "rgba(255,255,255,0)");
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(head.x, head.y, 24, 0, Math.PI * 2);
         ctx.fill();
-        ctx.globalCompositeOperation = "source-over";
       }
 
       /* 水晶碎粒 */
@@ -163,18 +150,16 @@ export default function MouseTrail() {
         p.vy += 1;
         p.rot += p.vr / 60;
         const a = Math.max(0, p.life);
-        if (dark) ctx.globalCompositeOperation = "lighter";
         diamond(
           p.x,
           p.y,
           p.size * a,
           p.rot,
-          dark
-            ? `rgba(186,230,253,${(a * 0.95).toFixed(3)})`
-            : `rgba(37,99,235,${(a * 0.55).toFixed(3)})`
+          `rgba(255,255,255,${(a * 0.9).toFixed(3)})`
         );
-        ctx.globalCompositeOperation = "source-over";
       }
+
+      ctx.globalCompositeOperation = "source-over";
 
       if (pts.length || particles.length) {
         raf = requestAnimationFrame(frame);
@@ -182,7 +167,7 @@ export default function MouseTrail() {
         running = false;
         ctx.clearRect(0, 0, w, h);
       }
-    }
+    };
 
     const onMove = (e: PointerEvent) => {
       const p = { x: e.clientX, y: e.clientY, t: performance.now() };
