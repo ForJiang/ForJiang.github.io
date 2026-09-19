@@ -1,44 +1,68 @@
-# 个人网页
+# ForJiang · 个人主页
 
-一个零依赖的单文件个人主页:纯 HTML + CSS + 原生 JavaScript,无需安装任何东西,双击 `index.html` 即可在浏览器打开。
+基于 **Next.js 14 + TypeScript + Tailwind CSS + shadcn/ui** 的个人主页，Hero 区使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做全屏动态背景，配合 Framer Motion 逐项入场动画。
+
+线上地址：**https://forjiang.github.io**
 
 ## 功能
 
-- 🖱️ 蔚蓝档案风格鼠标轨迹:蓝白流光拖尾 + 水晶碎粒,点击迸发粒子,深浅色自适应
-- 🌗 深色 / 浅色模式切换(自动跟随系统,并记住选择)
-- ⌨️ 首页打字机效果、滚动显现动画
-- 📱 完整响应式:桌面端双栏,移动端汉堡菜单
-- 🧭 滚动时导航自动高亮当前分区、回到顶部按钮
-- 📦 无任何外部资源(图标为内联 SVG,头像为 CSS 绘制),离线可用
+- 🌊 液态金属着色器背景（`@paper-design/shaders-react`）
+- 🖱️ 蔚蓝档案风格鼠标流光轨迹特效（深浅色主题自适应，遵循 `prefers-reduced-motion`）
+- 🌗 深色 / 浅色模式切换，自动跟随系统并记住选择
+- 🧭 固定导航栏 + 移动端汉堡菜单，平滑滚动定位
+- ✨ Framer Motion 入场 / 滚动显现动画
+- 🖼️ 项目卡片带渐变封面图（可替换为真实截图）
+- 📱 完整响应式布局
+- 📄 页面板块：Hero / 关于我 / 技术栈 / 精选项目 / 联系方式
+
+## 目录结构
+
+```
+personal-website/
+├── docs/deploy-workflow.yml      # GitHub Pages 部署工作流模板（首次启用时复制到 .github/workflows/deploy.yml）
+├── app/                          # Next.js App Router
+│   ├── layout.tsx                # 根布局 + 元信息 + favicon
+│   ├── page.tsx                  # 主页（各板块内容都在这里）
+│   └── globals.css               # shadcn 主题 CSS 变量
+├── components/
+│   ├── mouse-trail.tsx           # 鼠标流光轨迹特效
+│   └── ui/                       # shadcn/ui 组件 + liquid-metal-hero
+├── lib/utils.ts                  # cn() 工具函数
+└── index.html                    # 旧版纯 HTML 页面，仅作参考，可删除
+```
+
+## 本地运行
+
+需要 Node.js 18.17+：
+
+```bash
+npm install
+npm run dev
+# 打开 http://localhost:3000
+```
+
+## 部署（GitHub Actions 自动部署，推荐）
+
+工作流模板已放在 `docs/deploy-workflow.yml`：每次 push 到 `main`，GitHub 云端自动执行 `npm install && npm run build`（静态导出到 `out/`），并发布到 Pages —— **本地不需要安装 Node.js**。
+
+首次启用共两步（都在 GitHub 网页上完成）：
+
+1. **创建工作流文件**：仓库页面 **Add file → Create new file**，文件名填 `.github/workflows/deploy.yml`，把 `docs/deploy-workflow.yml` 的内容原样粘贴进去，提交到 `main`。（`.github/workflows/` 下的文件需要带 `workflow` 权限的凭证才能通过 git 推送，所以用网页创建最省事）
+2. **切换 Pages 来源**：**Settings → Pages → Build and deployment → Source**，从 `Deploy from a branch` 改为 **`GitHub Actions`**
+
+之后每次 `git push` 自动部署，构建进度见仓库 **Actions** 标签页。
+
+> 说明：目标仓库是 `ForJiang.github.io`（用户主站），站点挂在根路径，`next.config.js` 无需配置 `basePath`。切换到 Actions 部署后，仓库根目录的旧版 `index.html` 不再被使用，可以删除。
 
 ## 如何改成你自己的信息
 
-所有内容都在 `index.html` 里,用编辑器搜索替换即可:
-
-| 想改什么 | 搜索示例 |
+| 想改什么 | 位置 |
 | --- | --- |
-| 名字 | `ForJiang` |
-| 职位 / 打字机台词 | `roles = ['全栈开发工程师', ...]`(在底部 `<script>` 中) |
-| 自我介绍 | `关于我` 区块的两段 `<p>` |
-| 技能标签 | `技术栈` 区块的 `.tag` 项 |
-| 项目卡片 | `精选项目` 区块的 `proj-card`;封面图替换 `img` 的 `src`(如 `images/xxx.jpg`,支持 jpg/png/webp/svg),不需要时删掉 `cover-emoji` 那行 |
-| 经历时间线 | `我的经历` 区块的 `tl-item` |
-| 邮箱 | `jianghaoda.1@outlook.com` |
-| 哔哩哔哩 | `https://b23.tv/edD6tm9` |
-| GitHub | `github.com/ForJiang` |
-| 头像 | 找到 `.avatar` 里的 `FJ`,换成你的名字缩写;或改为 `<img>` |
-| 网页标题 | `<title>ForJiang · 个人主页</title>` |
-
-## 本地预览
-
-```bash
-cd personal-website
-python3 -m http.server 8765
-# 打开 http://localhost:8765
-```
-
-直接双击 `index.html` 也可以正常运行。
-
-## 部署
-
-把 `index.html` 上传到任意静态托管即可,例如 GitHub Pages、Vercel、Netlify 或 Cloudflare Pages,无需构建步骤。
+| Hero 标语 / 按钮文字 / 技能芯片 | `app/page.tsx` 中 `<LiquidMetalHero>` 的 props |
+| 自我介绍 | `app/page.tsx` 「关于我」区块 |
+| 技能标签 | `app/page.tsx` 顶部 `SKILLS` 数组 |
+| 项目卡片 / 封面图 | `app/page.tsx` 顶部 `PROJECTS` 数组（`gradient` 换成 `<img>` 即可用真实截图） |
+| 鼠标轨迹开关 / 配色 | `components/mouse-trail.tsx` |
+| 邮箱 / GitHub / 哔哩哔哩 | `app/page.tsx` 顶部 `CONTACTS` |
+| 网页标题 / 描述 / favicon | `app/layout.tsx` 的 `metadata` |
+| 主题配色 | `app/globals.css` 的 CSS 变量 |
