@@ -177,7 +177,6 @@ export default function Home() {
         secondaryCtaLabel="联系我"
         onPrimaryCtaClick={() => scrollTo("projects")}
         onSecondaryCtaClick={() => scrollTo("contact")}
-        features={["⚛️ React", "💚 Vue", "📘 TypeScript", "🚀 Node.js"]}
       />
 
       {/* About Section */}

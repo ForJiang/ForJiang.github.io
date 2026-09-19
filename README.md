@@ -57,7 +57,7 @@ npm run dev
 
 | 想改什么 | 位置 |
 | --- | --- |
-| Hero 标语 / 按钮文字 / 技能芯片 | `app/page.tsx` 中 `<LiquidMetalHero>` 的 props |
+| Hero 标语 / 按钮文字 | `app/page.tsx` 中 `<LiquidMetalHero>` 的 props |
 | 自我介绍 | `app/page.tsx` 「关于我」区块 |
 | 技能标签 | `app/page.tsx` 顶部 `SKILLS` 数组 |
 | 项目卡片 / 封面图 | `app/page.tsx` 顶部 `PROJECTS` 数组（`gradient` 换成 `<img>` 即可用真实截图） |
