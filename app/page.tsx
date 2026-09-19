@@ -152,7 +152,6 @@ export default function Home() {
       <LiquidMetalHero
         badge="👋 你好,我是"
         title="ForJiang"
-        subtitle="热爱构建优雅、高性能的 Web 应用,专注于前端工程化与用户体验,偶尔写写后端和设计。目前坐标上海,正在寻找有趣的合作机会。"
         primaryCtaLabel="查看我的项目 →"
         secondaryCtaLabel="联系我"
         onPrimaryCtaClick={() => scrollTo("projects")}

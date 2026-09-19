@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 interface LiquidMetalHeroProps {
   badge?: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   primaryCtaLabel: string;
   secondaryCtaLabel?: string;
   onPrimaryCtaClick: () => void;
@@ -91,12 +91,14 @@ export default function LiquidMetalHero({
               {title}
             </motion.h1>
             
-            <motion.p 
-              className="max-w-3xl mx-auto text-xl sm:text-2xl text-white/85 leading-relaxed [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]"
-              variants={itemVariants}
-            >
-              {subtitle}
-            </motion.p>
+            {subtitle && (
+              <motion.p
+                className="max-w-3xl mx-auto text-xl sm:text-2xl text-white/85 leading-relaxed [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]"
+                variants={itemVariants}
+              >
+                {subtitle}
+              </motion.p>
+            )}
           </motion.div>
           
           <motion.div 
