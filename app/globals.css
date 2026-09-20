@@ -56,4 +56,18 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* 移动端：锁定 html/body 为视口高度，防止地址栏伸缩导致 fixed 背景偏移 */
+  html {
+    overflow: hidden;
+    height: 100dvh;
+    /* iOS Safari 弹性滚动会拉动 fixed 层，彻底关闭 */
+    overscroll-behavior: none;
+  }
+  body {
+    overflow-y: auto;
+    height: 100dvh;
+    /* iOS 上用 touch 而非 auto 保留惯性滚动 */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+  }
 }

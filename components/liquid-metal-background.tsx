@@ -78,7 +78,18 @@ export default function LiquidMetalBackground() {
   }, []);
 
   return (
-    <div ref={wrapRef} className="fixed inset-0 -z-10">
+    <div
+      ref={wrapRef}
+      className="fixed inset-0 -z-10"
+      style={{
+        /* dvh 跟随移动端地址栏伸缩，不会像 100vh 那样溢出或留白 */
+        width: "100vw",
+        height: "100dvh",
+        /* GPU 独立合成层：滚动时不触发主线程重绘，消除移动端卡顿 */
+        willChange: "transform",
+        transform: "translateZ(0)",
+      }}
+    >
       <LiquidMetal
         colorBack="#0a0a0c"
         colorTint="#ced2da"
