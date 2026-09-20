@@ -340,7 +340,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 pb-[calc(2rem+env(safe-area-inset-bottom,0px))] border-t border-white/10">
+      <footer className="py-8 border-t border-white/10">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-white/60">
             © {new Date().getFullYear()} ForJiang

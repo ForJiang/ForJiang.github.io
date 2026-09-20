@@ -56,18 +56,17 @@
   body {
     @apply bg-background text-foreground;
   }
-  /* 移动端：锁定 html/body 为视口高度，防止地址栏伸缩导致 fixed 背景偏移 */
-  html {
-    overflow: hidden;
-    height: 100dvh;
-    /* iOS Safari 弹性滚动会拉动 fixed 层，彻底关闭 */
-    overscroll-behavior: none;
-  }
+}
+
+/*
+ * 移动端底部工具栏：iOS Safari / Android Chrome 的底部地址栏、工具栏是覆盖在
+ * 视口上的不透明浮层，滚到底时页脚内容会被它压住。iOS Safari 在普通浏览模式下
+ * env(safe-area-inset-bottom) 恒为 0（仅 standalone Web App 才有值），所以必须用
+ * 固定高度兜底；预留 100px 让页脚能被完整滚出工具栏区域。
+ * 桌面端（hover:hover）不适用此规则。
+ */
+@media (hover: none) and (pointer: coarse) {
   body {
-    overflow-y: auto;
-    height: 100dvh;
-    /* iOS 上用 touch 而非 auto 保留惯性滚动 */
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: none;
+    padding-bottom: 100px;
   }
 }
