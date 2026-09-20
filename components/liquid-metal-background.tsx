@@ -95,7 +95,15 @@ export default function LiquidMetalBackground() {
         colorTint="#ced2da"
         shape="metaballs"
         repetition={1}
-        scale={0.75}
+        /*
+         * scale 控制液滴场相对视口的大小，不是整体缩放画面：
+         * metaballs 的场是边长 1 的正方形，视口短边只覆盖 0.65/scale 个 shapeUV
+         * 单位，而 5 个球的轨道(0.566)+影响半径(1.0)可达 1.566，scale < 1 会放大
+         * 液滴、超出视口短边被硬切出直边。0.5 使液滴直径约为短边的 67%、四周留
+         * 33% 余量，漂移全程不触边。offsetY 在 /scale 之前叠加，屏幕位移量与 scale
+         * 无关，保持 0.18 维持液滴下移避开文字的构图。
+         */
+        scale={0.5}
         offsetY={0.18}
         softness={0.45}
         distortion={0.12}
