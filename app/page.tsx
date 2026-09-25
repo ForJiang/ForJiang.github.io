@@ -14,6 +14,7 @@ import { PROJECT_IMAGES, IMAGE_SIZES } from "@/lib/image-variants";
 import { PixivIcon, XIcon, BilibiliIcon } from "@/components/brand-icons";
 import Lightbox, { type LightboxItem } from "@/components/lightbox";
 import OriginButton from "@/components/ui/origin-button";
+import RevealText from "@/components/ui/reveal-text";
 
 /*
  * 液态金属背景异步加载：@paper-design/shaders-react 体积大且纯装饰，
@@ -198,14 +199,22 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
             className={`max-w-3xl mx-auto text-center space-y-6 rounded-3xl px-6 py-10 md:px-12 ${GLASS_CARD}`}
           >
             <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
               {t.about.badge}
             </Badge>
-            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>
+            {/* 面板是整体淡入，逐字揭示排在其后，避免两层位移动画叠加 */}
+            <RevealText
+              as="h2"
+              delay={0.45}
+              stagger={0.03}
+              duration={0.65}
+              className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
+            >
               {t.about.heading}
-            </h2>
+            </RevealText>
             {t.about.paragraphs.map((paragraph, idx) => (
               <p key={idx} className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}>
                 {paragraph}
@@ -218,20 +227,37 @@ export default function Home() {
       {/* Skills Section */}
       <section id="skills" className="min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-              {t.skills.badge}
-            </Badge>
-            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>
+          <div className="text-center mb-16">
+            <m.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-block"
+            >
+              <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+                {t.skills.badge}
+              </Badge>
+            </m.div>
+            {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
+            <RevealText
+              as="h2"
+              delay={0.15}
+              stagger={0.03}
+              duration={0.65}
+              className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
+            >
               {t.skills.heading}
-            </h2>
-            <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>{t.skills.subtitle}</p>
-          </m.div>
+            </RevealText>
+            <m.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className={`mt-3 text-white/75 ${BODY_SHADOW}`}
+            >
+              {t.skills.subtitle}
+            </m.p>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {t.skills.groups.map((group, idx) => (
@@ -328,20 +354,37 @@ export default function Home() {
       {/* Projects Section */}
       <section id="projects" className="min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-              {t.projects.badge}
-            </Badge>
-            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>
+          <div className="text-center mb-16">
+            <m.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-block"
+            >
+              <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+                {t.projects.badge}
+              </Badge>
+            </m.div>
+            {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
+            <RevealText
+              as="h2"
+              delay={0.15}
+              stagger={0.03}
+              duration={0.65}
+              className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
+            >
               {t.projects.heading}
-            </h2>
-            <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>{t.projects.subtitle}</p>
-          </m.div>
+            </RevealText>
+            <m.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className={`mt-3 text-white/75 ${BODY_SHADOW}`}
+            >
+              {t.projects.subtitle}
+            </m.p>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {t.projects.cards.map((card, idx) => {
@@ -422,14 +465,21 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
             className="max-w-3xl mx-auto text-center space-y-6"
           >
             <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
               {t.contact.badge}
             </Badge>
-            <h2 className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}>
+            <RevealText
+              as="h2"
+              delay={0.45}
+              stagger={0.03}
+              duration={0.65}
+              className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
+            >
               {t.contact.heading}
-            </h2>
+            </RevealText>
             <p className={`text-lg text-white/80 ${BODY_SHADOW}`}>
               {t.contact.subtitle}
             </p>
