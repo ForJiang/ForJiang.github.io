@@ -203,7 +203,7 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className={`max-w-3xl mx-auto text-center space-y-6 rounded-3xl px-6 py-10 md:px-12 ${GLASS_CARD}`}
+            className={`max-w-4xl mx-auto text-center space-y-6 rounded-3xl px-6 py-10 md:px-12 ${GLASS_CARD}`}
           >
             <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
               <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
@@ -216,7 +216,7 @@ export default function Home() {
               delay={0.45}
               stagger={0.03}
               duration={0.65}
-              className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
+              className={`mx-auto max-w-2xl text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
             >
               {t.about.heading}
             </RevealText>
