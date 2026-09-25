@@ -48,6 +48,28 @@ export const translations = {
           tags: ["Git", "Docker", "Nginx", "Linux", "Figma", "性能优化", "单元测试"],
         },
       ],
+      projects: {
+        badge: "实战项目",
+        heading: "把这些用在了这些项目里",
+        subtitle: "两个纯静态、可离线使用的网页工具",
+        demoCta: "在线试用",
+        items: [
+          {
+            name: "RVC 声音克隆",
+            desc: "基于 RVC 的网页端声音克隆工具：纯静态部署，浏览器内 ONNX 推理，也可连接本地 RVC 服务。仓库不托管音色模型，音色由用户自行导入。",
+            tags: ["JavaScript", "ONNX Runtime", "Web Audio", "Python"],
+            repo: "https://github.com/ForJiang/rvc-sound-clone",
+            demo: "https://forjiang.github.io/rvc-sound-clone/",
+          },
+          {
+            name: "图片元数据清除器",
+            desc: "批量清除 EXIF / GPS / XMP / IPTC / ICC 元数据的纯静态站点，全部处理在浏览器内完成，照片不上传；Canvas 重编码加强制拆段双保险，附 52 项单元测试。",
+            tags: ["JavaScript", "Canvas", "EXIF / IPTC", "ZIP"],
+            repo: "https://github.com/ForJiang/image-metadata-cleaner",
+            demo: "https://forjiang.github.io/image-metadata-cleaner/",
+          },
+        ],
+      },
     },
     projects: {
       badge: "AI 绘画",
@@ -123,6 +145,28 @@ export const translations = {
           tags: ["Git", "Docker", "Nginx", "Linux", "Figma", "Performance", "Unit Testing"],
         },
       ],
+      projects: {
+        badge: "Projects",
+        heading: "Where I put these skills to work",
+        subtitle: "Two fully static, offline-capable web tools",
+        demoCta: "Live demo",
+        items: [
+          {
+            name: "RVC Sound Clone",
+            desc: "A browser-based RVC voice cloning tool: statically deployed, runs ONNX inference in-browser, or connects to a local RVC service. No voice models are hosted — users import their own.",
+            tags: ["JavaScript", "ONNX Runtime", "Web Audio", "Python"],
+            repo: "https://github.com/ForJiang/rvc-sound-clone",
+            demo: "https://forjiang.github.io/rvc-sound-clone/",
+          },
+          {
+            name: "Image Metadata Cleaner",
+            desc: "A static site that batch-strips EXIF / GPS / XMP / IPTC / ICC metadata entirely in the browser — photos never leave your device. Canvas re-encoding plus forced segment splitting, backed by 52 unit tests.",
+            tags: ["JavaScript", "Canvas", "EXIF / IPTC", "ZIP"],
+            repo: "https://github.com/ForJiang/image-metadata-cleaner",
+            demo: "https://forjiang.github.io/image-metadata-cleaner/",
+          },
+        ],
+      },
     },
     projects: {
       badge: "AI Art",

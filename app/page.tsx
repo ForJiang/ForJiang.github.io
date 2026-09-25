@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
-import { Github, Mail, Menu, Languages } from "lucide-react";
+import { Github, Mail, ExternalLink, Menu, Languages } from "lucide-react";
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { translations, type Lang } from "@/lib/i18n";
@@ -256,6 +256,77 @@ export default function Home() {
               </m.div>
             ))}
           </div>
+
+          {/* 实战项目：技能区下方，展示技能落在真实项目里的成果 */}
+          <m.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-12"
+          >
+            <div className="text-center mb-8">
+              <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+                {t.skills.projects.badge}
+              </Badge>
+              <h3 className={`text-2xl md:text-3xl font-bold tracking-tight ${TEXT_SHADOW}`}>
+                {t.skills.projects.heading}
+              </h3>
+              <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>
+                {t.skills.projects.subtitle}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {t.skills.projects.items.map((proj, idx) => (
+                <m.div
+                  key={proj.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                >
+                  <Card className={`group h-full flex flex-col hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
+                    <CardHeader>
+                      <CardTitle className="text-white">{proj.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1 flex flex-col gap-4">
+                      <p className={`text-white/75 flex-1 ${BODY_SHADOW}`}>{proj.desc}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {proj.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap gap-3 pt-1">
+                        {/* asChild 让按钮保持外观但渲染成真实 <a>：可中键/右键新标签、可被爬取 */}
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+                        >
+                          <a href={proj.repo} target="_blank" rel="noopener noreferrer">
+                            <Github className="h-4 w-4" />
+                            GitHub
+                          </a>
+                        </Button>
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+                        >
+                          <a href={proj.demo} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="h-4 w-4" />
+                            {t.skills.projects.demoCta}
+                          </a>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </m.div>
+              ))}
+            </div>
+          </m.div>
         </div>
       </section>
 
