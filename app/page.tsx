@@ -12,6 +12,8 @@ import dynamic from "next/dynamic";
 import { translations, type Lang } from "@/lib/i18n";
 import { PROJECT_IMAGES, IMAGE_SIZES } from "@/lib/image-variants";
 import { PixivIcon, XIcon, BilibiliIcon } from "@/components/brand-icons";
+import Lightbox, { type LightboxItem } from "@/components/lightbox";
+import { AnimatePresence } from "framer-motion";
 
 /*
  * 液态金属背景异步加载：@paper-design/shaders-react 体积大且纯装饰，
@@ -60,6 +62,7 @@ const GLASS_TAG = "bg-white/10 text-white/85 border-transparent";
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [lang, setLang] = useState<Lang>("zh");
+  const [viewing, setViewing] = useState<number | null>(null);
   const t = translations[lang];
 
   useEffect(() => {
@@ -86,6 +89,13 @@ export default function Home() {
     if (el) el.scrollIntoView({ behavior: "smooth" });
     setMenuOpen(false);
   };
+
+  // 灯箱用高清母版（public/images 下的原图），按当前语言取标题与描述
+  const lightboxItems: LightboxItem[] = t.projects.cards.map((card, idx) => ({
+    src: PROJECT_IMAGES[idx]?.fallback ?? "",
+    title: card.title,
+    desc: card.desc,
+  }));
 
   const langButton = (
     <button
@@ -300,7 +310,17 @@ export default function Home() {
                           height={img.height}
                           loading="lazy"
                           decoding="async"
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          onClick={() => setViewing(idx)}
+                          role="button"
+                          tabIndex={0}
+                          aria-label={`${card.title} — 查看高清原图`}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              setViewing(idx);
+                            }
+                          }}
+                          className="h-full w-full cursor-zoom-in object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       </picture>
                       )}
@@ -391,6 +411,18 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* 全屏原图查看器 */}
+      <AnimatePresence>
+        {viewing !== null && (
+          <Lightbox
+            items={lightboxItems}
+            index={viewing}
+            onClose={() => setViewing(null)}
+            onNavigate={setViewing}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Footer */}
       <footer className="py-8 border-t border-white/10">

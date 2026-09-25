@@ -36,9 +36,9 @@ for (const name of NAMES) {
   const buf = await readFile(src);
   const meta = await sharp(buf).metadata();
   // 母版纵横比，用于 <img width height>，避免布局抖动
-  const height = Math.round((meta.height * WIDTHS[WIDTHS.length - 1]) / meta.width);
+  const height = meta.height; // 用母版真实尺寸声明，和 <img src> 指向的母版一致
 
-  const entry = { name, width: WIDTHS[WIDTHS.length - 1], height, avif: [], webp: [] };
+  const entry = { name, width: meta.width, height, avif: [], webp: [] };
 
   for (const w of WIDTHS) {
     for (const [fmt, q] of [["avif", AVIF_Q], ["webp", WEBP_Q]]) {

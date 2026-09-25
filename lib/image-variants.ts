@@ -3,8 +3,8 @@
 export const PROJECT_IMAGES = [
   {
     name: "yuntu",
-    width: 1200,
-    height: 676,
+    width: 1600,
+    height: 901,
     avif: [
       { w: 480, path: "/images/yuntu-480-9f84e0e1.avif" },
       { w: 800, path: "/images/yuntu-800-bc330d30.avif" },
@@ -19,8 +19,8 @@ export const PROJECT_IMAGES = [
   },
   {
     name: "tick",
-    width: 1200,
-    height: 676,
+    width: 1600,
+    height: 901,
     avif: [
       { w: 480, path: "/images/tick-480-bc8cb073.avif" },
       { w: 800, path: "/images/tick-800-d3738787.avif" },
@@ -35,8 +35,8 @@ export const PROJECT_IMAGES = [
   },
   {
     name: "pixelboard",
-    width: 1200,
-    height: 676,
+    width: 1600,
+    height: 901,
     avif: [
       { w: 480, path: "/images/pixelboard-480-ace85743.avif" },
       { w: 800, path: "/images/pixelboard-800-dfac803e.avif" },
@@ -51,8 +51,8 @@ export const PROJECT_IMAGES = [
   },
   {
     name: "solar",
-    width: 1200,
-    height: 676,
+    width: 1600,
+    height: 901,
     avif: [
       { w: 480, path: "/images/solar-480-db402b34.avif" },
       { w: 800, path: "/images/solar-800-b0671e24.avif" },
