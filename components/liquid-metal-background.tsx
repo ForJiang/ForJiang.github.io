@@ -80,15 +80,15 @@ export default function LiquidMetalBackground() {
   return (
     <div
       ref={wrapRef}
-      className="fixed inset-0 -z-10"
-      style={{
-        /* dvh 跟随移动端地址栏伸缩，不会像 100vh 那样溢出或留白 */
-        width: "100vw",
-        height: "100dvh",
-        /* GPU 独立合成层：滚动时不触发主线程重绘，消除移动端卡顿 */
-        willChange: "transform",
-        transform: "translateZ(0)",
-      }}
+      /*
+       * 滚动时背景必须纹丝不动：高度用 100lvh（工具栏收起后的视口高，全程恒定），
+       * canvas 不会因地址栏伸缩而反复 resize——dvh 会在每次滚动时触发 canvas 重建，
+       * 表现为背景滑动 + 卡顿，故不能用 dvh。
+       * 只锚 top 不锚 bottom：地址栏收起时视口变高，锚 bottom 会把背景往下拽。
+       * 不加 will-change/translateZ：把 fixed 提成合成层在 iOS 上反致滚动抖动。
+       * 工具栏展开时底部多出的部分被视口裁掉，收起时正好铺满，不会露黑边。
+       */
+      className="shader-bg fixed left-0 right-0 top-0 -z-10 overflow-hidden"
     >
       <LiquidMetal
         colorBack="#0a0a0c"

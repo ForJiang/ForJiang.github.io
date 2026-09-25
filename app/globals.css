@@ -59,6 +59,17 @@
 }
 
 /*
+ * 液态金属固定背景。高度必须恒定，不能在滚动时随地址栏伸缩变化：
+ * lvh 是"工具栏收起后"的视口高度，滚动全程不变，WebGL canvas 因此不会反复
+ * resize（每次 resize 都要重建渲染缓冲 → 背景滑动 + 卡顿）。dvh/lvh 不被
+ * 支持时回退到 100vh。工具栏展开时底部多出的部分被视口裁掉，收起时正好铺满。
+ */
+.shader-bg {
+  height: 100vh;
+  height: 100lvh;
+}
+
+/*
  * 移动端底部工具栏：iOS Safari / Android Chrome 的底部地址栏、工具栏是覆盖在
  * 视口上的不透明浮层，滚到底时页脚内容会被它压住。iOS Safari 在普通浏览模式下
  * env(safe-area-inset-bottom) 恒为 0（仅 standalone Web App 才有值），所以必须用
