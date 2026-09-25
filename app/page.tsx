@@ -341,19 +341,17 @@ export default function Home() {
               <Button
                 variant="outline"
                 size="lg"
-                className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+                className="border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
                 onClick={() => window.open(CONTACTS.pixiv, "_blank")}
               >
-                <PixivIcon className="h-4 w-4" />
                 Pixiv
               </Button>
               <Button
                 variant="outline"
                 size="lg"
-                className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+                className="border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
                 onClick={() => window.open(CONTACTS.x, "_blank")}
               >
-                <XIcon className="h-4 w-4" />
                 X
               </Button>
             </div>
