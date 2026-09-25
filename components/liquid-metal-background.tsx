@@ -100,11 +100,11 @@ export default function LiquidMetalBackground() {
          * metaballs 的场是边长 1 的正方形，视口短边只覆盖 0.65/scale 个 shapeUV
          * 单位，而 5 个球的轨道(0.566)+影响半径(1.0)可达 1.566，scale < 1 会放大
          * 液滴、超出视口短边被硬切出直边。0.5 使液滴直径约为短边的 67%、四周留
-         * 33% 余量，漂移全程不触边。offsetY 在 /scale 之前叠加，屏幕位移量与 scale
-         * 无关，保持 0.18 维持液滴下移避开文字的构图。
+         * 33% 余量，漂移全程不触边。
+         * offsetX/offsetY 默认 0：液滴群在视口正中央漂移（之前用 offsetY 0.18
+         * 把液滴下移以避开 Hero 标题，现按用户要求改为居中）。
          */
         scale={0.5}
-        offsetY={0.18}
         softness={0.45}
         distortion={0.12}
         contour={0.35}
