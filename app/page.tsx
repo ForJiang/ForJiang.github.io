@@ -105,9 +105,7 @@ export default function Home() {
       aria-label="Switch language / 切换语言"
     >
       <Languages className="h-4 w-4" />
-      <RevealText as="span" stagger={0.03} duration={0.5} blur={6}>
-        {t.langToggle}
-      </RevealText>
+      {t.langToggle}
     </button>
   );
 
@@ -129,19 +127,12 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/50 backdrop-blur-md">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <div className="flex items-center justify-between h-16">
-            <RevealText
-              as="div"
-              stagger={0.025}
-              duration={0.55}
-              blur={8}
-              className="text-xl font-bold tracking-tight"
-              items={[
-                ..."ForJiang".split(""),
-                <span key="dot" className="text-white/60">
-                  .
-                </span>,
-              ]}
-            />
+            {/* 导航与页脚不做逐字入场：它们是常驻框架，每字错峰反而显得碎；
+                且 RevealText 的 w-full 容器会把 button 的固有宽度算错，中文
+                逐字后必然换行成竖排 */}
+            <div className="text-xl font-bold tracking-tight">
+              ForJiang<span className="text-white/60">.</span>
+            </div>
 
             {/* Desktop nav */}
             <div className="hidden md:flex items-center gap-8">
@@ -151,9 +142,7 @@ export default function Home() {
                   onClick={() => scrollTo(id)}
                   className="text-sm font-medium text-white/75 hover:text-white transition-colors"
                 >
-                  <RevealText as="span" stagger={0.03} duration={0.5} blur={6}>
-                    {t.nav[id]}
-                  </RevealText>
+                  {t.nav[id]}
                 </button>
               ))}
               {langButton}
@@ -187,9 +176,7 @@ export default function Home() {
                   onClick={() => scrollTo(id)}
                   className="text-left text-sm font-medium text-white/75 hover:text-white transition-colors py-2"
                 >
-                  <RevealText as="span" stagger={0.03} duration={0.5} blur={6}>
-                    {t.nav[id]}
-                  </RevealText>
+                  {t.nav[id]}
                 </button>
               ))}
             </div>
@@ -654,15 +641,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-8 border-t border-white/10">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <RevealText
-            as="p"
-            stagger={0.04}
-            duration={0.5}
-            blur={6}
-            className="text-sm text-white/60"
-          >
-            © {new Date().getFullYear()} ForJiang
-          </RevealText>
+          <p className="text-sm text-white/60">© {new Date().getFullYear()} ForJiang</p>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" aria-label="GitHub" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.github, "_blank")}>
               <Github className="h-4 w-4" />

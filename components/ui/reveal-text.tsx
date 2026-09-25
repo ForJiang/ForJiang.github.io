@@ -160,9 +160,17 @@ export default function RevealText({
   const textUnits = items ? [] : splitRevealUnits(collectText(children) || text || "");
   const units: ReactNode[] = items ?? textUnits;
 
+  // span 是 inline，width:100% 会让浏览器把容器算成只有一行的宽度，
+  // 里面的 inline-block 单元就会逐个换行，中文逐字直接竖排
+  const isInline = as === "span";
+
   return (
     <LazyMotion features={domAnimation}>
-      <MotionComponent ref={ref as never} className={cn("w-full", className)} style={style}>
+      <MotionComponent
+        ref={ref as never}
+        className={cn(!isInline && "w-full", className)}
+        style={style}
+      >
         {units.map((unit, i) => (
           <m.span
             key={i}
