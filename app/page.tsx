@@ -105,7 +105,9 @@ export default function Home() {
       aria-label="Switch language / 切换语言"
     >
       <Languages className="h-4 w-4" />
-      {t.langToggle}
+      <RevealText as="span" stagger={0.03} duration={0.5} blur={6}>
+        {t.langToggle}
+      </RevealText>
     </button>
   );
 
@@ -127,9 +129,19 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/50 backdrop-blur-md">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <div className="flex items-center justify-between h-16">
-            <div className="text-xl font-bold tracking-tight">
-              ForJiang<span className="text-white/60">.</span>
-            </div>
+            <RevealText
+              as="div"
+              stagger={0.025}
+              duration={0.55}
+              blur={8}
+              className="text-xl font-bold tracking-tight"
+              items={[
+                ..."ForJiang".split(""),
+                <span key="dot" className="text-white/60">
+                  .
+                </span>,
+              ]}
+            />
 
             {/* Desktop nav */}
             <div className="hidden md:flex items-center gap-8">
@@ -139,7 +151,9 @@ export default function Home() {
                   onClick={() => scrollTo(id)}
                   className="text-sm font-medium text-white/75 hover:text-white transition-colors"
                 >
-                  {t.nav[id]}
+                  <RevealText as="span" stagger={0.03} duration={0.5} blur={6}>
+                    {t.nav[id]}
+                  </RevealText>
                 </button>
               ))}
               {langButton}
@@ -173,7 +187,9 @@ export default function Home() {
                   onClick={() => scrollTo(id)}
                   className="text-left text-sm font-medium text-white/75 hover:text-white transition-colors py-2"
                 >
-                  {t.nav[id]}
+                  <RevealText as="span" stagger={0.03} duration={0.5} blur={6}>
+                    {t.nav[id]}
+                  </RevealText>
                 </button>
               ))}
             </div>
@@ -203,7 +219,9 @@ export default function Home() {
             className={`max-w-3xl mx-auto text-center space-y-6 rounded-3xl px-6 py-10 md:px-12 ${GLASS_CARD}`}
           >
             <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-              {t.about.badge}
+              <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
+                {t.about.badge}
+              </RevealText>
             </Badge>
             {/* 面板是整体淡入，逐字揭示排在其后，避免两层位移动画叠加 */}
             <RevealText
@@ -216,9 +234,17 @@ export default function Home() {
               {t.about.heading}
             </RevealText>
             {t.about.paragraphs.map((paragraph, idx) => (
-              <p key={idx} className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}>
+              <RevealText
+                key={idx}
+                as="p"
+                delay={0.7 + idx * 0.12}
+                stagger={0.01}
+                duration={0.5}
+                blur={6}
+                className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}
+              >
                 {paragraph}
-              </p>
+              </RevealText>
             ))}
           </m.div>
         </div>
@@ -235,7 +261,9 @@ export default function Home() {
               className="inline-block"
             >
               <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-                {t.skills.badge}
+                <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
+                  {t.skills.badge}
+                </RevealText>
               </Badge>
             </m.div>
             {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
@@ -248,15 +276,16 @@ export default function Home() {
             >
               {t.skills.heading}
             </RevealText>
-            <m.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
+            <RevealText
+              as="p"
+              delay={0.4}
+              stagger={0.01}
+              duration={0.5}
+              blur={6}
               className={`mt-3 text-white/75 ${BODY_SHADOW}`}
             >
               {t.skills.subtitle}
-            </m.p>
+            </RevealText>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -270,14 +299,24 @@ export default function Home() {
               >
                 <Card className={`h-full hover:shadow-lg transition-shadow ${GLASS_CARD}`}>
                   <CardHeader>
-                    <CardTitle className="text-white">{group.title}</CardTitle>
+                    <CardTitle className="text-white">
+                      <RevealText as="div" stagger={0.03} duration={0.5} blur={6}>
+                        {group.title}
+                      </RevealText>
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {group.tags.map((tag) => (
+                    {/* 标签是组件不是纯文本，用 items 模式逐个做揭示，胶囊外观不变 */}
+                    <RevealText
+                      as="div"
+                      items={group.tags.map((tag) => (
                         <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
                       ))}
-                    </div>
+                      className="flex flex-wrap gap-2"
+                      stagger={0.04}
+                      duration={0.45}
+                      blur={6}
+                    />
                   </CardContent>
                 </Card>
               </m.div>
@@ -293,14 +332,30 @@ export default function Home() {
           >
             <div className="text-center mb-8">
               <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-                {t.skills.projects.badge}
+                <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
+                  {t.skills.projects.badge}
+                </RevealText>
               </Badge>
-              <h3 className={`text-2xl md:text-3xl font-bold tracking-tight ${TEXT_SHADOW}`}>
+              <RevealText
+                as="h3"
+                delay={0.15}
+                stagger={0.03}
+                duration={0.65}
+                blur={10}
+                className={`text-2xl md:text-3xl font-bold tracking-tight ${TEXT_SHADOW}`}
+              >
                 {t.skills.projects.heading}
-              </h3>
-              <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>
+              </RevealText>
+              <RevealText
+                as="p"
+                delay={0.35}
+                stagger={0.01}
+                duration={0.5}
+                blur={6}
+                className={`mt-3 text-white/75 ${BODY_SHADOW}`}
+              >
                 {t.skills.projects.subtitle}
-              </p>
+              </RevealText>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -314,15 +369,32 @@ export default function Home() {
                 >
                   <Card className={`group h-full flex flex-col hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
                     <CardHeader>
-                      <CardTitle className="text-white">{proj.name}</CardTitle>
+                      <CardTitle className="text-white">
+                        <RevealText as="div" stagger={0.03} duration={0.5} blur={6}>
+                          {proj.name}
+                        </RevealText>
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="flex-1 flex flex-col gap-4">
-                      <p className={`text-white/75 flex-1 ${BODY_SHADOW}`}>{proj.desc}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {proj.tags.map((tag) => (
+                      <RevealText
+                        as="p"
+                        stagger={0.01}
+                        duration={0.5}
+                        blur={6}
+                        className={`text-white/75 flex-1 ${BODY_SHADOW}`}
+                      >
+                        {proj.desc}
+                      </RevealText>
+                      <RevealText
+                        as="div"
+                        items={proj.tags.map((tag) => (
                           <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
                         ))}
-                      </div>
+                        className="flex flex-wrap gap-2"
+                        stagger={0.04}
+                        duration={0.45}
+                        blur={6}
+                      />
                       <div className="flex flex-wrap gap-3 pt-1">
                         {/* 传 href 即渲染真实 <a>：可中键/右键新标签、可被爬取 */}
                         <OriginButton
@@ -331,7 +403,9 @@ export default function Home() {
                           className="h-9 px-3 text-xs"
                         >
                           <Github className="h-4 w-4" />
-                          GitHub
+                          <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                            GitHub
+                          </RevealText>
                         </OriginButton>
                         <OriginButton
                           tone="glass"
@@ -339,7 +413,9 @@ export default function Home() {
                           className="h-9 px-3 text-xs"
                         >
                           <ExternalLink className="h-4 w-4" />
-                          {t.skills.projects.demoCta}
+                          <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                            {t.skills.projects.demoCta}
+                          </RevealText>
                         </OriginButton>
                       </div>
                     </CardContent>
@@ -362,7 +438,9 @@ export default function Home() {
               className="inline-block"
             >
               <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-                {t.projects.badge}
+                <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
+                  {t.projects.badge}
+                </RevealText>
               </Badge>
             </m.div>
             {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
@@ -375,15 +453,16 @@ export default function Home() {
             >
               {t.projects.heading}
             </RevealText>
-            <m.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
+            <RevealText
+              as="p"
+              delay={0.4}
+              stagger={0.01}
+              duration={0.5}
+              blur={6}
               className={`mt-3 text-white/75 ${BODY_SHADOW}`}
             >
               {t.projects.subtitle}
-            </m.p>
+            </RevealText>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -440,15 +519,32 @@ export default function Home() {
                       )}
                     </div>
                     <CardHeader>
-                      <CardTitle className="text-white">{card.title}</CardTitle>
+                      <CardTitle className="text-white">
+                        <RevealText as="div" stagger={0.03} duration={0.5} blur={6}>
+                          {card.title}
+                        </RevealText>
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="flex-1 flex flex-col gap-4">
-                      <p className={`text-white/75 flex-1 ${BODY_SHADOW}`}>{card.desc}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {meta.tags.map((tag) => (
+                      <RevealText
+                        as="p"
+                        stagger={0.01}
+                        duration={0.5}
+                        blur={6}
+                        className={`text-white/75 flex-1 ${BODY_SHADOW}`}
+                      >
+                        {card.desc}
+                      </RevealText>
+                      <RevealText
+                        as="div"
+                        items={meta.tags.map((tag) => (
                           <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
                         ))}
-                      </div>
+                        className="flex flex-wrap gap-2"
+                        stagger={0.04}
+                        duration={0.45}
+                        blur={6}
+                      />
                     </CardContent>
                   </Card>
                 </m.div>
@@ -469,7 +565,9 @@ export default function Home() {
             className="max-w-3xl mx-auto text-center space-y-6"
           >
             <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-              {t.contact.badge}
+              <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
+                {t.contact.badge}
+              </RevealText>
             </Badge>
             <RevealText
               as="h2"
@@ -480,44 +578,61 @@ export default function Home() {
             >
               {t.contact.heading}
             </RevealText>
-            <p className={`text-lg text-white/80 ${BODY_SHADOW}`}>
+            <RevealText
+              as="p"
+              delay={0.65}
+              stagger={0.01}
+              duration={0.5}
+              blur={6}
+              className={`text-lg text-white/80 ${BODY_SHADOW}`}
+            >
               {t.contact.subtitle}
-            </p>
+            </RevealText>
             <div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center pt-4">
               <OriginButton
                 tone="solid"
                 onClick={() => window.location.href = `mailto:${CONTACTS.email}`}
               >
                 <Mail className="h-4 w-4" />
-                {t.contact.emailCta}
+                <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                  {t.contact.emailCta}
+                </RevealText>
               </OriginButton>
               <OriginButton
                 tone="glass"
                 onClick={() => window.open(CONTACTS.github, "_blank")}
               >
                 <Github className="h-4 w-4" />
-                GitHub
+                <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                  GitHub
+                </RevealText>
               </OriginButton>
               <OriginButton
                 tone="glass"
                 onClick={() => window.open(CONTACTS.bilibili, "_blank")}
               >
                 <BilibiliIcon className="h-4 w-4" />
-                {t.contact.bilibiliCta}
+                <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                  {t.contact.bilibiliCta}
+                </RevealText>
               </OriginButton>
               <OriginButton
                 tone="glass"
                 onClick={() => window.open(CONTACTS.pixiv, "_blank")}
               >
                 <PixivIcon className="h-4 w-4" />
-                Pixiv
+                <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                  Pixiv
+                </RevealText>
               </OriginButton>
               <OriginButton
                 tone="glass"
                 onClick={() => window.open(CONTACTS.x, "_blank")}
               >
                 <XIcon className="h-4 w-4" />
-                X
+                <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                  X
+                </RevealText>
               </OriginButton>
             </div>
           </m.div>
@@ -539,9 +654,15 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-8 border-t border-white/10">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-white/60">
+          <RevealText
+            as="p"
+            stagger={0.04}
+            duration={0.5}
+            blur={6}
+            className="text-sm text-white/60"
+          >
             © {new Date().getFullYear()} ForJiang
-          </p>
+          </RevealText>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" aria-label="GitHub" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.github, "_blank")}>
               <Github className="h-4 w-4" />
