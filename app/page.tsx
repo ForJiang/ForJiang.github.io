@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Github, Mail, ExternalLink, Menu, Languages } from "lucide-react";
+import { PixivIcon, XIcon } from "@/components/brand-icons";
 import { useState, useEffect } from "react";
 import { translations, type Lang } from "@/lib/i18n";
 
@@ -36,6 +37,9 @@ const CONTACTS = {
   email: "jianghaoda.1@outlook.com",
   github: "https://github.com/ForJiang",
   bilibili: "https://b23.tv/edD6tm9",
+  pixiv: "https://www.pixiv.net/users/101240081",
+  // x.com/jianghaoda3?s=11 的 ?s=11 是分享链接参数，指向同一账号，这里用干净地址
+  x: "https://x.com/jianghaoda3",
 };
 
 const SECTION_BADGE = "bg-white/10 text-white border-white/25";
@@ -307,7 +311,7 @@ export default function Home() {
             <p className={`text-lg text-white/80 ${BODY_SHADOW}`}>
               {t.contact.subtitle}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center pt-4">
               <Button
                 size="lg"
                 className="gap-2 bg-white text-zinc-950 hover:bg-white/90"
@@ -334,6 +338,24 @@ export default function Home() {
                 <ExternalLink className="h-4 w-4" />
                 {t.contact.bilibiliCta}
               </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+                onClick={() => window.open(CONTACTS.pixiv, "_blank")}
+              >
+                <PixivIcon className="h-4 w-4" />
+                Pixiv
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+                onClick={() => window.open(CONTACTS.x, "_blank")}
+              >
+                <XIcon className="h-4 w-4" />
+                X
+              </Button>
             </div>
           </motion.div>
         </div>
@@ -346,13 +368,19 @@ export default function Home() {
             © {new Date().getFullYear()} ForJiang
           </p>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.github, "_blank")}>
+            <Button variant="ghost" size="icon" aria-label="GitHub" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.github, "_blank")}>
               <Github className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.bilibili, "_blank")}>
+            <Button variant="ghost" size="icon" aria-label="哔哩哔哩" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.bilibili, "_blank")}>
               <ExternalLink className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.location.href = `mailto:${CONTACTS.email}`}>
+            <Button variant="ghost" size="icon" aria-label="Pixiv" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.pixiv, "_blank")}>
+              <PixivIcon className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" aria-label="X" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.x, "_blank")}>
+              <XIcon className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" aria-label="Email" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.location.href = `mailto:${CONTACTS.email}`}>
               <Mail className="h-4 w-4" />
             </Button>
           </div>
