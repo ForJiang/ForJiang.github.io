@@ -7,8 +7,11 @@
  *  apple-touch-icon 不走这里：iOS 会自己给图标套圆角 mask，预先裁圆的源图会被
  *  二次裁切，透明角还会透出桌面壁纸，所以它必须是直角且整幅不透明（见 favicon.jpg）。
  *
- *  重新生成：用 Chrome canvas 读 public/favicon.jpg，套 roundRect 的
- *  destination-in 圆角遮罩后 toDataURL('image/png')。
+ *  重新生成：本地一次性脚本，用 puppeteer-core + Chrome for Testing 打开空白页，
+ *  `img.decode()` 读 public/favicon.jpg，画到 32×32 与 128×128 两个 canvas 后
+ *  设 `globalCompositeOperation = 'destination-in'`、`roundRect(0,0,size,size,size*0.2)`
+ *  填充做圆角遮罩，`toDataURL('image/png')` 取回。半径取边长的 20%（iOS squircle
+ *  的比例）。128×128 那份存成 public/favicon-rounded.png，32×32 这份内联在下面。
  */
 export const INLINE_ICON_32 =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAL9klEQVR4AWyXCZBV1ZnHf+fc5b1339qvd3pjXwXZ90WQwVAZsRAQ"
