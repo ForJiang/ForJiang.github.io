@@ -13,6 +13,7 @@ import { translations, type Lang } from "@/lib/i18n";
 import { PROJECT_IMAGES, IMAGE_SIZES } from "@/lib/image-variants";
 import { PixivIcon, XIcon, BilibiliIcon } from "@/components/brand-icons";
 import Lightbox, { type LightboxItem } from "@/components/lightbox";
+import OriginButton from "@/components/ui/origin-button";
 
 /*
  * 液态金属背景异步加载：@paper-design/shaders-react 体积大且纯装饰，
@@ -297,29 +298,23 @@ export default function Home() {
                         ))}
                       </div>
                       <div className="flex flex-wrap gap-3 pt-1">
-                        {/* asChild 让按钮保持外观但渲染成真实 <a>：可中键/右键新标签、可被爬取 */}
-                        <Button
-                          asChild
-                          variant="outline"
-                          size="sm"
-                          className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+                        {/* 传 href 即渲染真实 <a>：可中键/右键新标签、可被爬取 */}
+                        <OriginButton
+                          tone="glass"
+                          href={proj.repo}
+                          className="h-9 px-3 text-xs"
                         >
-                          <a href={proj.repo} target="_blank" rel="noopener noreferrer">
-                            <Github className="h-4 w-4" />
-                            GitHub
-                          </a>
-                        </Button>
-                        <Button
-                          asChild
-                          variant="outline"
-                          size="sm"
-                          className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+                          <Github className="h-4 w-4" />
+                          GitHub
+                        </OriginButton>
+                        <OriginButton
+                          tone="glass"
+                          href={proj.demo}
+                          className="h-9 px-3 text-xs"
                         >
-                          <a href={proj.demo} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="h-4 w-4" />
-                            {t.skills.projects.demoCta}
-                          </a>
-                        </Button>
+                          <ExternalLink className="h-4 w-4" />
+                          {t.skills.projects.demoCta}
+                        </OriginButton>
                       </div>
                     </CardContent>
                   </Card>
@@ -439,50 +434,41 @@ export default function Home() {
               {t.contact.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center pt-4">
-              <Button
-                size="lg"
-                className="gap-2 bg-white text-zinc-950 hover:bg-white/90"
+              <OriginButton
+                tone="solid"
                 onClick={() => window.location.href = `mailto:${CONTACTS.email}`}
               >
                 <Mail className="h-4 w-4" />
                 {t.contact.emailCta}
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+              </OriginButton>
+              <OriginButton
+                tone="glass"
                 onClick={() => window.open(CONTACTS.github, "_blank")}
               >
                 <Github className="h-4 w-4" />
                 GitHub
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+              </OriginButton>
+              <OriginButton
+                tone="glass"
                 onClick={() => window.open(CONTACTS.bilibili, "_blank")}
               >
                 <BilibiliIcon className="h-4 w-4" />
                 {t.contact.bilibiliCta}
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+              </OriginButton>
+              <OriginButton
+                tone="glass"
                 onClick={() => window.open(CONTACTS.pixiv, "_blank")}
               >
                 <PixivIcon className="h-4 w-4" />
                 Pixiv
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
+              </OriginButton>
+              <OriginButton
+                tone="glass"
                 onClick={() => window.open(CONTACTS.x, "_blank")}
               >
                 <XIcon className="h-4 w-4" />
                 X
-              </Button>
+              </OriginButton>
             </div>
           </m.div>
         </div>

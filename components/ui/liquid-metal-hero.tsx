@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from '@/components/ui/button';
+import OriginButton from '@/components/ui/origin-button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { LazyMotion, domAnimation, m } from 'framer-motion';
@@ -105,32 +105,27 @@ export default function LiquidMetalHero({
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             variants={buttonVariants}
           >
-            <m.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button
+            {/* 悬停时圆形填充从指针处扩散、文字反色；缩放反馈由按钮自身处理，
+                外层 m.div 只保留入场 variants，避免双重缩放 */}
+            <m.div>
+              <OriginButton
+                tone="solid"
                 onClick={onPrimaryCtaClick}
-                size="lg"
-                className="bg-white text-zinc-950 hover:bg-white/90 transition-all duration-300 shadow-2xl text-lg px-8 py-6 font-semibold"
+                className="shadow-2xl text-lg px-8 h-12 font-semibold"
               >
                 {primaryCtaLabel}
-              </Button>
+              </OriginButton>
             </m.div>
-            
+
             {secondaryCtaLabel && onSecondaryCtaClick && (
-              <m.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
+              <m.div>
+                <OriginButton
+                  tone="glass"
                   onClick={onSecondaryCtaClick}
-                  variant="outline"
-                  size="lg"
-                  className="border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60 transition-all duration-300 backdrop-blur-md text-lg px-8 py-6 font-semibold"
+                  className="backdrop-blur-md text-lg px-8 h-12 font-semibold"
                 >
                   {secondaryCtaLabel}
-                </Button>
+                </OriginButton>
               </m.div>
             )}
           </m.div>
