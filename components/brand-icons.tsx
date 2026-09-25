@@ -1,36 +1,40 @@
 import type { SVGProps } from "react";
 
 /**
- * 品牌图标。lucide-react 没有 Pixiv / X 的图标（只有已停用的 Twitter 小鸟），
- * 这里按 lucide 的描边风格（24×24、stroke-width 2、round cap/join）自绘，
- * 与站内其它图标视觉一致；均为文字标签旁的辅助图形，非官方标志复刻。
+ * 官方品牌标志：单色实心路径，24x24 viewBox，取自 simple-icons（CC0-1.0）。
+ *
+ * 与 lucide-react 的描边图标不同，品牌标志是实心图形，因此用 fill="currentColor"
+ * 继承文字颜色（站内为白色），不能套用 stroke 系列属性。
+ * Bilibili 标志替换了原先通用的 ExternalLink 图标；X / Pixiv 替换了自绘描边图形。
+ * 本文件由 simple-icons 的 svg 直接生成，请勿手改 path。
  */
-const strokeProps: SVGProps<SVGSVGElement> = {
+
+const brandProps: SVGProps<SVGSVGElement> = {
   viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: 2,
-  strokeLinecap: "round",
-  strokeLinejoin: "round",
+  fill: "currentColor",
   "aria-hidden": true,
 };
 
-export function PixivIcon({ className, ...props }: SVGProps<SVGSVGElement>) {
+export function XIcon({ className, ...props }: SVGProps<SVGSVGElement>) {
   return (
-    <svg {...strokeProps} className={className} {...props}>
-      {/* 竖笔 + 右上碗形，对应 Pixiv 标志的 P 字形 */}
-      <path d="M9 21V5" />
-      <path d="M9 5h5.2a4.3 4.3 0 0 1 0 8.6H9" />
+    <svg {...brandProps} className={className} {...props}>
+      <path d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z" />
     </svg>
   );
 }
 
-export function XIcon({ className, ...props }: SVGProps<SVGSVGElement>) {
+export function PixivIcon({ className, ...props }: SVGProps<SVGSVGElement>) {
   return (
-    <svg {...strokeProps} className={className} {...props}>
-      {/* 两道交叉笔画 */}
-      <path d="M4.5 4.5 19.5 19.5" />
-      <path d="M19.5 4.5 4.5 19.5" />
+    <svg {...brandProps} className={className} {...props}>
+      <path d="M4.94 0A4.953 4.953 0 0 0 0 4.94v14.12A4.953 4.953 0 0 0 4.94 24h14.12A4.953 4.953 0 0 0 24 19.06c-.014 1.355 0-14.12 0-14.12A4.953 4.953 0 0 0 19.06 0Zm1.783 5.465h.904a.37.37 0 0 1 .31.17l.752 1.17a6.172 6.172 0 0 1 10.01 4.834 6.172 6.172 0 0 1-9.394 5.265v2.016a.37.37 0 0 1-.37.367H6.724a.37.37 0 0 1-.37-.367V5.834a.37.37 0 0 1 .37-.37m5.804 2.951a3.222 3.222 0 1 0-.002 6.443 3.222 3.222 0 0 0 .002-6.443" />
+    </svg>
+  );
+}
+
+export function BilibiliIcon({ className, ...props }: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...brandProps} className={className} {...props}>
+      <path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373Z" />
     </svg>
   );
 }

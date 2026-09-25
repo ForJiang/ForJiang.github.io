@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { Github, Mail, ExternalLink, Menu, Languages } from "lucide-react";
-import { PixivIcon, XIcon } from "@/components/brand-icons";
+import { Github, Mail, Menu, Languages } from "lucide-react";
+import { PixivIcon, XIcon, BilibiliIcon } from "@/components/brand-icons";
 import { useState, useEffect } from "react";
 import { translations, type Lang } from "@/lib/i18n";
 
@@ -335,7 +335,7 @@ export default function Home() {
                 className="gap-2 border-white/40 bg-black/40 text-white hover:bg-black/60 hover:text-white hover:border-white/60"
                 onClick={() => window.open(CONTACTS.bilibili, "_blank")}
               >
-                <ExternalLink className="h-4 w-4" />
+                <BilibiliIcon className="h-4 w-4" />
                 {t.contact.bilibiliCta}
               </Button>
               <Button
@@ -370,7 +370,7 @@ export default function Home() {
               <Github className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="icon" aria-label="哔哩哔哩" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.bilibili, "_blank")}>
-              <ExternalLink className="h-4 w-4" />
+              <BilibiliIcon className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="icon" aria-label="Pixiv" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.pixiv, "_blank")}>
               <PixivIcon className="h-4 w-4" />
