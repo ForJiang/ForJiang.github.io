@@ -192,7 +192,7 @@ export default function Home() {
       />
 
       {/* About Section */}
-      <section id="about" className="bg-black/35 py-24 scroll-mt-16">
+      <section id="about" className="min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -216,7 +216,7 @@ export default function Home() {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="bg-black/35 py-24 scroll-mt-16">
+      <section id="skills" className="min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -326,7 +326,7 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="bg-black/35 py-24 scroll-mt-16">
+      <section id="projects" className="min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -416,7 +416,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="bg-black/35 py-24 scroll-mt-16">
+      <section id="contact" className="min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <m.div
             initial={{ opacity: 0, y: 20 }}
