@@ -56,15 +56,15 @@ export const translations = {
         items: [
           {
             name: "RVC 声音克隆",
-            desc: "基于 RVC 的网页端声音克隆工具：纯静态部署，浏览器内 ONNX 推理，也可连接本地 RVC 服务。仓库不托管音色模型，音色由用户自行导入。",
-            tags: ["JavaScript", "ONNX Runtime", "Web Audio", "Python"],
+            desc: "浏览器端 RVC 声音克隆：录音、上传、推理、导出全在页内完成，音频不上传。双引擎设计——ONNX Runtime Web 页内推理，或连接本机 RVC 服务取 GPU 级音质；批量队列可打包 ZIP 一次下载。",
+            tags: ["JavaScript", "ONNX Runtime", "Web Audio", "IndexedDB", "Python"],
             repo: "https://github.com/ForJiang/rvc-sound-clone",
             demo: "https://forjiang.github.io/rvc-sound-clone/",
           },
           {
             name: "图片元数据清除器",
-            desc: "批量清除 EXIF / GPS / XMP / IPTC / ICC 元数据的纯静态站点，全部处理在浏览器内完成，照片不上传；Canvas 重编码加强制拆段双保险，附 52 项单元测试。",
-            tags: ["JavaScript", "Canvas", "EXIF / IPTC", "ZIP"],
+            desc: "批量抹掉照片里的隐藏信息：EXIF 相机型号、拍摄时间、GPS 定位、内嵌缩略图与修图痕迹。先扫描后清除再自检，输出零元数据；Canvas 重编码加强制拆段双保险，断网可用，附 65 项单元测试。",
+            tags: ["JavaScript", "Canvas", "EXIF / GPS / XMP", "ZIP"],
             repo: "https://github.com/ForJiang/image-metadata-cleaner",
             demo: "https://forjiang.github.io/image-metadata-cleaner/",
           },
@@ -153,15 +153,15 @@ export const translations = {
         items: [
           {
             name: "RVC Sound Clone",
-            desc: "A browser-based RVC voice cloning tool: statically deployed, runs ONNX inference in-browser, or connects to a local RVC service. No voice models are hosted — users import their own.",
-            tags: ["JavaScript", "ONNX Runtime", "Web Audio", "Python"],
+            desc: "Browser-side RVC voice cloning: record, upload, infer and export entirely in-page — audio never leaves the device. Dual-engine: ONNX Runtime Web in the browser, or a local RVC service for GPU-grade quality. Batch queue exports as ZIP.",
+            tags: ["JavaScript", "ONNX Runtime", "Web Audio", "IndexedDB", "Python"],
             repo: "https://github.com/ForJiang/rvc-sound-clone",
             demo: "https://forjiang.github.io/rvc-sound-clone/",
           },
           {
             name: "Image Metadata Cleaner",
-            desc: "A static site that batch-strips EXIF / GPS / XMP / IPTC / ICC metadata entirely in the browser — photos never leave your device. Canvas re-encoding plus forced segment splitting, backed by 52 unit tests.",
-            tags: ["JavaScript", "Canvas", "EXIF / IPTC", "ZIP"],
+            desc: "Batch-strips the hidden data in photos: camera model, timestamps, GPS coordinates, embedded thumbnails, editor traces. Scan first, then strip, then self-verify — zero metadata out. Works offline, 65 unit tests.",
+            tags: ["JavaScript", "Canvas", "EXIF / GPS / XMP", "ZIP"],
             repo: "https://github.com/ForJiang/image-metadata-cleaner",
             demo: "https://forjiang.github.io/image-metadata-cleaner/",
           },
