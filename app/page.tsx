@@ -1,34 +1,43 @@
 "use client";
 
 import LiquidMetalHero from "@/components/ui/liquid-metal-hero";
-import LiquidMetalBackground from "@/components/liquid-metal-background";
 import MouseTrail from "@/components/mouse-trail";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Github, Mail, Menu, Languages } from "lucide-react";
-import { PixivIcon, XIcon, BilibiliIcon } from "@/components/brand-icons";
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { translations, type Lang } from "@/lib/i18n";
+import { PROJECT_IMAGES, IMAGE_SIZES } from "@/lib/image-variants";
+import { PixivIcon, XIcon, BilibiliIcon } from "@/components/brand-icons";
+
+/*
+ * 液态金属背景异步加载：@paper-design/shaders-react 体积大且纯装饰，
+ * 拆出首屏关键路径后文字先出图，shader 随后补上（body 已是纯黑，无闪屏）。
+ */
+const LiquidMetalBackground = dynamic(
+  () => import("@/components/liquid-metal-background")
+);
 
 const NAV_IDS = ["about", "skills", "projects", "contact"] as const;
 
 const PROJECT_META = [
   {
-    cover: "/images/yuntu.jpg",
+    image: "yuntu",
     tags: ["AI Art", "Illustration", "ComfyUI"],
   },
   {
-    cover: "/images/tick.jpg",
+    image: "tick",
     tags: ["AI Art", "Illustration", "ComfyUI"],
   },
   {
-    cover: "/images/pixelboard.jpg",
+    image: "pixelboard",
     tags: ["AI Art", "Illustration", "ComfyUI"],
   },
   {
-    cover: "/images/solar.jpg",
+    image: "solar",
     tags: ["AI Art", "Illustration", "ComfyUI"],
   },
 ];
@@ -256,6 +265,7 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {t.projects.cards.map((card, idx) => {
               const meta = PROJECT_META[idx];
+              const img = PROJECT_IMAGES.find((i) => i.name === meta.image);
               return (
                 <motion.div
                   key={idx}
@@ -265,14 +275,35 @@ export default function Home() {
                   transition={{ delay: idx * 0.08 }}
                 >
                   <Card className={`group h-full flex flex-col overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
-                    {/* 封面图放在 public/images/ 下，替换同名文件即可 */}
+                    {/* 封面图：AVIF → WebP → JPEG 逐级回退，按视口宽度取合适档位 */}
                     <div className="relative h-52 overflow-hidden shrink-0">
-                      <img
-                        src={meta.cover}
-                        alt={card.title}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
+                      {img && (
+                      <picture>
+                        {img.avif && (
+                          <source
+                            type="image/avif"
+                            srcSet={img.avif.map((v) => `${v.path} ${v.w}w`).join(", ")}
+                            sizes={IMAGE_SIZES}
+                          />
+                        )}
+                        {img.webp && (
+                          <source
+                            type="image/webp"
+                            srcSet={img.webp.map((v) => `${v.path} ${v.w}w`).join(", ")}
+                            sizes={IMAGE_SIZES}
+                          />
+                        )}
+                        <img
+                          src={img.fallback}
+                          alt={card.title}
+                          width={img.width}
+                          height={img.height}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </picture>
+                      )}
                     </div>
                     <CardHeader>
                       <CardTitle className="text-white">{card.title}</CardTitle>

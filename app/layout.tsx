@@ -8,9 +8,9 @@ export const metadata: Metadata = {
   title: "ForJiang · 个人主页",
   description: "ForJiang 的个人主页 —— 高中生，热爱编程的学习者。",
   icons: {
-    // public/favicon.png，256×256，源图由 IMG_3964 转换而来
-    icon: "/favicon.png",
-    apple: "/favicon.png",
+    // public/favicon.jpg，256×256 q82（源图由 IMG_3964 转换而来）
+    icon: "/favicon.jpg",
+    apple: "/favicon.jpg",
   },
   other: {
     "theme-color": "#000000",
