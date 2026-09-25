@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface LightboxItem {
@@ -56,7 +56,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
   if (!current) return null;
 
   return (
-    <motion.div
+    <m.div
       className="fixed inset-0 z-[10000] flex flex-col items-center justify-center gap-4 bg-black/90 p-4 backdrop-blur-md"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -102,7 +102,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
       )}
 
       {/* stopPropagation：点图片 itself 不关闭，只有点遮罩才关 */}
-      <motion.img
+      <m.img
         key={current.src}
         src={current.src}
         alt={current.title}
@@ -123,6 +123,6 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
           {index + 1} / {items.length}
         </p>
       </div>
-    </motion.div>
+    </m.div>
   );
 }

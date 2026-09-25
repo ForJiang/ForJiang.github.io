@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { motion } from 'framer-motion';
+import { LazyMotion, domAnimation, m } from 'framer-motion';
 
 interface LiquidMetalHeroProps {
   badge?: string;
@@ -57,7 +57,7 @@ export default function LiquidMetalHero({
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* 液态金属背景已上移为全站固定层 components/liquid-metal-background.tsx */}
       <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-        <motion.div 
+        <m.div 
           className="text-center space-y-8"
           variants={containerVariants}
           initial="hidden"
@@ -65,7 +65,7 @@ export default function LiquidMetalHero({
           transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
         >
           {badge && (
-            <motion.div 
+            <m.div 
               className="flex justify-center"
               variants={itemVariants}
             >
@@ -75,37 +75,37 @@ export default function LiquidMetalHero({
               >
                 {badge}
               </Badge>
-            </motion.div>
+            </m.div>
           )}
           
-          <motion.div 
+          <m.div 
             className="space-y-6"
             variants={itemVariants}
           >
-            <motion.h1 
+            <m.h1 
               role="heading" 
               aria-level={1}
               className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight tracking-tight [text-shadow:0_2px_16px_rgba(0,0,0,0.45)]"
               variants={itemVariants}
             >
               {title}
-            </motion.h1>
+            </m.h1>
             
             {subtitle && (
-              <motion.p
+              <m.p
                 className="max-w-3xl mx-auto text-xl sm:text-2xl text-white/85 leading-relaxed [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]"
                 variants={itemVariants}
               >
                 {subtitle}
-              </motion.p>
+              </m.p>
             )}
-          </motion.div>
+          </m.div>
           
-          <motion.div 
+          <m.div 
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             variants={buttonVariants}
           >
-            <motion.div
+            <m.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -116,10 +116,10 @@ export default function LiquidMetalHero({
               >
                 {primaryCtaLabel}
               </Button>
-            </motion.div>
+            </m.div>
             
             {secondaryCtaLabel && onSecondaryCtaClick && (
-              <motion.div
+              <m.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -131,16 +131,16 @@ export default function LiquidMetalHero({
                 >
                   {secondaryCtaLabel}
                 </Button>
-              </motion.div>
+              </m.div>
             )}
-          </motion.div>
+          </m.div>
           
           {features.length > 0 && (
-            <motion.div 
+            <m.div 
               className="pt-12"
               variants={itemVariants}
             >
-              <motion.div
+              <m.div
                 whileHover={{ y: -4 }}
                 transition={{ duration: 0.3 }}
               >
@@ -148,7 +148,7 @@ export default function LiquidMetalHero({
                   <div className="p-8">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                       {features.map((feature, index) => (
-                        <motion.div 
+                        <m.div 
                           key={index}
                           className="flex items-center justify-center text-center"
                           initial={{ opacity: 0, x: -20 }}
@@ -161,15 +161,15 @@ export default function LiquidMetalHero({
                           <p className="text-white/90 font-medium text-lg">
                             {feature}
                           </p>
-                        </motion.div>
+                        </m.div>
                       ))}
                     </div>
                   </div>
                 </Card>
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
           )}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

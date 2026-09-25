@@ -5,7 +5,7 @@ import MouseTrail from "@/components/mouse-trail";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { Github, Mail, Menu, Languages } from "lucide-react";
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
@@ -13,7 +13,6 @@ import { translations, type Lang } from "@/lib/i18n";
 import { PROJECT_IMAGES, IMAGE_SIZES } from "@/lib/image-variants";
 import { PixivIcon, XIcon, BilibiliIcon } from "@/components/brand-icons";
 import Lightbox, { type LightboxItem } from "@/components/lightbox";
-import { AnimatePresence } from "framer-motion";
 
 /*
  * 液态金属背景异步加载：@paper-design/shaders-react 体积大且纯装饰，
@@ -109,6 +108,12 @@ export default function Home() {
   );
 
   return (
+    /*
+     * LazyMotion + domAnimation：只打包进 fade/scale/variant/whileInView/exit 等
+     * 本站用到的动画特性，去掉 framer-motion 里没用到的 drag 与 layout 投影
+     * （约 22KB，Lighthouse 记为未使用 JS）。
+     */
+    <LazyMotion features={domAnimation}>
     <main className="relative min-h-screen text-white">
       {/* 全站液态金属固定背景 */}
       <LiquidMetalBackground />
@@ -154,7 +159,7 @@ export default function Home() {
 
         {/* Mobile nav */}
         {menuOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="md:hidden border-t border-white/10 bg-black/70 backdrop-blur-md"
@@ -170,7 +175,7 @@ export default function Home() {
                 </button>
               ))}
             </div>
-          </motion.div>
+          </m.div>
         )}
       </nav>
 
@@ -188,7 +193,7 @@ export default function Home() {
       {/* About Section */}
       <section id="about" className="bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -205,14 +210,14 @@ export default function Home() {
                 {paragraph}
               </p>
             ))}
-          </motion.div>
+          </m.div>
         </div>
       </section>
 
       {/* Skills Section */}
       <section id="skills" className="bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -225,11 +230,11 @@ export default function Home() {
               {t.skills.heading}
             </h2>
             <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>{t.skills.subtitle}</p>
-          </motion.div>
+          </m.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {t.skills.groups.map((group, idx) => (
-              <motion.div
+              <m.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -248,7 +253,7 @@ export default function Home() {
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </div>
@@ -257,7 +262,7 @@ export default function Home() {
       {/* Projects Section */}
       <section id="projects" className="bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -270,14 +275,14 @@ export default function Home() {
               {t.projects.heading}
             </h2>
             <p className={`mt-3 text-white/75 ${BODY_SHADOW}`}>{t.projects.subtitle}</p>
-          </motion.div>
+          </m.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {t.projects.cards.map((card, idx) => {
               const meta = PROJECT_META[idx];
               const img = PROJECT_IMAGES.find((i) => i.name === meta.image);
               return (
-                <motion.div
+                <m.div
                   key={idx}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -337,7 +342,7 @@ export default function Home() {
                       </div>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </m.div>
               );
             })}
           </div>
@@ -347,7 +352,7 @@ export default function Home() {
       {/* Contact Section */}
       <section id="contact" className="bg-black/35 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -408,7 +413,7 @@ export default function Home() {
                 X
               </Button>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </section>
 
@@ -450,5 +455,6 @@ export default function Home() {
         </div>
       </footer>
     </main>
+    </LazyMotion>
   );
 }
