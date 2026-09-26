@@ -84,6 +84,16 @@
 }
 
 /*
+ * 逐字动画播完后摘掉 filter。framer-motion 会把 blur(0px) 留在每个单元的内联
+ * style 上，blur(0px) 视觉上等于 none，但 Safari 会因此给元素建合成层，显出
+ * 一块和文字等大的灰色矩形（每个词一块）。!important 是必须的——要压过内联
+ * 样式。.reveal-done 由 reveal-text.tsx 在动画结束后加到容器上。
+ */
+.reveal-done .reveal-unit {
+  filter: none !important;
+}
+
+/*
  * 卡片 hover 的光晕层。透明度压得很低（0.12）且从指针位置展开，只为给
  * 「鼠标移到卡片上有反馈」一个暗示，不会影响卡片里白字的可读性。
  * 用类而不是 Tailwind 任意值：那条 radial-gradient 里有逗号、括号和 var()

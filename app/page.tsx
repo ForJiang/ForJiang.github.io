@@ -389,7 +389,11 @@ export default function Home() {
             >
               {t.skills.projects.items.map((proj, idx) => (
                 <m.div
-                  key={proj.name}
+                  // key 必须跨语言稳定：用项目名会让 React 在切换语言时把三张卡片
+                  // 连同里面的 RevealText 一起卸载重挂载，揭示动画重新从隐藏态播
+                  // 一遍，刚摘掉的 filter（Safari 灰块）也跟着回来。repo 地址两种
+                  // 语言一致且互不重复，适合做 key
+                  key={proj.repo}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}

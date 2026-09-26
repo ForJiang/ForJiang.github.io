@@ -137,7 +137,7 @@ node scripts/generate-images.mjs
 
 **framer-motion 的一般纪律**：全站用 `LazyMotion` + `domAnimation` 按需加载 framer-motion，剔除了未使用的 drag / layout 代码。新增带动画的组件请用 `m.*` 而非 `motion.*`，否则会把完整版拖回包里。另注意 framer-motion 会接管元素的 `transform` 属性，不要同时用 Tailwind 的 `-translate-x-1/2` 之类的工具类做定位（`origin-button.tsx` 里踩过，改用 `x/y` 由它统一管理）。
 
-**逐字揭示动画（`reveal-text.tsx`）**，五个坑都实测过，改这个文件前值得先看：
+**逐字揭示动画（`reveal-text.tsx`）**，七个坑都实测过，改这个文件前值得先看：
 
 1. **拆字必须按码点**（`Array.from(input)`），不能用正则的 `[\s\S]`——后者按 UTF-16 码元匹配，会把 emoji 拆成孤立代理项，而孤立代理项在服务端序列化与客户端 hydrate 时结果不同，触发 React 注水失败，整棵服务端树被丢弃后 `useInView` 的观察器全部失效，表现为全站文字停在不可见状态。
 2. **每个单元自己驱动动画**，不要依赖 framer 的父子 variant 传播——传播只在父级首次切换 variant 时发生，之后新挂载的子元素（切换语言时就会出现）接不上，会永远停在 hidden。
@@ -145,5 +145,6 @@ node scripts/generate-images.mjs
 4. **`as="span"` 时不能加 `w-full`**：span 是 inline，`width:100%` 会让浏览器把容器算成只有一行宽，中文逐字必然竖排。
 5. **`delay` 写在 variants 的 visible 分支里**，不要放 `transition` prop，否则它对 `hidden` 的初始应用同样生效。
 6. **默认语言的服务端与客户端必须一致**。改 `useState<Lang>` 的同时必须改 `app/layout.tsx` 的 `<html lang>`：服务端按 layout 的 lang 渲染首帧，客户端按 `useState` 的初值 hydrate，两边不同就是一次 React 注水失败——整棵服务端树被丢弃，`useInView` 的观察器跟着失效，全站文字停在不可见状态。另外首帧语言不要由 `navigator.language` / `localStorage` 决定，那必然造成两边不一致。
+7. **framer-motion 会把 `filter: blur(0px)` 留在每个单元的内联样式上**。动画播完后它视觉上等于 `none`，但 Safari 只要看到元素上还有 filter 就会给它建合成层，并在那个层里显示出一块和文字等大的灰色矩形——逐字拆得越散灰块越多（contact 标题上每个词一块）。所以播放一结束就给容器加 `.reveal-done`，由 CSS 用 `filter: none !important` 摘掉它（`!important` 是必须的，要压过内联样式）。
 
-切换语言会换掉整套单元，`key` 用索引而非文本，避免 ~790 个 span 全部卸载重挂载；已揭示过的组件用 ref 记住状态，让新挂载的单元直接以可见状态出现。
+切换语言会换掉整套单元，单元 `key` 用索引而非文本，避免 ~790 个 span 全部卸载重挂载。但**列表的 `key` 同样必须跨语言稳定**：实战项目卡片原来写 `key={proj.name}`，中文名和英文名不同，切换语言时 React 会把三张卡片连同里面的 `RevealText` 组件一起卸载重挂载——组件自己记住「已揭示过」的 ref 也随之一块丢，文字重新从隐藏态播一遍，刚摘掉的 filter 也跟着回来。现在改用 `repo` 地址做 key。

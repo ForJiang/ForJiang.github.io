@@ -159,6 +159,31 @@ export default function RevealText({
   // items 模式：每个子元素一个单元，包一层 inline-block 让它能参与 transform
   const textUnits = items ? [] : splitRevealUnits(collectText(children) || text || "");
   const units: ReactNode[] = items ?? textUnits;
+  const unitCount = units.length;
+
+  // Safari 上文字后面出现灰色半透明方块，就是 framer-motion 留在每个单元内联
+  // 样式上的 filter。动画播完后它是 blur(0px)，视觉上等于 none，但 Safari 只要
+  // 看到 filter 不是 none 就会给元素建合成层，在那层里显出一块和文字等大的灰色
+  // 矩形——逐字拆得越散，灰块越多（用户在 contact 标题上每个词一块）。所以播完
+  // 就给容器加 reveal-done，由 CSS 把 filter 摘掉。
+  // 切换语言导致单元数变化时也会立刻摘：那时文字本来就是直接出现的。
+  const playedRef = useRef(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !isInView) return;
+    if (playedRef.current) {
+      el.classList.add("reveal-done");
+      return;
+    }
+    playedRef.current = true;
+    // 最后一个单元的动画结束时刻：delay + (n-1)*stagger + duration
+    const total = delay + Math.max(0, unitCount - 1) * stagger + duration;
+    const timer = window.setTimeout(
+      () => el.classList.add("reveal-done"),
+      (total + 0.15) * 1000,
+    );
+    return () => window.clearTimeout(timer);
+  }, [isInView, unitCount, delay, stagger, duration]);
 
   // span 是 inline，width:100% 会让浏览器把容器算成只有一行的宽度，
   // 里面的 inline-block 单元就会逐个换行，中文逐字直接竖排
