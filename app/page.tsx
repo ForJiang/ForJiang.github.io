@@ -343,7 +343,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mt-12"
+            className="mt-16"
           >
             <div className="text-center mb-8">
               <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
@@ -377,12 +377,15 @@ export default function Home() {
               三个项目卡片做成横向滑动：容器 overflow-x-auto + snap-mandatory。
               卡片宽 min(30rem, 85vw) + shrink-0，三张总宽必然超过版心，于是
               末尾一张会露出一角，暗示可以横向滑。原生滚动条隐藏，露出的一角
-              与左右箭头按钮（见上面 scrollByCard）共同承担可滑的提示。
+              与左右箭头按钮（见上面 scrollByCard）共同承担可滑的提示。pt-4 不能省：
+              overflow-x:auto 会把 overflow-y 隐式提成 auto，而卡片 hover 要上浮 4px，
+              没有上内边距时那 4px 会溢出 padding box 被裁掉——表现为卡片上边缘
+              少一截。
             */}
             <div
               ref={scrollerRef}
               tabIndex={0}
-              className="-mx-2 flex snap-x snap-mandatory gap-6 overflow-x-auto px-2 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="-mx-2 flex snap-x snap-mandatory gap-6 overflow-x-auto px-2 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {t.skills.projects.items.map((proj, idx) => (
                 <m.div
