@@ -55,8 +55,8 @@ const CONTACTS = {
 };
 
 const SECTION_BADGE = "bg-white/10 text-white border-white/25";
-const TEXT_SHADOW = "[text-shadow:0_2px_12px_rgba(0,0,0,0.5)]";
-const BODY_SHADOW = "[text-shadow:0_1px_8px_rgba(0,0,0,0.45)]";
+const TEXT_SHADOW = "[text-shadow:0_2px_18px_rgba(0,0,0,0.78),0_0_8px_rgba(0,0,0,0.55)]";
+const BODY_SHADOW = "[text-shadow:0_1px_12px_rgba(0,0,0,0.72),0_0_6px_rgba(0,0,0,0.45)]";
 const GLASS_CARD = "border-white/15 bg-black/40 backdrop-blur-sm";
 const GLASS_TAG = "bg-white/10 text-white/85 border-transparent";
 
@@ -640,9 +640,12 @@ export default function Home() {
       </AnimatePresence>
 
       {/* Footer */}
-      <footer className="py-8 border-t border-white/10">
+      {/* 页脚是唯一没有 bg-black 蒙层的区块，液态金属的镜面高光扫过时
+          版权文字（text-white/75）会被完全淹没——实测背景峰值 193 高于文字
+          本身亮度。加一层暗底 + 轻模糊把它压住。 */}
+      <footer className="bg-black/45 py-8 border-t border-white/10 backdrop-blur-sm">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-white/60">© {new Date().getFullYear()} ForJiang</p>
+          <p className="text-sm text-white/75 [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">© {new Date().getFullYear()} ForJiang</p>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" aria-label="GitHub" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.github, "_blank")}>
               <Github className="h-4 w-4" />
