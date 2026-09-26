@@ -345,20 +345,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="mt-12"
           >
-            <div className="relative text-center mb-8">
-              {/* 桌面没有触摸屏，露角不足以提示可滑，补两个箭头按钮 */}
-              <div className="absolute right-0 top-1 hidden items-center gap-2 md:flex">
-                {([-1, 1] as const).map((dir) => (
-                  <button
-                    key={dir}
-                    onClick={() => scrollByCard(dir)}
-                    aria-label={dir === -1 ? t.skills.projects.prevProject : t.skills.projects.nextProject}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white/80 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white"
-                  >
-                    <ChevronLeft className={dir === -1 ? "h-4 w-4" : "h-4 w-4 rotate-180"} />
-                  </button>
-                ))}
-              </div>
+            <div className="text-center mb-8">
               <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
                 <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
                   {t.skills.projects.badge}
@@ -467,6 +454,20 @@ export default function Home() {
                     </CardContent>
                   </Card>
                 </m.div>
+              ))}
+            </div>
+
+            {/* 桌面没有触摸屏，露角不足以提示可滑，把切换按钮放在卡片下方 */}
+            <div className="mt-6 flex justify-center gap-3">
+              {([-1, 1] as const).map((dir) => (
+                <button
+                  key={dir}
+                  onClick={() => scrollByCard(dir)}
+                  aria-label={dir === -1 ? t.skills.projects.prevProject : t.skills.projects.nextProject}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white/80 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white"
+                >
+                  <ChevronLeft className={dir === -1 ? "h-4 w-4" : "h-4 w-4 rotate-180"} />
+                </button>
               ))}
             </div>
           </m.div>
