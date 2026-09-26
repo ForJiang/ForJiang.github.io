@@ -4,6 +4,18 @@
 
 线上地址：**https://forjiang.github.io**
 
+## 收录的项目
+
+主站之外，这些工具都在 GitHub Pages 上独立部署，全部纯静态、断网可用：
+
+| 项目 | 一句话 | 在线 |
+| --- | --- | --- |
+| [RVC 声音克隆](https://github.com/ForJiang/rvc-sound-clone) | 浏览器内录音变声：ONNX Runtime Web 页内推理 + 本机 GPU 引擎双动力，完整参数一键预设，批量导出 ZIP | [试用](https://forjiang.github.io/rvc-sound-clone/) |
+| [图片元数据清除器](https://github.com/ForJiang/image-metadata-cleaner) | 批量抹除 EXIF / GPS / 缩略图 / 尾部隐藏数据，先扫描后清除再自检，69 项单元测试 | [试用](https://forjiang.github.io/image-metadata-cleaner/) |
+| [图生 3D 高斯泼溅](https://github.com/ForJiang/image-to-splat) | 图片 / 视频 → 本地深度估计 → 可交互高斯点云，导出 .ply / .splat 给 Blender | [试用](https://forjiang.github.io/image-to-splat/) |
+| [函数图像生成器](https://github.com/ForJiang/function-grapher) | 多曲线同图 + 零依赖符号求导（1–8 阶带步骤）与切线方程，260 项单元测试 | [试用](https://forjiang.github.io/function-grapher/) |
+| [hello 手写动画](https://github.com/ForJiang/forjiang-hello) | 零依赖复刻 Apple Hello：体素地形上逐笔手写，字标是实时光源 | [观看](https://forjiang.github.io/forjiang-hello/) |
+
 ## 功能
 
 - 🌊 液态金属着色器全站固定背景（`@paper-design/shaders-react`），滚动全程可见、不随地址栏伸缩而变形位移
