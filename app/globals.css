@@ -80,19 +80,30 @@
  *
  * 单元的动画参数由组件通过 CSS 变量下发（--reveal-delay/dur/stagger/y/blur），
  * 每个单元的错峰延迟 = var(--reveal-delay) + var(--ri) * var(--reveal-stagger)。
- * .reveal-play 加到容器上时开始播放；.reveal-done 在全部播完后加上。
+ * .reveal-play 加到容器上时开始播放。
  */
 .reveal-unit {
   display: inline-block;
+  /* 隐藏态完全不画：WebKit 会给任何带 filter 的元素建合成层，空层在
+     Safari/iOS 上显出一块和文字等大的灰框——首屏加载、等注水的那一两秒
+     最明显（用户报告「苹果设备刚开始加载时文字总有框」）。visibility
+     在类切换时立即翻转为可见，不影响下面的过渡时序。 */
+  visibility: hidden;
   opacity: 0;
   transform: translateY(var(--reveal-y, 24px));
-  filter: blur(var(--reveal-blur, 10px));
+  /* blur=0 的组件不设 --reveal-blur，落到 none：blur(0px) 也算 filter，
+     同样会让 WebKit 建合成层出灰框。 */
+  filter: var(--reveal-blur, none);
 }
 
 .reveal-play .reveal-unit {
+  visibility: visible;
   opacity: 1;
-  transform: translateY(0);
-  filter: blur(0px);
+  transform: none;
+  /* 目标值直接写 none 而不是 blur(0px)：规范规定 none 与 filter 列表插值时
+     按另一方的函数补恒等值，即 blur(10px)→none 会平滑过渡成 blur(10)→blur(0)，
+     观感不变；过渡结束后 filter 是 none，合成层随之释放，灰框无处可生。 */
+  filter: none;
   transition:
     opacity var(--reveal-dur, 0.65s) cubic-bezier(0.215, 0.61, 0.355, 1)
       calc(var(--reveal-delay, 0s) + var(--ri, 0) * var(--reveal-stagger, 0.03s)),
@@ -103,17 +114,14 @@
 }
 
 /*
- * 播完后摘掉 filter。blur(0px) 视觉上等于 none，但 Safari 只要看到 filter 不是
- * none 就会给元素建合成层，显出一块和文字等大的灰色矩形（每个词一块）。本规则
- * 必须放在 .reveal-play 之后——两条特异性相同，按源顺序取胜。
+ * 播放态的目标 filter 直接是 none（见上），过渡结束合成层随之释放，
+ * 不再需要旧的 .reveal-done 摘除机制。
  */
-.reveal-done .reveal-unit {
-  filter: none;
-}
 
 /* 减少动态效果时直接显示，不做逐字过渡 */
 @media (prefers-reduced-motion: reduce) {
   .reveal-unit {
+    visibility: visible;
     opacity: 1;
     transform: none;
     filter: none;

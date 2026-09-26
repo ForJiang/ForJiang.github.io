@@ -138,30 +138,6 @@ export default function RevealText({
   const unitCount = units.length;
   const effBlur = unitCount > BLUR_UNIT_CAP ? 0 : blur;
 
-  // Safari 上文字后面出现灰色半透明方块，就是残留的 filter。动画播完后单元
-  // 还带着 blur(0px)，视觉上等于 none，但 Safari 只要看到 filter 不是 none 就
-  // 会给元素建合成层，在那层里显出一块和文字等大的灰色矩形——逐字拆得越散，
-  // 灰块越多（用户在 contact 标题上每个词一块）。所以播完就给容器加
-  // reveal-done，由 CSS 把 filter 摘掉。切换语言导致单元数变化时也会立刻摘：
-  // 那时文字本来就是直接出现的。
-  const playedRef = useRef(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || !isInView) return;
-    if (playedRef.current) {
-      el.classList.add("reveal-done");
-      return;
-    }
-    playedRef.current = true;
-    // 最后一个单元的动画结束时刻：delay + (n-1)*stagger + duration
-    const total = delay + Math.max(0, unitCount - 1) * stagger + duration;
-    const timer = window.setTimeout(
-      () => el.classList.add("reveal-done"),
-      (total + 0.15) * 1000,
-    );
-    return () => window.clearTimeout(timer);
-  }, [isInView, unitCount, delay, stagger, duration]);
-
   // span 是 inline，width:100% 会让浏览器把容器算成只有一行的宽度，
   // 里面的 inline-block 单元就会逐个换行，中文逐字直接竖排
   const isInline = as === "span";
@@ -174,7 +150,11 @@ export default function RevealText({
     "--reveal-dur": `${duration}s`,
     "--reveal-stagger": `${stagger}s`,
     "--reveal-y": `${yOffset}px`,
-    "--reveal-blur": `${effBlur}px`,
+    // blur=0 时刻意不设 --reveal-blur：CSS 落到 filter: none。blur(0px) 也算
+    // filter，WebKit 照样给隐藏态的单元建合成层、显出灰框（首屏加载最明显）。
+    // 值必须自带 blur() 包装——var() 是字面替换，裸的 "8px" 会把
+    // filter: var(--reveal-blur) 替换成非法的 filter: 8px，回退成 none
+    ...(effBlur > 0 ? { "--reveal-blur": `blur(${effBlur}px)` } : null),
   } as CSSProperties;
 
   return (
