@@ -62,20 +62,20 @@ const GLASS_TAG = "bg-white/10 text-white/85 border-transparent";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [lang, setLang] = useState<Lang>("zh");
+  // 默认英文，且服务端也渲染英文（见 layout 的 <html lang="en">）。两边必须
+  // 一致，否则首帧服务端中文、客户端英文会触发 React 注水失败——曾因此全站
+  // 文字停在不可见状态。
+  const [lang, setLang] = useState<Lang>("en");
   const [viewing, setViewing] = useState<number | null>(null);
   const t = translations[lang];
 
   useEffect(() => {
+    // 只恢复用户手动切换过的选择，不再跟随浏览器语言
     const saved = localStorage.getItem("language");
-    const initial: Lang =
-      saved === "en" || saved === "zh"
-        ? saved
-        : navigator.language.toLowerCase().startsWith("zh")
-          ? "zh"
-          : "en";
-    setLang(initial);
-    document.documentElement.lang = initial === "zh" ? "zh-CN" : "en";
+    if (saved === "en" || saved === "zh") {
+      setLang(saved);
+      document.documentElement.lang = saved === "zh" ? "zh-CN" : "en";
+    }
   }, []);
 
   const toggleLang = () => {

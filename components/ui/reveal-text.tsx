@@ -187,8 +187,7 @@ export default function RevealText({
             // 只在父级首次切换 variant 时发生，之后新挂载的子元素接不上
             initial={revealedRef.current ? "visible" : "hidden"}
             animate={isInView ? "visible" : "hidden"}
-            className="inline-block"
-            style={items ? undefined : { marginRight: "0.24em" }}
+            className={cn("inline-block", !items && "reveal-unit")}
           >
             {unit}
           </m.span>

@@ -70,6 +70,20 @@
 }
 
 /*
+ * 逐字揭示的单元间距。用类而不是每个 span 的 inline style，是为了能用
+ * :last-child 把最后一个单元的右间距去掉——inline style 做不到。少了这一条，
+ * 徽章这类短文本（如「Projects」）右侧会多出一段空白，在 inline-flex 里
+ * 整体偏左；段落行尾也会多个多余空格。
+ */
+.reveal-unit {
+  margin-right: 0.24em;
+}
+
+.reveal-unit:last-child {
+  margin-right: 0;
+}
+
+/*
  * 移动端底部工具栏：iOS Safari / Android Chrome 的底部地址栏、工具栏是覆盖在
  * 视口上的不透明浮层，滚到底时页脚内容会被它压住。iOS Safari 在普通浏览模式下
  * env(safe-area-inset-bottom) 恒为 0（仅 standalone Web App 才有值），所以必须用

@@ -21,8 +21,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN">
+    <html lang="en">
       <head>
+        {/* 默认英文，与 page.tsx 的 useState<Lang>("en") 保持一致，避免注水失败 */}
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         {/*
           图标链接的顺序有意义：浏览器按页面 URL 把 favicon 缓存在自己的图标
