@@ -1,6 +1,6 @@
 # ForJiang · 个人主页
 
-基于 **Next.js 14 + TypeScript + Tailwind CSS + shadcn/ui** 的个人主页。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景，配合纯 CSS transition 的逐字揭示动画与 Framer Motion 的按钮填充 / 入场动画（Framer 只负责按钮和卡片，逐字动画不用它——原因见「Safari 性能专项」）。
+基于 **Next.js 14 + TypeScript + Tailwind CSS + shadcn/ui** 的个人主页：技能与插画之外，收录五个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画演示。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景，逐字揭示动画由纯 CSS transition 驱动，Framer Motion 只负责按钮填充与卡片入场（逐字动画不用它——原因见「Safari 性能专项」）。
 
 线上地址：**https://forjiang.github.io**
 

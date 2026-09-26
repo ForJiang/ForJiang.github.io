@@ -7,7 +7,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "ForJiang · 个人主页",
-  description: "ForJiang 的个人主页 —— 高中生，热爱编程的学习者。",
+  description:
+    "ForJiang 的个人主页：五个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画，另有 AI 插画作品。高中生，热爱编程的学习者。",
   // 图标不走 metadata.icons：Next 会把 url 当路径 normalize，data URI 的
   // "data:image/png;base64," 前缀会被剥掉。改用原生 <link>，见下面 <head>。
   other: {
