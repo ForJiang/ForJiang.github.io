@@ -106,28 +106,37 @@ export default function Home() {
     el.scrollBy({ left: dir * step, behavior: "smooth" });
   };
 
-  // 无限轮播的归位：卡片渲染三份，加载后把 scrollLeft 定位到中间那份；滚动
-  // 完全停下后若滑出了中间份，就按一整份的宽度无声平移回去——三份内容完全
-  // 相同，肉眼不可见，于是「最后一张之后」接着的就是第一张，两个方向都滑
-  // 不到头。平移必须等滚动停稳：iOS Safari 在惯性滚动途中改 scrollLeft 会直接
-  // 掐断惯性，所以用 120ms 防抖等手势/惯性结束。跳变距离恒为 setWidth 的整数
-  // 倍，落在 snap 吸附点上，不会引起吸附跳动。
+  // 无限轮播的归位：卡片渲染三份，加载后把 scrollLeft 定位到「中间份第一张
+  // 恰好居中」的位置；滚动完全停下后若滑出了中间份，就按一整份的宽度无声
+  // 平移回去——三份内容完全相同，肉眼不可见，于是「最后一张之后」接着的就
+  // 是第一张，两个方向都滑不到头。
+  // 吸附用 snap-center（见卡片 className）：静止时当前卡片居中、两侧邻居
+  // 等量露出，排布对称。定位/归位都以居中态为基准：scrollLeft 需要加上
+  // centerOffset（卡片半宽 − 滚动口半宽），归位带宽随之整体平移。
+  // 平移必须等滚动停稳：iOS Safari 在惯性滚动途中改 scrollLeft 会直接掐断
+  // 惯性，所以用 120ms 防抖等手势/惯性结束。跳变距离恒为 setWidth 的整数倍，
+  // 落在 snap 吸附点上，不会引起吸附跳动。
   const projectCount = t.skills.projects.items.length;
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
-    const first = el.firstElementChild as HTMLElement | null;
+    const first = el.children[0] as HTMLElement | undefined;
     const nextSet = el.children[projectCount] as HTMLElement | undefined;
     if (!first || !nextSet) return;
-    const setWidth = nextSet.offsetLeft - first.offsetLeft;
+    const setWidth =
+      nextSet.getBoundingClientRect().left - first.getBoundingClientRect().left;
     if (!setWidth) return;
-    el.scrollLeft = setWidth;
+    // 居中偏移：卡片几何中心对齐滚动口中心所需的额外滚动量。
+    // padL 用 rect 差值取（offsetLeft 的参照系是 offsetParent，不一定是滚动容器）
+    const padL = first.getBoundingClientRect().left - el.getBoundingClientRect().left;
+    const centerOffset = padL + first.offsetWidth / 2 - el.clientWidth / 2;
+    el.scrollLeft = setWidth + centerOffset;
     let timer = 0;
     const normalize = () => {
       window.clearTimeout(timer);
       timer = window.setTimeout(() => {
-        if (el.scrollLeft >= setWidth * 2) el.scrollLeft -= setWidth;
-        else if (el.scrollLeft < setWidth) el.scrollLeft += setWidth;
+        if (el.scrollLeft >= setWidth * 2 + centerOffset) el.scrollLeft -= setWidth;
+        else if (el.scrollLeft < setWidth + centerOffset) el.scrollLeft += setWidth;
       }, 120);
     };
     el.addEventListener("scroll", normalize, { passive: true });
@@ -472,7 +481,7 @@ export default function Home() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.1 }}
-                    className="w-[min(30rem,85vw)] shrink-0 snap-start"
+                    className="w-[min(30rem,85vw)] shrink-0 snap-center"
                   >
                   <Card
                     className={`group relative h-full flex flex-col overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 ${GLASS_CARD}`}
