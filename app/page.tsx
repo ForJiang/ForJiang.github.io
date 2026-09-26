@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { Github, Mail, ExternalLink, Menu, Languages, ChevronLeft } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { translations, type Lang } from "@/lib/i18n";
 import { PROJECT_IMAGES, IMAGE_SIZES } from "@/lib/image-variants";
@@ -144,12 +144,50 @@ export default function Home() {
   };
 
   // 灯箱看高清原图：full 是全尺寸 WebP 无损图（不做有损压缩），
-  // fallback 只是给不支持 AVIF/WebP 的浏览器兜底的小图，不能拿它当原图
-  const lightboxItems: LightboxItem[] = t.projects.cards.map((card, idx) => ({
-    src: PROJECT_IMAGES[idx]?.full ?? "",
-    title: card.title,
-    desc: card.desc,
-  }));
+  // fallback 只是给不支持 AVIF/WebP 的浏览器兜底的小图，不能拿它当原图。
+  // thumb 用最大一档封面变体（1200w）：与卡片封面同源，打开灯箱时已在
+  // 浏览器缓存里，立即上屏，原图下载完毕后在其上淡入
+  const lightboxItems: LightboxItem[] = t.projects.cards.map((card, idx) => {
+    const img = PROJECT_IMAGES[idx];
+    return {
+      src: img?.full ?? "",
+      thumb: (img && img.webp[img.webp.length - 1]?.path) || img?.fallback || "",
+      title: card.title,
+      desc: card.desc,
+    };
+  });
+
+  // 无损原图每张 ~3MB，点开才开始下载要白等数秒。两个预热入口：
+  // ① 画廊（#projects）进入视口后按顺序预热全部原图——用户浏览插画的
+  //    那几秒里下载大多已完成，点开即是秒开；② 桌面端鼠标悬停某张卡时
+  //    立即预热那一张。省流量模式（Save-Data）不预热。
+  const prefetchDoneRef = useRef<Set<string>>(new Set());
+  const prefetchFull = useCallback((idx: number) => {
+    const img = PROJECT_IMAGES[idx];
+    if (!img || prefetchDoneRef.current.has(img.full)) return;
+    prefetchDoneRef.current.add(img.full);
+    const im = new Image();
+    im.src = img.full;
+  }, []);
+  useEffect(() => {
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } })
+      .connection;
+    if (conn?.saveData) return;
+    const section = document.getElementById("projects");
+    if (!section) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        PROJECT_IMAGES.forEach((_, i) => {
+          window.setTimeout(() => prefetchFull(i), i * 2500);
+        });
+      },
+      { threshold: 0.15 },
+    );
+    io.observe(section);
+    return () => io.disconnect();
+  }, [prefetchFull]);
 
   const langButton = (
     <button
@@ -566,6 +604,7 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.08 }}
+                  onMouseEnter={() => prefetchFull(idx)}
                 >
                   <Card className={`group h-full flex flex-col overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
                     {/* 封面图：AVIF → WebP → JPEG 逐级回退，按视口宽度取合适档位 */}
