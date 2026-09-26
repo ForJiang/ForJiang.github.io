@@ -15,7 +15,7 @@
 - 🔍 点击封面图打开全屏灯箱查看 2400×1352 **WebP 无损**原图（Esc / 点遮罩关闭，左右方向键切换，打开期间锁定背景滚动）
 - 🔗 联系方式带 Bilibili / Pixiv / X 官方标志（simple-icons, CC0），入口为真实 `<a>`，可中键新标签打开
 - 🪟 全站深色玻璃拟态面板，白色文字系统，任意液滴位置下保持可读（Safari 上大面积卡片自动降级为不透明深色底，见「Safari 性能专项」）
-- 🚀 Safari / iOS 性能专项：逐字动画纯 CSS transition（合成器动画）、着色器 WebKit 跳过最高档起步、逐字 blur 超过 48 单元自动关闭，均经 Playwright WebKit 实测归因
+- 🚀 Safari / iOS 性能专项：逐字动画纯 CSS transition（合成器动画）、卡片对 WebKit 去大面积 backdrop 模糊、逐字 blur 超过 48 单元自动关闭，均经 Playwright WebKit 实测归因
 - ✒️ 按钮采用指针扩散填充动画：圆形背景从鼠标进入的位置展开铺满、文字反色（`components/ui/origin-button.tsx`）
 - 📱 完整响应式布局；移动端针对 iOS Safari 的视口与工具栏做了专门处理
 - 📄 页面板块：Hero / 关于我 / 技术能力（含实战项目）/ 插画作品 / 联系方式 / 页脚
@@ -53,7 +53,6 @@ personal-website/
 ├── scripts/
 │   └── generate-images.mjs       # 母版 → 响应式变体生成脚本
 ├── docs/deploy-workflow.yml     # 部署工作流模板副本
-└── index.html                    # 旧版纯 HTML 页面，仅作参考，可删除
 ```
 
 ## 本地运行
@@ -128,7 +127,7 @@ node scripts/generate-images.mjs
 | 文字动效的快慢与强度 | `RevealText` 的 `duration` / `stagger` / `blur` / `yOffset` props |
 | 长文本弃用模糊的阈值 | `components/ui/reveal-text.tsx` 的 `BLUR_UNIT_CAP`（单元数超过它自动只保留淡入+上浮） |
 | Safari 的卡片降级（去模糊） | `app/globals.css` 的 `html.webkit .glass-soft`，webkit 类由 `app/layout.tsx` 的内联脚本打上 |
-| 着色器画质档位 | `components/liquid-metal-background.tsx` 的 `QUALITY_TIERS`（WebKit 自动跳过最高档起步） |
+| 着色器画质档位 | `components/liquid-metal-background.tsx` 的 `QUALITY_TIERS`（最高档为库默认的 ≈8.3MP，覆盖 1440p 级 Retina 原生精度） |
 | 液态金属背景参数 | `components/liquid-metal-background.tsx` |
 | 网站文案（中文 / English） | `lib/i18n.ts` 的 `translations`，两个语言都要补齐 |
 | 默认语言 | `app/page.tsx` 的 `useState<Lang>` **和** `app/layout.tsx` 的 `<html lang>`，两处必须一起改（见下面第 6 条） |
@@ -163,7 +162,7 @@ node scripts/generate-images.mjs
 | framer 逐帧写样式 | 滚动揭示 55fps、最差帧 300ms | 改纯 CSS transition（见上面第 8 条） |
 | 图片解码（首次滚入视口） | 慢帧第二大头 | 已是 `loading=lazy` + `decoding=async`，无法再省，属一次性成本 |
 | 卡片大面积 `backdrop-blur` | 滚动时每帧重滤背景 | `html.webkit .glass-soft` 关掉卡片模糊、底色加深补偿（layout.tsx 的内联脚本给 WebKit 打类） |
-| 液态金属着色器 | 空闲时非瓶颈；WebKit 光栅化吃力 | WebKit 跳过最高档 2560×1440，从 1920×1080 起步再做自适应降档 |
+| 液态金属着色器 | 空闲时非瓶颈 | 最高档提到库默认 1920×1080×4（Retina 上不再被降采样拉虚）；自适应采样提速（0.5s 稳定 + 60 帧），弱 GPU 一秒出头就落到 hold 得住的档位 |
 | 逐字 blur 过渡 | filter 过渡不能上合成器 | 长文本（>48 单元，`BLUR_UNIT_CAP`）自动不用 blur，只保留 opacity+位移 |
 
 着色器与 backdrop-blur 在空闲时都不贵，**不要预先优化它们**——先测量再动手。长文本弃用 blur 后视觉差别很小（仍是淡入 + 上浮），短标题保留完整模糊效果。

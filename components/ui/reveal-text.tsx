@@ -33,7 +33,7 @@ function collectText(node: ReactNode): string {
  * emoji 拆成两个孤立代理项，而孤立代理项在服务端序列化与客户端 hydrate 时
  * 结果不同，直接触发整棵树注水失败。
  */
-export function splitRevealUnits(input: string): string[] {
+function splitRevealUnits(input: string): string[] {
   if (!input) return [];
   const units: string[] = [];
   let word = "";

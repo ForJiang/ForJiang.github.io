@@ -6,25 +6,24 @@ import { LiquidMetal } from "@paper-design/shaders-react";
 /**
  * 全站固定液态金属背景：深色底 + 单个柔和银色液滴（metaballs）。
  *
- * 自适应画质：从最高档渲染缓冲起步，实测帧时间不达标才逐级降档。
- * 该着色器的抗锯齿依赖超采样（渲染精度高于 CSS 分辨率），因此
- * 档位只会影响边缘锐度而不会产生锯齿；快设备自动停留在最高档。
- * fixed + zIndex -10 铺满视口；上方内容需使用半透明深色玻璃面板
- * + 白色文字保证可读性。
+ * 渲染精度：库默认按 max(dpr, 2) 倍渲染（minPixelRatio=2，同时承担超采样抗
+ * 锯齿），再把总像素数压进 maxPixelCount。所以 cap 一旦低于「CSS 尺寸 × 4」，
+ * 画面就会被降采样拉虚——Retina 上尤其明显。最高档取库默认的 1920×1080×4
+ * (≈8.3MP)，正好覆盖 1440p 级 Retina 屏的原生精度；往下三档留给自适应降档。
+ *
+ * 自适应画质：从最高档起步，实测帧时间不达标就逐级降档，采样周期刻意短
+ * （0.5s 稳定 + 60 帧采样），让带不动的设备在一秒出头就落回能 hold 住的档位，
+ * 避免加载头几秒掉帧。抗锯齿依赖超采样，因此档位只影响边缘锐度、不产生锯齿；
+ * 快设备自动停留在最高档。fixed + zIndex -10 铺满视口；上方内容需使用半透明
+ * 深色玻璃面板 + 白色文字保证可读性。
  */
-const QUALITY_TIERS = [2560 * 1440, 1920 * 1080, 1280 * 720];
+const QUALITY_TIERS = [
+  1920 * 1080 * 4, // ≈8.3MP：1440p 级 Retina 的原生精度
+  2560 * 1440, //    ≈3.7MP
+  1920 * 1080, //    ≈2.1MP
+  1280 * 720, //     ≈0.9MP：弱设备兜底
+];
 const TARGET_FRAME_MS = 17.5; // ≈57fps 的帧时间预算，留出余量保持满帧观感
-
-/**
- * Safari / iOS 全系（包括 iOS 上的第三方浏览器，它们全是 WebKit）的 WebGL
- * 光栅化明显比 Chromium 吃力。自适应降档从采样到落地要 ~2.4s，如果从最高档
- * 起步，加载后的前几秒就掉帧——正是「Safari 打开网页卡」的主要来源之一。
- * 所以 WebKit 直接从次高档起步，跳过最高档。
- */
-const IS_WEBKIT =
-  typeof navigator !== "undefined" &&
-  /AppleWebKit/.test(navigator.userAgent) &&
-  !/Chrom(e|ium)|Edg\//.test(navigator.userAgent);
 
 interface ShaderMountLike {
   setMaxPixelCount?: (count?: number) => void;
@@ -44,22 +43,45 @@ export default function LiquidMetalBackground() {
       return el?.paperShaderMount;
     };
 
-    /** 采样约 1.5 秒帧时间，用 p95 惩罚偶发卡顿后的"有效帧时间" */
+    /**
+     * 采样帧时间判档。setMaxPixelCount 每次都会触发画布 resize / 重新编译，
+     * 紧跟其后的几帧是几十毫秒的长帧——不剔掉的话 p95 会被污染，每一档都会被
+     * 误判成「带不动」而一路降到底（实测过）。所以先等连续 8 帧回到正常时长
+     * 再正式采样 60 帧，判档值取中位数与 p90×0.8 的较大者：中位数抗个别毛刺，
+     * p90 项保留对持续卡顿的惩罚。稳定等待超过 ~4s（8×30 次）视为该档完全
+     * 带不动，直接判失败。
+     */
     const measureFrameTime = () =>
       new Promise<number>((resolve) => {
         const deltas: number[] = [];
         let last = performance.now();
+        let stable = 0;
+        let ticks = 0;
         const tick = (now: number) => {
-          deltas.push(now - last);
+          const d = now - last;
           last = now;
-          if (deltas.length <= 90) {
+          if (++ticks > 240) {
+            resolve(999); // 始终稳定不下来，按最差处理触发降档
+            return;
+          }
+          if (d > 33) {
+            stable = 0;
+            raf = requestAnimationFrame(tick);
+            return;
+          }
+          if (++stable < 8) {
+            raf = requestAnimationFrame(tick);
+            return;
+          }
+          deltas.push(d);
+          if (deltas.length <= 60) {
             raf = requestAnimationFrame(tick);
           } else {
             deltas.shift();
             deltas.sort((a, b) => a - b);
-            const avg = deltas.reduce((s, d) => s + d, 0) / deltas.length;
-            const p95 = deltas[Math.floor(deltas.length * 0.95)];
-            resolve(Math.max(avg, p95 * 0.7));
+            const median = deltas[Math.floor(deltas.length / 2)];
+            const p90 = deltas[Math.floor(deltas.length * 0.9)];
+            resolve(Math.max(median, p90 * 0.8));
           }
         };
         raf = requestAnimationFrame(tick);
@@ -71,10 +93,10 @@ export default function LiquidMetalBackground() {
         await new Promise((r) => setTimeout(r, 100));
         if (cancelled) return;
       }
-      for (const tier of QUALITY_TIERS.slice(IS_WEBKIT ? 1 : 0)) {
+      for (const tier of QUALITY_TIERS) {
         if (cancelled) return;
         getMount()?.setMaxPixelCount?.(tier);
-        await new Promise((r) => setTimeout(r, 900)); // 等 resize 与合成稳定
+        await new Promise((r) => setTimeout(r, 500)); // 等 resize 与合成稳定
         if (cancelled) return;
         const effectiveMs = await measureFrameTime();
         if (cancelled) return;

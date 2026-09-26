@@ -38,7 +38,10 @@ export default function MouseTrail() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    // 按 devicePixelRatio 渲染，上限 2：光标轨迹是全屏 2D canvas，Retina 上
+    // 若低于原生分辨率会被拉伸，光晕和亮芯明显发糊；2 已覆盖绝大多数屏幕
+    // （3x 的 iPhone 上再往上收益很小），同时 bounding 绘制与显存成本
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
     const resize = () => {
       canvas.width = Math.round(window.innerWidth * dpr);
       canvas.height = Math.round(window.innerHeight * dpr);
