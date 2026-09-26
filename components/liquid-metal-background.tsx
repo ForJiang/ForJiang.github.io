@@ -15,6 +15,17 @@ import { LiquidMetal } from "@paper-design/shaders-react";
 const QUALITY_TIERS = [2560 * 1440, 1920 * 1080, 1280 * 720];
 const TARGET_FRAME_MS = 17.5; // ≈57fps 的帧时间预算，留出余量保持满帧观感
 
+/**
+ * Safari / iOS 全系（包括 iOS 上的第三方浏览器，它们全是 WebKit）的 WebGL
+ * 光栅化明显比 Chromium 吃力。自适应降档从采样到落地要 ~2.4s，如果从最高档
+ * 起步，加载后的前几秒就掉帧——正是「Safari 打开网页卡」的主要来源之一。
+ * 所以 WebKit 直接从次高档起步，跳过最高档。
+ */
+const IS_WEBKIT =
+  typeof navigator !== "undefined" &&
+  /AppleWebKit/.test(navigator.userAgent) &&
+  !/Chrom(e|ium)|Edg\//.test(navigator.userAgent);
+
 interface ShaderMountLike {
   setMaxPixelCount?: (count?: number) => void;
 }
@@ -60,7 +71,7 @@ export default function LiquidMetalBackground() {
         await new Promise((r) => setTimeout(r, 100));
         if (cancelled) return;
       }
-      for (const tier of QUALITY_TIERS) {
+      for (const tier of QUALITY_TIERS.slice(IS_WEBKIT ? 1 : 0)) {
         if (cancelled) return;
         getMount()?.setMaxPixelCount?.(tier);
         await new Promise((r) => setTimeout(r, 900)); // 等 resize 与合成稳定

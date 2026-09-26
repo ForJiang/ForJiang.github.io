@@ -57,7 +57,8 @@ const CONTACTS = {
 const SECTION_BADGE = "bg-white/10 text-white border-white/25";
 const TEXT_SHADOW = "[text-shadow:0_2px_18px_rgba(0,0,0,0.78),0_0_8px_rgba(0,0,0,0.55)]";
 const BODY_SHADOW = "[text-shadow:0_1px_12px_rgba(0,0,0,0.72),0_0_6px_rgba(0,0,0,0.45)]";
-const GLASS_CARD = "border-white/15 bg-black/40 backdrop-blur-sm";
+// glass-soft：globals.css 里 WebKit 的降级钩子（Safari 去掉 backdrop-filter）
+const GLASS_CARD = "glass-soft border-white/15 bg-black/40 backdrop-blur-sm";
 const GLASS_TAG = "bg-white/10 text-white/85 border-transparent";
 
 export default function Home() {

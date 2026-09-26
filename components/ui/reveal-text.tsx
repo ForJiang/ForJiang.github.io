@@ -2,12 +2,19 @@
 
 import { useEffect, useRef } from "react";
 import type { CSSProperties, ReactNode } from "react";
-import { LazyMotion, domAnimation, m, useInView } from "framer-motion";
+import { useInView } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const WORD_HEAD = /[A-Za-z0-9]/;
 // 词内部允许的后续字符：撇号、句读、括号、常见符号与连字符
 const WORD_TAIL = /[A-Za-z0-9'’.,!?;:"()[\]/@#$%&*+=<>~`^|_-]/;
+
+/**
+ * 超过这个单元数就自动弃用 blur：filter 过渡无法在合成器上运行，只能逐帧
+ * 栅格化。实测滚动揭示长段落（~123 个单元同时过渡）在 WebKit 上直接把帧率
+ * 拖到 55fps 以下；opacity/transform 是合成器动画不受影响。短标题保留模糊。
+ */
+const BLUR_UNIT_CAP = 48;
 
 function collectText(node: ReactNode): string {
   if (typeof node === "string") return node;
@@ -57,41 +64,7 @@ export function splitRevealUnits(input: string): string[] {
   return units;
 }
 
-/** 单个单元的两种状态：从「透明 + 下移 + 模糊」过渡到清晰位置。 */
-function createUnitVariants({
-  duration = 0.65,
-  yOffset = 24,
-  blur = 10,
-  delay = 0,
-}) {
-  return {
-    hidden: {
-      opacity: 0,
-      y: yOffset,
-      filter: `blur(${blur}px)`,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { duration, ease: [0.215, 0.61, 0.355, 1], delay },
-    },
-  };
-}
-
 type RevealTag = "h1" | "h2" | "h3" | "h4" | "p" | "span" | "div";
-
-/** 用 m.* 而非 motion.*：配合 LazyMotion + domAnimation，避免把 framer-motion 里
- *  未使用的 drag / layout 代码拖回包里（见 origin-button.tsx 同样的处理）。 */
-const MOTION_ELEMENTS = {
-  h1: m.h1,
-  h2: m.h2,
-  h3: m.h3,
-  h4: m.h4,
-  p: m.p,
-  span: m.span,
-  div: m.div,
-} as const;
 
 export interface RevealTextProps {
   /** 要揭示的文本。传 children 为字符串时优先用 children。 */
@@ -113,7 +86,7 @@ export interface RevealTextProps {
   stagger?: number;
   /** 上浮起始位移（px）。 */
   yOffset?: number;
-  /** 模糊强度（px）。 */
+  /** 模糊强度（px）。单元数超过 BLUR_UNIT_CAP 时自动降为 0。 */
   blur?: number;
   /** 是否只在首次进入视口时播放。 */
   once?: boolean;
@@ -123,6 +96,12 @@ export interface RevealTextProps {
 /**
  * 逐字 / 逐块的模糊上浮揭示动画：内容被拆成最小单元，各自从「透明 + 下移 + 模糊」
  * 过渡到清晰位置，单元之间按 stagger 错开；滚动进入视口时触发。
+ *
+ * 动画完全由 CSS transition 驱动（globals.css 的 .reveal-unit / .reveal-play），
+ * 而不是 framer-motion：framer 会为每个单元跑一个 JS rAF 循环逐帧写内联样式，
+ * 上百个单元同时过渡时主线程每帧要做上百次样式写入 + 重算，Safari 上直接掉帧；
+ * 换成 CSS 后主线程只在容器上切换一次 class，opacity/transform 的逐帧工作
+ * 全部移到合成器。组件的 props API 与 framer 版本保持一致。
  *
  * 全站文字共用此效果，单元数量很多，因此刻意不给单个 span 加 will-change：
  * 数百个提升层的开销比不加提示更大，交由浏览器自行决定合成时机。
@@ -147,26 +126,24 @@ export default function RevealText({
   // 文字就永远停在隐藏态。顶部同理，fixed 导航会被负的上边距漏掉。
   const isInView = useInView(ref, { once, margin: "0px" });
   // 首次入场播完后置位：切换语言会让文本换成另一套单元，新挂载的单元若再从
-  // hidden 起跳，父级已经播放完 visible、不会再广播一次，它们就会永远停在隐藏态。
-  // 所以重挂载的单元直接以 visible 出现。
+  // hidden 起跳，父级已经播放完、不会再切换一次 class，它们就会永远停在隐藏态。
+  // 所以重挂载的单元直接以可见状态出现（挂载时容器已带 reveal-play，无过渡）。
   const revealedRef = useRef(false);
   useEffect(() => {
     if (isInView) revealedRef.current = true;
   }, [isInView]);
 
-  const MotionComponent = MOTION_ELEMENTS[as] ?? m.h2;
-
-  // items 模式：每个子元素一个单元，包一层 inline-block 让它能参与 transform
   const textUnits = items ? [] : splitRevealUnits(collectText(children) || text || "");
   const units: ReactNode[] = items ?? textUnits;
   const unitCount = units.length;
+  const effBlur = unitCount > BLUR_UNIT_CAP ? 0 : blur;
 
-  // Safari 上文字后面出现灰色半透明方块，就是 framer-motion 留在每个单元内联
-  // 样式上的 filter。动画播完后它是 blur(0px)，视觉上等于 none，但 Safari 只要
-  // 看到 filter 不是 none 就会给元素建合成层，在那层里显出一块和文字等大的灰色
-  // 矩形——逐字拆得越散，灰块越多（用户在 contact 标题上每个词一块）。所以播完
-  // 就给容器加 reveal-done，由 CSS 把 filter 摘掉。
-  // 切换语言导致单元数变化时也会立刻摘：那时文字本来就是直接出现的。
+  // Safari 上文字后面出现灰色半透明方块，就是残留的 filter。动画播完后单元
+  // 还带着 blur(0px)，视觉上等于 none，但 Safari 只要看到 filter 不是 none 就
+  // 会给元素建合成层，在那层里显出一块和文字等大的灰色矩形——逐字拆得越散，
+  // 灰块越多（用户在 contact 标题上每个词一块）。所以播完就给容器加
+  // reveal-done，由 CSS 把 filter 摘掉。切换语言导致单元数变化时也会立刻摘：
+  // 那时文字本来就是直接出现的。
   const playedRef = useRef(false);
   useEffect(() => {
     const el = ref.current;
@@ -188,36 +165,37 @@ export default function RevealText({
   // span 是 inline，width:100% 会让浏览器把容器算成只有一行的宽度，
   // 里面的 inline-block 单元就会逐个换行，中文逐字直接竖排
   const isInline = as === "span";
+  const Tag = as;
+  // 动画参数全部走 CSS 变量下发：在 render 里算好，服务端与客户端一致，
+  // 每个单元的错峰延迟用 calc(var(--reveal-delay) + var(--ri) * var(--reveal-stagger))
+  const hostStyle = {
+    ...style,
+    "--reveal-delay": `${delay}s`,
+    "--reveal-dur": `${duration}s`,
+    "--reveal-stagger": `${stagger}s`,
+    "--reveal-y": `${yOffset}px`,
+    "--reveal-blur": `${effBlur}px`,
+  } as CSSProperties;
 
   return (
-    <LazyMotion features={domAnimation}>
-      <MotionComponent
-        ref={ref as never}
-        className={cn(!isInline && "w-full", className)}
-        style={style}
-      >
-        {units.map((unit, i) => (
-          <m.span
-            key={i}
-            // delay 写在 variants 里而不是 transition prop：transition prop 对
-            // hidden 的初始应用同样生效，序号大的单元会连「隐藏」都被推迟，
-            // 看起来像卡在可见状态一小会儿
-            variants={createUnitVariants({
-              duration,
-              yOffset,
-              blur,
-              delay: delay + i * stagger,
-            })}
-            // 每个单元自己驱动动画，不依赖 framer 的父子 variant 传播——传播
-            // 只在父级首次切换 variant 时发生，之后新挂载的子元素接不上
-            initial={revealedRef.current ? "visible" : "hidden"}
-            animate={isInView ? "visible" : "hidden"}
-            className={cn("inline-block", !items && "reveal-unit")}
-          >
-            {unit}
-          </m.span>
-        ))}
-      </MotionComponent>
-    </LazyMotion>
+    <Tag
+      ref={ref as never}
+      className={cn(
+        !isInline && "w-full",
+        isInView || revealedRef.current ? "reveal-play" : undefined,
+        className,
+      )}
+      style={hostStyle}
+    >
+      {units.map((unit, i) => (
+        <span
+          key={i}
+          className={cn("reveal-unit", !items && "reveal-gap")}
+          style={{ "--ri": i } as CSSProperties}
+        >
+          {unit}
+        </span>
+      ))}
+    </Tag>
   );
 }

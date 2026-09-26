@@ -38,6 +38,18 @@ export default function RootLayout({
           预先裁圆的源图会被二次裁切，透明角还会透出用户的桌面壁纸。
         */}
         <link rel="apple-touch-icon" href="/favicon.jpg" />
+        {/*
+          给 WebKit（Safari 及 iOS 上的全部浏览器）打类，供 globals.css 做
+          引擎降级：卡片的大面积 backdrop-filter 在滚动时每帧都要重滤背景，
+          是 Safari 滚动掉帧的主要来源之一。必须是 head 内联脚本——class 要在
+          首帧渲染前就位；React 不管理 <html> 的 className，注水不会冲掉它。
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "if(/AppleWebKit/.test(navigator.userAgent)&&!/Chrom(e|ium)|Edg\\//.test(navigator.userAgent))document.documentElement.classList.add('webkit');",
+          }}
+        />
       </head>
       <body className={inter.className}>{children}</body>
     </html>

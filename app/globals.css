@@ -70,27 +70,83 @@
 }
 
 /*
- * 逐字揭示的单元间距。用类而不是每个 span 的 inline style，是为了能用
- * :last-child 把最后一个单元的右间距去掉——inline style 做不到。少了这一条，
- * 徽章这类短文本（如「Projects」）右侧会多出一段空白，在 inline-flex 里
- * 整体偏左；段落行尾也会多个多余空格。
+ * 逐字揭示动画（由 reveal-text.tsx 驱动，纯 CSS transition，不用 framer）。
+ *
+ * 为什么不用 framer 逐帧写样式：framer 会为每个单元跑一个 JS rAF 循环、每帧
+ * 写一次内联 style。长段落揭示时上百个单元同时过渡，主线程每帧要做上百次
+ * 样式写入 + 样式重算，WebKit 实测掉到 55fps 以下、最差帧 300ms；而 CSS
+ * transition 的 opacity/transform 由合成器接管，主线程只在容器上切换一次
+ * reveal-play class。
+ *
+ * 单元的动画参数由组件通过 CSS 变量下发（--reveal-delay/dur/stagger/y/blur），
+ * 每个单元的错峰延迟 = var(--reveal-delay) + var(--ri) * var(--reveal-stagger)。
+ * .reveal-play 加到容器上时开始播放；.reveal-done 在全部播完后加上。
  */
 .reveal-unit {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(var(--reveal-y, 24px));
+  filter: blur(var(--reveal-blur, 10px));
+}
+
+.reveal-play .reveal-unit {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0px);
+  transition:
+    opacity var(--reveal-dur, 0.65s) cubic-bezier(0.215, 0.61, 0.355, 1)
+      calc(var(--reveal-delay, 0s) + var(--ri, 0) * var(--reveal-stagger, 0.03s)),
+    transform var(--reveal-dur, 0.65s) cubic-bezier(0.215, 0.61, 0.355, 1)
+      calc(var(--reveal-delay, 0s) + var(--ri, 0) * var(--reveal-stagger, 0.03s)),
+    filter var(--reveal-dur, 0.65s) cubic-bezier(0.215, 0.61, 0.355, 1)
+      calc(var(--reveal-delay, 0s) + var(--ri, 0) * var(--reveal-stagger, 0.03s));
+}
+
+/*
+ * 播完后摘掉 filter。blur(0px) 视觉上等于 none，但 Safari 只要看到 filter 不是
+ * none 就会给元素建合成层，显出一块和文字等大的灰色矩形（每个词一块）。本规则
+ * 必须放在 .reveal-play 之后——两条特异性相同，按源顺序取胜。
+ */
+.reveal-done .reveal-unit {
+  filter: none;
+}
+
+/* 减少动态效果时直接显示，不做逐字过渡 */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-unit {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}
+
+/*
+ * 逐字揭示的单元间距（仅文本拆字模式带 reveal-gap，items 模式不带）。
+ * 用类而不是每个 span 的 inline style，是为了能用 :last-child 把最后一个
+ * 单元的右间距去掉——inline style 做不到。少了这一条，徽章这类短文本
+ * （如「Projects」）右侧会多出一段空白，在 inline-flex 里整体偏左；
+ * 段落行尾也会多个多余空格。
+ */
+.reveal-gap {
   margin-right: 0.24em;
 }
 
-.reveal-unit:last-child {
+.reveal-gap:last-child {
   margin-right: 0;
 }
 
 /*
- * 逐字动画播完后摘掉 filter。framer-motion 会把 blur(0px) 留在每个单元的内联
- * style 上，blur(0px) 视觉上等于 none，但 Safari 会因此给元素建合成层，显出
- * 一块和文字等大的灰色矩形（每个词一块）。!important 是必须的——要压过内联
- * 样式。.reveal-done 由 reveal-text.tsx 在动画结束后加到容器上。
+ * WebKit 引擎降级（html.webkit 由 layout.tsx 的内联脚本打上，覆盖 Safari 和
+ * iOS 上的全部浏览器）。卡片面积大且随滚动移动，backdrop-filter 每帧都要对着
+ * 变化的背景重新模糊，实测是 Safari 滚动掉帧的第二大来源（图片解码第一）；
+ * 而卡片背后是平滑的深色液滴，模糊在视觉上几乎看不出来。WebKit 上直接去掉
+ * 模糊、把底色加深一档补偿对比度。Chromium / Firefox 不受影响。
  */
-.reveal-done .reveal-unit {
-  filter: none !important;
+html.webkit .glass-soft {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background-color: rgb(0 0 0 / 55%);
 }
 
 /*
