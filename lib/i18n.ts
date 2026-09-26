@@ -58,21 +58,21 @@ export const translations = {
         items: [
           {
             name: "RVC 声音克隆",
-            desc: "浏览器端 RVC 声音克隆：录音、上传、推理、导出全在页内完成，音频不上传。双引擎设计——ONNX Runtime Web 页内推理，或连接本机 RVC 服务取 GPU 级音质；批量队列可打包 ZIP 一次下载。",
+            desc: "浏览器端 RVC 声音克隆：录音、上传、推理、导出全在页内完成，音频不上传。双引擎——ONNX Runtime Web 页内推理，或连本机 RVC 服务走 GPU；变调、清音保护等完整参数加预设一键套用，批量队列打包 ZIP，模型库自带下载与拖拽导入。",
             tags: ["JavaScript", "ONNX Runtime", "Web Audio", "IndexedDB", "Python"],
             repo: "https://github.com/ForJiang/rvc-sound-clone",
             demo: "https://forjiang.github.io/rvc-sound-clone/",
           },
           {
             name: "图片元数据清除器",
-            desc: "批量抹掉照片里的隐藏信息：EXIF 相机型号、拍摄时间、GPS 定位、内嵌缩略图与修图痕迹。先扫描后清除再自检，输出零元数据；Canvas 重编码加强制拆段双保险，断网可用，附 65 项单元测试。",
+            desc: "批量抹掉照片里的隐藏信息：EXIF 相机型号、拍摄时间、GPS 定位、内嵌缩略图、修图痕迹与文件尾部隐藏数据。先扫描后清除再自检，输出零元数据；Canvas 重编码加强制拆段双保险，终端风格日志实时展示过程，断网可用，附 69 项单元测试。",
             tags: ["JavaScript", "Canvas", "EXIF / GPS / XMP", "ZIP"],
             repo: "https://github.com/ForJiang/image-metadata-cleaner",
             demo: "https://forjiang.github.io/image-metadata-cleaner/",
           },
           {
             name: "hello 手写动画演示页",
-            desc: "零依赖纯静态页：黑灰体素地形背景之上，hello 三个字母逐笔手写描出（3.5 秒），字标还是实时光源——按椭圆衰减照亮附近体素顶面与右面，再叠一层逐像素加法渐变光池。SVG 描边复刻 Apple Hello 动画，无 React、无构建。",
+            desc: "零依赖纯静态页：黑灰体素地形背景之上，hello 三个字母逐笔手写描出（3.5 秒），字标还是实时光源——按椭圆衰减照亮附近体素顶面与右面，再叠一层逐像素加法渐变光池。字标下方挂着同风格实时时钟，点击任意处或按 R 重播；SVG 描边复刻 Apple Hello 动画，无 React、无构建。",
             tags: ["JavaScript", "SVG", "Canvas", "零依赖"],
             repo: "https://github.com/ForJiang/forjiang-hello",
             demo: "https://forjiang.github.io/forjiang-hello/",
@@ -86,7 +86,7 @@ export const translations = {
           },
           {
             name: "函数图像生成器",
-            desc: "纯前端函数图像工具：输入表达式即时绘制，最多 6 条曲线同图对比，函数库一键添加。零依赖自研符号求导引擎，1–8 阶导数带化简步骤、虚线叠加导函数、切线方程；238 项单元测试用数值差分逐项校验，防止「看起来对、数值错」。",
+            desc: "纯前端函数图像工具：输入表达式即时绘制，最多 6 条曲线同图对比，20+ 函数库一键添加；滚轮缩放、拖拽平移、悬停读值。零依赖自研符号求导引擎，1–8 阶导数带步骤、虚线叠加导函数、切线方程，终端风格日志实时记录；260 项单元测试用数值差分逐项校验，防止「看起来对、数值错」。",
             tags: ["JavaScript", "Canvas", "符号求导", "零依赖"],
             repo: "https://github.com/ForJiang/function-grapher",
             demo: "https://forjiang.github.io/function-grapher/",
@@ -178,21 +178,21 @@ export const translations = {
         items: [
           {
             name: "RVC Sound Clone",
-            desc: "Browser-side RVC voice cloning: record, upload, infer and export entirely in-page — audio never leaves the device. Dual-engine: ONNX Runtime Web in the browser, or a local RVC service for GPU-grade quality. Batch queue exports as ZIP.",
+            desc: "Browser-side RVC voice cloning: record, upload, infer and export entirely in-page — audio never leaves the device. Dual-engine: ONNX Runtime Web in the browser, or a local RVC service for GPU-grade quality. Full voice parameters with one-click presets, batch queue exports as ZIP, built-in model library with drag-and-drop import.",
             tags: ["JavaScript", "ONNX Runtime", "Web Audio", "IndexedDB", "Python"],
             repo: "https://github.com/ForJiang/rvc-sound-clone",
             demo: "https://forjiang.github.io/rvc-sound-clone/",
           },
           {
             name: "Image Metadata Cleaner",
-            desc: "Batch-strips the hidden data in photos: camera model, timestamps, GPS coordinates, embedded thumbnails, editor traces. Scan first, then strip, then self-verify — zero metadata out. Works offline, 65 unit tests.",
+            desc: "Batch-strips the hidden data in photos: camera model, timestamps, GPS coordinates, embedded thumbnails, editor traces and trailing hidden data. Scan first, then strip, then self-verify — zero metadata out. Canvas re-encode plus forced segment stripping, terminal-style live log, works offline, 69 unit tests.",
             tags: ["JavaScript", "Canvas", "EXIF / GPS / XMP", "ZIP"],
             repo: "https://github.com/ForJiang/image-metadata-cleaner",
             demo: "https://forjiang.github.io/image-metadata-cleaner/",
           },
           {
             name: "hello Handwriting Demo",
-            desc: "A zero-dependency static page: over a black-and-gray voxel terrain, hello is drawn stroke by stroke in 3.5s, and the wordmark itself is a live light source — per-voxel elliptical falloff plus a per-pixel additive gradient pool. Pure SVG stroke port of the Apple Hello animation, no React, no build.",
+            desc: "A zero-dependency static page: over a black-and-gray voxel terrain, hello is drawn stroke by stroke in 3.5s, and the wordmark itself is a live light source — per-voxel elliptical falloff plus a per-pixel additive gradient pool. A live clock sits below the wordmark in the same glow; click anywhere or press R to replay. Pure SVG stroke port of the Apple Hello animation, no React, no build.",
             tags: ["JavaScript", "SVG", "Canvas", "Zero-dep"],
             repo: "https://github.com/ForJiang/forjiang-hello",
             demo: "https://forjiang.github.io/forjiang-hello/",
@@ -206,7 +206,7 @@ export const translations = {
           },
           {
             name: "Function Grapher",
-            desc: "A fully client-side function plotter: type an expression and it draws instantly, up to 6 curves overlaid, one-click function library. A zero-dependency symbolic differentiation engine gives 1st–8th derivatives with simplification steps, dashed derivative overlay and tangent lines — verified by 238 unit tests against numerical differences.",
+            desc: "A fully client-side function plotter: type an expression and it draws instantly, up to 6 curves overlaid, 20+ one-click functions; wheel zoom, drag pan, hover readout. A zero-dependency symbolic differentiation engine gives 1st–8th derivatives with steps, dashed derivative overlay and tangent lines, logged live in a terminal-style panel — verified by 260 unit tests against numerical differences.",
             tags: ["JavaScript", "Canvas", "Symbolic diff", "Zero-dep"],
             repo: "https://github.com/ForJiang/function-grapher",
             demo: "https://forjiang.github.io/function-grapher/",
