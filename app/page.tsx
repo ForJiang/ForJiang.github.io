@@ -91,9 +91,10 @@ export default function Home() {
     setMenuOpen(false);
   };
 
-  // 灯箱用高清母版（public/images 下的原图），按当前语言取标题与描述
+  // 灯箱看高清原图：full 是全尺寸 WebP 无损图（不做有损压缩），
+  // fallback 只是给不支持 AVIF/WebP 的浏览器兜底的小图，不能拿它当原图
   const lightboxItems: LightboxItem[] = t.projects.cards.map((card, idx) => ({
-    src: PROJECT_IMAGES[idx]?.fallback ?? "",
+    src: PROJECT_IMAGES[idx]?.full ?? "",
     title: card.title,
     desc: card.desc,
   }));

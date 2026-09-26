@@ -12,7 +12,7 @@
 - 🧭 四个内容版块各占满一页（`min-h-screen` + 垂直居中），滚动节奏一致
 - 🌐 中文 / English 双语言切换（首次访问自动跟随浏览器语言，手动切换后记住选择）
 - 🖼️ 插画封面使用 `<picture>` + `srcset` 响应式加载：AVIF → WebP → JPEG 逐级回退，三档宽度按视口与 DPR 选择，文件名带内容哈希
-- 🔍 点击封面图打开全屏灯箱查看 1600×901 高清原图（Esc / 点遮罩关闭，左右方向键切换，打开期间锁定背景滚动）
+- 🔍 点击封面图打开全屏灯箱查看 2400×1352 **WebP 无损**原图（Esc / 点遮罩关闭，左右方向键切换，打开期间锁定背景滚动）
 - 🔗 联系方式带 Bilibili / Pixiv / X 官方标志（simple-icons, CC0），入口为真实 `<a>`，可中键新标签打开
 - 🪟 全站深色玻璃拟态面板，白色文字系统，任意液滴位置下保持可读
 - ✒️ 按钮采用指针扩散填充动画：圆形背景从鼠标进入的位置展开铺满、文字反色（`components/ui/origin-button.tsx`）
@@ -48,7 +48,7 @@ personal-website/
 ├── public/
 │   ├── favicon.jpg               # apple-touch-icon 用（直角、整幅不透明，256×256）
 │   ├── favicon-rounded.png       # 标签页图标（128×128 圆角，四角透明）
-│   └── images/                   # 4 张插画母版 + 生成的 AVIF/WebP 变体
+│   └── images/                   # 4 张插画的 2400px 无损原图 + AVIF/WebP 变体
 ├── scripts/
 │   └── generate-images.mjs       # 母版 → 响应式变体生成脚本
 ├── docs/deploy-workflow.yml     # 部署工作流模板副本
@@ -78,17 +78,22 @@ npm run dev
 封面图不手工维护多份尺寸，改用脚本生成：
 
 ```bash
-# 一次性安装 sharp（仅本地需要，不写入 package.json，不参与线上构建）
-npm i -D sharp
+# 一次性安装 sharp（仅本地需要，--no-save 保证不写进 package.json、
+# 不参与 CI 安装）
+npm i --no-save sharp
 
-# 把新母版（建议 1600×901 或更大）命名替换 public/images/ 下的同名 .jpg
-# 然后重新生成 AVIF/WebP 三档变体与清单
+# 换图：把新原图命名成 public/images/<name>.png（<name> 取 NAMES 里的那个）
+# 然后重跑脚本
 node scripts/generate-images.mjs
 ```
 
-脚本会做三件事：为每张母版生成 480 / 800 / 1200 三档宽度的 AVIF 与 WebP（文件名含 8 位内容哈希，内容变化即自动失效缓存）、母版保留作 `<img>` 回退、写出 `lib/image-variants.ts` 供页面引用。
+脚本会做四件事：为每张母版生成一张 **2400px 宽的 WebP 无损原图**（`<name>-full-<hash8>.webp`）、再从它生成 480 / 800 / 1200 三档宽度的 AVIF 与 WebP 封面变体（文件名含 8 位内容哈希，内容变化即自动失效缓存）、`<img>` 回退用 480 宽那一档、写出 `lib/image-variants.ts` 供页面引用。
 
-母版清单在 `scripts/generate-images.mjs` 顶部的 `NAMES` 数组里，新增图片要同步加进来。
+母版清单在 `scripts/generate-images.mjs` 顶部的 `NAMES` 数组里，新增图片要同步加进去。
+
+**高清原图为什么不是 1:1 存原图**：ComfyUI 直出的图是 3864×2176 PNG，单张约 10MB，四张共 42MB；全尺寸转 WebP lossless 也要 27MB，入库存不起。缩到 2400px 宽后降到每张 2.7~3.2MB（四张共约 11.7MB），而 2400 宽已超过绝大多数显示场景（灯箱 `max-w-92vw`，4K 屏才刚好铺满），降采样看不出来。灯箱只在点击后才加载它，首屏不为它付流量。
+
+封面变体从 2400 的母版而不是原 PNG 缩放，避免「有损之上再有损」。母版文件本身不单独保留，脚本重跑时直接用已生成的 `-full-*.webp` 当输入（所以重跑是幂等的）。
 
 ## 换站点图标
 
