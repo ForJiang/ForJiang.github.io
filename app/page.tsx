@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
-import { Github, Mail, ExternalLink, Menu, Languages } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Github, Mail, ExternalLink, Menu, Languages, ChevronLeft } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import { translations, type Lang } from "@/lib/i18n";
 import { PROJECT_IMAGES, IMAGE_SIZES } from "@/lib/image-variants";
@@ -83,6 +83,17 @@ export default function Home() {
     setLang(next);
     localStorage.setItem("language", next);
     document.documentElement.lang = next === "zh" ? "zh-CN" : "en";
+  };
+
+  // 项目卡片横向滚动：一按走一张卡（卡宽 + gap），用 scrollBy 让浏览器自己
+  // 处理平滑与边界，比手算 scrollLeft 稳
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const scrollByCard = (dir: -1 | 1) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const card = el.firstElementChild as HTMLElement | null;
+    const step = card ? card.offsetWidth + 24 : el.clientWidth * 0.8;
+    el.scrollBy({ left: dir * step, behavior: "smooth" });
   };
 
   const scrollTo = (id: string) => {
@@ -318,7 +329,20 @@ export default function Home() {
             viewport={{ once: true }}
             className="mt-12"
           >
-            <div className="text-center mb-8">
+            <div className="relative text-center mb-8">
+              {/* 桌面没有触摸屏，露角不足以提示可滑，补两个箭头按钮 */}
+              <div className="absolute right-0 top-1 hidden items-center gap-2 md:flex">
+                {([-1, 1] as const).map((dir) => (
+                  <button
+                    key={dir}
+                    onClick={() => scrollByCard(dir)}
+                    aria-label={dir === -1 ? t.skills.projects.prevProject : t.skills.projects.nextProject}
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white/80 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    <ChevronLeft className={dir === -1 ? "h-4 w-4" : "h-4 w-4 rotate-180"} />
+                  </button>
+                ))}
+              </div>
               <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
                 <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
                   {t.skills.projects.badge}
@@ -346,7 +370,17 @@ export default function Home() {
               </RevealText>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/*
+              三个项目卡片做成横向滑动：容器 overflow-x-auto + snap-mandatory。
+              卡片宽 min(30rem, 85vw) + shrink-0，三张总宽必然超过版心，于是
+              末尾一张会露出一角，暗示可以横向滑。原生滚动条隐藏，露出的一角
+              与左右箭头按钮（见上面 scrollByCard）共同承担可滑的提示。
+            */}
+            <div
+              ref={scrollerRef}
+              tabIndex={0}
+              className="-mx-2 flex snap-x snap-mandatory gap-6 overflow-x-auto px-2 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
               {t.skills.projects.items.map((proj, idx) => (
                 <m.div
                   key={proj.name}
@@ -354,6 +388,7 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1 }}
+                  className="w-[min(30rem,85vw)] shrink-0 snap-start"
                 >
                   <Card className={`group h-full flex flex-col hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
                     <CardHeader>

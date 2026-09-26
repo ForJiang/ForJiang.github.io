@@ -51,8 +51,10 @@ export const translations = {
       projects: {
         badge: "实战项目",
         heading: "把这些用在了这些项目里",
-        subtitle: "两个纯静态、可离线使用的网页工具",
+        subtitle: "三个纯静态、可离线使用的网页小工具",
         demoCta: "在线试用",
+        prevProject: "上一个项目",
+        nextProject: "下一个项目",
         items: [
           {
             name: "RVC 声音克隆",
@@ -67,6 +69,13 @@ export const translations = {
             tags: ["JavaScript", "Canvas", "EXIF / GPS / XMP", "ZIP"],
             repo: "https://github.com/ForJiang/image-metadata-cleaner",
             demo: "https://forjiang.github.io/image-metadata-cleaner/",
+          },
+          {
+            name: "hello 手写动画演示页",
+            desc: "零依赖纯静态页：黑灰体素地形背景之上，hello 三个字母逐笔手写描出（3.5 秒），字标还是实时光源——按椭圆衰减照亮附近体素顶面与右面，再叠一层逐像素加法渐变光池。SVG 描边复刻 Apple Hello 动画，无 React、无构建。",
+            tags: ["JavaScript", "SVG", "Canvas", "零依赖"],
+            repo: "https://github.com/ForJiang/forjiang-hello",
+            demo: "https://forjiang.github.io/forjiang-hello/",
           },
         ],
       },
@@ -148,8 +157,10 @@ export const translations = {
       projects: {
         badge: "Projects",
         heading: "Where I put these skills to work",
-        subtitle: "Two fully static, offline-capable web tools",
+        subtitle: "Three fully static, offline-capable web tools",
         demoCta: "Live demo",
+        prevProject: "Previous project",
+        nextProject: "Next project",
         items: [
           {
             name: "RVC Sound Clone",
@@ -164,6 +175,13 @@ export const translations = {
             tags: ["JavaScript", "Canvas", "EXIF / GPS / XMP", "ZIP"],
             repo: "https://github.com/ForJiang/image-metadata-cleaner",
             demo: "https://forjiang.github.io/image-metadata-cleaner/",
+          },
+          {
+            name: "hello Handwriting Demo",
+            desc: "A zero-dependency static page: over a black-and-gray voxel terrain, hello is drawn stroke by stroke in 3.5s, and the wordmark itself is a live light source — per-voxel elliptical falloff plus a per-pixel additive gradient pool. Pure SVG stroke port of the Apple Hello animation, no React, no build.",
+            tags: ["JavaScript", "SVG", "Canvas", "Zero-dep"],
+            repo: "https://github.com/ForJiang/forjiang-hello",
+            demo: "https://forjiang.github.io/forjiang-hello/",
           },
         ],
       },
