@@ -84,6 +84,20 @@
 }
 
 /*
+ * 卡片 hover 的光晕层。透明度压得很低（0.12）且从指针位置展开，只为给
+ * 「鼠标移到卡片上有反馈」一个暗示，不会影响卡片里白字的可读性。
+ * 用类而不是 Tailwind 任意值：那条 radial-gradient 里有逗号、括号和 var()
+ * 默认值，写在 class 里既难读又容易踩 Tailwind 的解析边界。
+ */
+.spotlight {
+  background: radial-gradient(
+    14rem 14rem at var(--spot-x, 50%) var(--spot-y, 50%),
+    rgba(255, 255, 255, 0.09),
+    transparent 74%
+  );
+}
+
+/*
  * 移动端底部工具栏：iOS Safari / Android Chrome 的底部地址栏、工具栏是覆盖在
  * 视口上的不透明浮层，滚到底时页脚内容会被它压住。iOS Safari 在普通浏览模式下
  * env(safe-area-inset-bottom) 恒为 0（仅 standalone Web App 才有值），所以必须用

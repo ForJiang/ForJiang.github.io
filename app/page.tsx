@@ -87,6 +87,15 @@ export default function Home() {
 
   // 项目卡片横向滚动：一按走一张卡（卡宽 + gap），用 scrollBy 让浏览器自己
   // 处理平滑与边界，比手算 scrollLeft 稳
+  // 卡片 hover 光晕跟随指针：只写 CSS 变量，不 setState——每次 pointermove
+  // 触发一次重渲染会让卡片里的逐字 span 全部重新 diff，代价不值。
+  const trackSpotlight = (e: React.PointerEvent<HTMLElement>) => {
+    const el = e.currentTarget;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--spot-x", `${e.clientX - r.left}px`);
+    el.style.setProperty("--spot-y", `${e.clientY - r.top}px`);
+  };
+
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const scrollByCard = (dir: -1 | 1) => {
     const el = scrollerRef.current;
@@ -296,15 +305,22 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
               >
-                <Card className={`h-full hover:shadow-lg transition-shadow ${GLASS_CARD}`}>
-                  <CardHeader>
+                <Card
+                  className={`group relative h-full overflow-hidden transition-shadow hover:border-white/30 hover:shadow-lg ${GLASS_CARD}`}
+                  onPointerMove={trackSpotlight}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="spotlight pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  />
+                  <CardHeader className="relative z-10">
                     <CardTitle className="text-white">
                       <RevealText as="div" stagger={0.03} duration={0.5} blur={6}>
                         {group.title}
                       </RevealText>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="relative z-10">
                     {/* 标签是组件不是纯文本，用 items 模式逐个做揭示，胶囊外观不变 */}
                     <RevealText
                       as="div"
@@ -390,15 +406,22 @@ export default function Home() {
                   transition={{ delay: idx * 0.1 }}
                   className="w-[min(30rem,85vw)] shrink-0 snap-start"
                 >
-                  <Card className={`group h-full flex flex-col hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
-                    <CardHeader>
+                  <Card
+                    className={`group relative h-full flex flex-col overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 ${GLASS_CARD}`}
+                    onPointerMove={trackSpotlight}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="spotlight pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    />
+                    <CardHeader className="relative z-10">
                       <CardTitle className="text-white">
                         <RevealText as="div" stagger={0.03} duration={0.5} blur={6}>
                           {proj.name}
                         </RevealText>
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="flex-1 flex flex-col gap-4">
+                    <CardContent className="relative z-10 flex-1 flex flex-col gap-4">
                       <RevealText
                         as="p"
                         stagger={0.01}

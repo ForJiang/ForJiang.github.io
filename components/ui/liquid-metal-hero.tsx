@@ -31,18 +31,6 @@ export default function LiquidMetalHero({
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* 液态金属背景已上移为全站固定层 components/liquid-metal-background.tsx */}
       <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-        {/*
-          文字背后的柔和暗色遮罩。液态金属球是动画的，会周期性扫过标题——球体
-          的暗部横切白色字母时读不清（用户报告过一次）。遮罩把文字区域压暗一点，
-          但完全不改动球的位置与大小（仍保持视口居中播放）。
-          范围比文字本身宽，边缘大幅羽化，看起来是「文字自带的一层光晕」而不是
-          一块补丁。中心压到 0.72 是因为液态金属有镜面高光，0.6 上下的遮罩压不
-          住它，副标题仍有相位被高光切进去。
-        */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[40rem] w-[56rem] max-w-[92vw] -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.78)_0%,rgba(0,0,0,0.64)_40%,rgba(0,0,0,0.36)_70%,transparent_92%)]"
-        />
         <div className="text-center space-y-8">
           {badge && (
             <div className="flex justify-center">
