@@ -10,8 +10,8 @@
 - 🖱️ 白色鼠标流光轨迹特效（遵循 `prefers-reduced-motion`）
 - ✨ 全站文字逐字揭示：每个单元从「透明 + 下移 + 模糊」过渡到清晰位置，按 stagger 错峰，滚动进入视口时触发（`components/ui/reveal-text.tsx`）
 - 🧭 四个内容版块各占满一页（`min-h-screen` + 垂直居中），滚动节奏一致
-- 🌐 中文 / English 双语言切换（首次访问自动跟随浏览器语言，手动切换后记住选择）
-- 🖼️ 插画封面使用 `<picture>` + `srcset` 响应式加载：AVIF → WebP → JPEG 逐级回退，三档宽度按视口与 DPR 选择，文件名带内容哈希
+- 🌐 中文 / English 双语言切换（**默认英文**，手动切换后记住选择，不再跟随浏览器语言）
+- 🖼️ 插画封面使用 `<picture>` + `srcset` 响应式加载：AVIF → WebP → WebP（480 宽）逐级回退，三档宽度按视口与 DPR 选择，文件名带内容哈希
 - 🔍 点击封面图打开全屏灯箱查看 2400×1352 **WebP 无损**原图（Esc / 点遮罩关闭，左右方向键切换，打开期间锁定背景滚动）
 - 🔗 联系方式带 Bilibili / Pixiv / X 官方标志（simple-icons, CC0），入口为真实 `<a>`，可中键新标签打开
 - 🪟 全站深色玻璃拟态面板，白色文字系统，任意液滴位置下保持可读
@@ -89,11 +89,11 @@ node scripts/generate-images.mjs
 
 脚本会做四件事：为每张母版生成一张 **2400px 宽的 WebP 无损原图**（`<name>-full-<hash8>.webp`）、再从它生成 480 / 800 / 1200 三档宽度的 AVIF 与 WebP 封面变体（文件名含 8 位内容哈希，内容变化即自动失效缓存）、`<img>` 回退用 480 宽那一档、写出 `lib/image-variants.ts` 供页面引用。
 
-母版清单在 `scripts/generate-images.mjs` 顶部的 `NAMES` 数组里，新增图片要同步加进去。
+母版清单在 `scripts/generate-images.mjs` 顶部的 `NAMES` 数组里，新增图片要同步加进去。脚本会用**已有的 `-full-*.webp` 当母版**，所以换图分两种情况：第一次放原图 `<name>.png` 进目录；只想调整变体质量就什么都不用放，直接重跑。
 
 **高清原图为什么不是 1:1 存原图**：ComfyUI 直出的图是 3864×2176 PNG，单张约 10MB，四张共 42MB；全尺寸转 WebP lossless 也要 27MB，入库存不起。缩到 2400px 宽后降到每张 2.7~3.2MB（四张共约 11.7MB），而 2400 宽已超过绝大多数显示场景（灯箱 `max-w-92vw`，4K 屏才刚好铺满），降采样看不出来。灯箱只在点击后才加载它，首屏不为它付流量。
 
-封面变体从 2400 的母版而不是原 PNG 缩放，避免「有损之上再有损」。母版文件本身不单独保留，脚本重跑时直接用已生成的 `-full-*.webp` 当输入（所以重跑是幂等的）。
+封面变体从 2400 的母版而不是原 PNG 缩放，避免「有损之上再有损」。因为母版就是 `-full-*.webp` 本身，重跑脚本只会生成同名文件（内容哈希不变），所以反复重跑是幂等的。
 
 ## 换站点图标
 
@@ -121,12 +121,13 @@ node scripts/generate-images.mjs
 | 技能标签 | `lib/i18n.ts` 的 `skills.groups` |
 | 实战项目（名称、描述、标签、仓库与演示链接） | `lib/i18n.ts` 的 `skills.projects.items` |
 | 插画卡片文案 | `lib/i18n.ts` 的 `projects.cards` |
-| 插画封面图 | 替换 `public/images/` 母版后重跑上面的脚本 |
+| 插画封面图 | 把新原图命名成 `public/images/<name>.png` 后重跑上面的脚本 |
 | 联系方式（邮箱 / GitHub / 哔哩哔哩 / Pixiv / X） | `app/page.tsx` 顶部 `CONTACTS` |
 | 网页标题 / 描述 / favicon | `app/layout.tsx` 的 `metadata`；换图标见上一节 |
 | 文字动效的快慢与强度 | `RevealText` 的 `duration` / `stagger` / `blur` / `yOffset` props |
 | 液态金属背景参数 | `components/liquid-metal-background.tsx` |
 | 网站文案（中文 / English） | `lib/i18n.ts` 的 `translations`，两个语言都要补齐 |
+| 默认语言 | `app/page.tsx` 的 `useState<Lang>` **和** `app/layout.tsx` 的 `<html lang>`，两处必须一起改（见下面第 6 条） |
 
 ## 实现上值得注意的几点
 
@@ -143,5 +144,6 @@ node scripts/generate-images.mjs
 3. **`IntersectionObserver` 不要给 margin 设负值**。负的 top margin 会漏掉 fixed 导航，负的 bottom margin 会在「已滚到页面最底」时漏掉页脚版权文字——用户看得见它，IO 却判它不相交。
 4. **`as="span"` 时不能加 `w-full`**：span 是 inline，`width:100%` 会让浏览器把容器算成只有一行宽，中文逐字必然竖排。
 5. **`delay` 写在 variants 的 visible 分支里**，不要放 `transition` prop，否则它对 `hidden` 的初始应用同样生效。
+6. **默认语言的服务端与客户端必须一致**。改 `useState<Lang>` 的同时必须改 `app/layout.tsx` 的 `<html lang>`：服务端按 layout 的 lang 渲染首帧，客户端按 `useState` 的初值 hydrate，两边不同就是一次 React 注水失败——整棵服务端树被丢弃，`useInView` 的观察器跟着失效，全站文字停在不可见状态。另外首帧语言不要由 `navigator.language` / `localStorage` 决定，那必然造成两边不一致。
 
 切换语言会换掉整套单元，`key` 用索引而非文本，避免 ~790 个 span 全部卸载重挂载；已揭示过的组件用 ref 记住状态，让新挂载的单元直接以可见状态出现。
