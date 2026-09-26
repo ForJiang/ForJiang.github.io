@@ -1,6 +1,6 @@
 # ForJiang · 个人主页
 
-基于 **Next.js 14 + TypeScript + Tailwind CSS + shadcn/ui** 的个人主页。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景，配合 Framer Motion 的逐字揭示与按钮填充动画。
+基于 **Next.js 14 + TypeScript + Tailwind CSS + shadcn/ui** 的个人主页。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景，配合纯 CSS transition 的逐字揭示动画与 Framer Motion 的按钮填充 / 入场动画（Framer 只负责按钮和卡片，逐字动画不用它——原因见「Safari 性能专项」）。
 
 线上地址：**https://forjiang.github.io**
 
@@ -8,13 +8,14 @@
 
 - 🌊 液态金属着色器全站固定背景（`@paper-design/shaders-react`），滚动全程可见、不随地址栏伸缩而变形位移
 - 🖱️ 白色鼠标流光轨迹特效（遵循 `prefers-reduced-motion`）
-- ✨ 全站文字逐字揭示：每个单元从「透明 + 下移 + 模糊」过渡到清晰位置，按 stagger 错峰，滚动进入视口时触发（`components/ui/reveal-text.tsx`）
+- ✨ 全站文字逐字揭示：每个单元从「透明 + 下移 +（短文本）模糊」过渡到清晰位置，按 stagger 错峰，滚动进入视口时触发。**纯 CSS transition 驱动**（合成器动画），framer 不参与逐帧（`components/ui/reveal-text.tsx`）
 - 🧭 四个内容版块各占满一页（`min-h-screen` + 垂直居中），滚动节奏一致
 - 🌐 中文 / English 双语言切换（**默认英文**，手动切换后记住选择，不再跟随浏览器语言）
 - 🖼️ 插画封面使用 `<picture>` + `srcset` 响应式加载：AVIF → WebP → WebP（480 宽）逐级回退，三档宽度按视口与 DPR 选择，文件名带内容哈希
 - 🔍 点击封面图打开全屏灯箱查看 2400×1352 **WebP 无损**原图（Esc / 点遮罩关闭，左右方向键切换，打开期间锁定背景滚动）
 - 🔗 联系方式带 Bilibili / Pixiv / X 官方标志（simple-icons, CC0），入口为真实 `<a>`，可中键新标签打开
-- 🪟 全站深色玻璃拟态面板，白色文字系统，任意液滴位置下保持可读
+- 🪟 全站深色玻璃拟态面板，白色文字系统，任意液滴位置下保持可读（Safari 上大面积卡片自动降级为不透明深色底，见「Safari 性能专项」）
+- 🚀 Safari / iOS 性能专项：逐字动画纯 CSS transition（合成器动画）、着色器 WebKit 跳过最高档起步、逐字 blur 超过 48 单元自动关闭，均经 Playwright WebKit 实测归因
 - ✒️ 按钮采用指针扩散填充动画：圆形背景从鼠标进入的位置展开铺满、文字反色（`components/ui/origin-button.tsx`）
 - 📱 完整响应式布局；移动端针对 iOS Safari 的视口与工具栏做了专门处理
 - 📄 页面板块：Hero / 关于我 / 技术能力（含实战项目）/ 插画作品 / 联系方式 / 页脚
@@ -39,7 +40,7 @@ personal-website/
 │       ├── badge.tsx / button.tsx / card.tsx   # shadcn/ui 组件
 │       ├── liquid-metal-hero.tsx               # Hero 区
 │       ├── origin-button.tsx                   # 指针扩散填充按钮
-│       └── reveal-text.tsx                     # 逐字模糊上浮揭示动画
+│       └── reveal-text.tsx                     # 逐字模糊上浮揭示动画（纯 CSS transition）
 ├── lib/
 │   ├── favicon-inline.ts         # 主图标的圆角 PNG 内联 data URI
 │   ├── i18n.ts                   # 中英双语文案字典（含实战项目数据）
@@ -125,6 +126,9 @@ node scripts/generate-images.mjs
 | 联系方式（邮箱 / GitHub / 哔哩哔哩 / Pixiv / X） | `app/page.tsx` 顶部 `CONTACTS` |
 | 网页标题 / 描述 / favicon | `app/layout.tsx` 的 `metadata`；换图标见上一节 |
 | 文字动效的快慢与强度 | `RevealText` 的 `duration` / `stagger` / `blur` / `yOffset` props |
+| 长文本弃用模糊的阈值 | `components/ui/reveal-text.tsx` 的 `BLUR_UNIT_CAP`（单元数超过它自动只保留淡入+上浮） |
+| Safari 的卡片降级（去模糊） | `app/globals.css` 的 `html.webkit .glass-soft`，webkit 类由 `app/layout.tsx` 的内联脚本打上 |
+| 着色器画质档位 | `components/liquid-metal-background.tsx` 的 `QUALITY_TIERS`（WebKit 自动跳过最高档起步） |
 | 液态金属背景参数 | `components/liquid-metal-background.tsx` |
 | 网站文案（中文 / English） | `lib/i18n.ts` 的 `translations`，两个语言都要补齐 |
 | 默认语言 | `app/page.tsx` 的 `useState<Lang>` **和** `app/layout.tsx` 的 `<html lang>`，两处必须一起改（见下面第 6 条） |
@@ -135,7 +139,7 @@ node scripts/generate-images.mjs
 
 **移动端**：底部工具栏是覆盖在视口上的不透明浮层，iOS Safari 在普通浏览下 `env(safe-area-inset-bottom)` 恒为 0，因此用固定值兜底（见 `globals.css` 中 `@media (hover: none) and (pointer: coarse)`）。站点为单一深色主题，不要重新引入 `bg-background` / 主题色切换，否则会遮住固定的液态金属背景。
 
-**framer-motion 的一般纪律**：全站用 `LazyMotion` + `domAnimation` 按需加载 framer-motion，剔除了未使用的 drag / layout 代码。新增带动画的组件请用 `m.*` 而非 `motion.*`，否则会把完整版拖回包里。另注意 framer-motion 会接管元素的 `transform` 属性，不要同时用 Tailwind 的 `-translate-x-1/2` 之类的工具类做定位（`origin-button.tsx` 里踩过，改用 `x/y` 由它统一管理）。
+**framer-motion 的一般纪律**：带动画的组件（按钮、卡片入场、灯箱）用 `LazyMotion` + `domAnimation` 按需加载 framer-motion，剔除了未使用的 drag / layout 代码。新增带动画的组件请用 `m.*` 而非 `motion.*`，否则会把完整版拖回包里。另注意 framer-motion 会接管元素的 `transform` 属性，不要同时用 Tailwind 的 `-translate-x-1/2` 之类的工具类做定位（`origin-button.tsx` 里踩过，改用 `x/y` 由它统一管理）。**但 framer 不适合驱动大量元素的逐帧动画**——它会为每个元素跑一个 JS rAF 循环逐帧写内联样式，逐字揭示因此改成了纯 CSS transition（见下面第 8 条与「Safari 性能专项」），`reveal-text.tsx` 里只保留了 `useInView` 这一个 hook。
 
 **逐字揭示动画（`reveal-text.tsx`）**，八个坑都实测过，改这个文件前值得先看：
 
