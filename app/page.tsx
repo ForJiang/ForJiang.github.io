@@ -106,16 +106,21 @@ export default function Home() {
     el.scrollBy({ left: dir * step, behavior: "smooth" });
   };
 
-  // 无限轮播的归位：卡片渲染三份，加载后把 scrollLeft 定位到「中间份第一张
-  // 恰好居中」的位置；滚动完全停下后若滑出了中间份，就按一整份的宽度无声
-  // 平移回去——三份内容完全相同，肉眼不可见，于是「最后一张之后」接着的就
-  // 是第一张，两个方向都滑不到头。
+  // 无限轮播的归位：卡片渲染五份，加载后把 scrollLeft 定位到「中间份第一张
+  // 恰好居中」的位置；一旦滚出中间份（band = 第三份的范围）立即按一整份的
+  // 宽度无声平移回去——五份内容完全相同，肉眼不可见，于是「最后一张之后」
+  // 接着的就是第一张，两个方向都滑不到头。
+  // 为什么立即归位、不等滚动停稳：触屏上用力一甩的惯性可达数千 px，而三份
+  // 结构的实体滚动区间只有一份宽的余量，惯性会直接撞到 scrollLeft 的物理
+  // 边界——防抖归位在手势/惯性途中又永远等不到触发，表现为「滑到尽头卡
+  // 住」（用户实测）。改成立即归位后，任意时刻距边界都有两份（~5000px）
+  // 的余量，甩不到头；惯性途中归位最多让长甩的惯性提前收尾，画面无任何
+  // 跳变。跳变距离恒为 setWidth 的整数倍，落在 snap 吸附点上，不会引起
+  // 吸附跳动。程序化平滑滚动途中被归位覆盖也无需担心：动画每帧按原目标
+  // 绝对定位，结束时最后一次 scroll 事件会把位置拉回带内。
   // 吸附用 snap-center（见卡片 className）：静止时当前卡片居中、两侧邻居
   // 等量露出，排布对称。定位/归位都以居中态为基准：scrollLeft 需要加上
   // centerOffset（卡片半宽 − 滚动口半宽），归位带宽随之整体平移。
-  // 平移必须等滚动停稳：iOS Safari 在惯性滚动途中改 scrollLeft 会直接掐断
-  // 惯性，所以用 120ms 防抖等手势/惯性结束。跳变距离恒为 setWidth 的整数倍，
-  // 落在 snap 吸附点上，不会引起吸附跳动。
   const projectCount = t.skills.projects.items.length;
   useEffect(() => {
     const el = scrollerRef.current;
@@ -130,20 +135,15 @@ export default function Home() {
     // padL 用 rect 差值取（offsetLeft 的参照系是 offsetParent，不一定是滚动容器）
     const padL = first.getBoundingClientRect().left - el.getBoundingClientRect().left;
     const centerOffset = padL + first.offsetWidth / 2 - el.clientWidth / 2;
-    el.scrollLeft = setWidth + centerOffset;
-    let timer = 0;
+    const low = setWidth * 2 + centerOffset;
+    const high = setWidth * 3 + centerOffset;
+    el.scrollLeft = low;
     const normalize = () => {
-      window.clearTimeout(timer);
-      timer = window.setTimeout(() => {
-        if (el.scrollLeft >= setWidth * 2 + centerOffset) el.scrollLeft -= setWidth;
-        else if (el.scrollLeft < setWidth + centerOffset) el.scrollLeft += setWidth;
-      }, 120);
+      while (el.scrollLeft >= high) el.scrollLeft -= setWidth;
+      while (el.scrollLeft < low) el.scrollLeft += setWidth;
     };
     el.addEventListener("scroll", normalize, { passive: true });
-    return () => {
-      el.removeEventListener("scroll", normalize);
-      window.clearTimeout(timer);
-    };
+    return () => el.removeEventListener("scroll", normalize);
   }, [projectCount]);
 
   const scrollTo = (id: string) => {
@@ -454,19 +454,20 @@ export default function Home() {
 
             {/*
               项目卡片做成横向滑动的无限轮播：容器 overflow-x-auto + snap-mandatory，
-              内容渲染三份（见下面 useEffect 的归位逻辑），中间份是常驻视区，
-              左右两份是回路缓冲——滑到最后一张之后接着的还是第一张，两个方向
-              都滑不到头。卡片宽 min(30rem, 85vw) + shrink-0，末尾一张露出的一角
-              与左右箭头按钮共同承担可滑的提示。py-4 不能省：overflow-x:auto 会把
-              overflow-y 隐式提成 auto，而卡片 hover 要上浮 4px，没有纵向内边距时
-              那 4px 会溢出 padding box 被裁掉——表现为卡片上边缘少一截。
+              内容渲染五份（见下面 useEffect 的归位逻辑），中间份是常驻视区，
+              左右各两份是回路缓冲——触屏惯性甩动也撞不到实体边界，滑到最后
+              一张之后接着的还是第一张。卡片宽 min(30rem, 85vw) + shrink-0，
+              末尾一张露出的一角与左右箭头按钮共同承担可滑的提示。py-4 不能省：
+              overflow-x:auto 会把 overflow-y 隐式提成 auto，而卡片 hover 要上浮
+              4px，没有纵向内边距时那 4px 会溢出 padding box 被裁掉——表现为
+              卡片上边缘少一截。
             */}
             <div
               ref={scrollerRef}
               tabIndex={0}
               className="-mx-2 flex snap-x snap-mandatory gap-6 overflow-x-auto px-2 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
-              {[0, 1, 2]
+              {[0, 1, 2, 3, 4]
                 .flatMap((copy) =>
                   t.skills.projects.items.map((proj, idx) => ({ copy, proj, idx }))
                 )
@@ -475,7 +476,7 @@ export default function Home() {
                     // key 必须跨语言稳定：用项目名会让 React 在切换语言时把卡片
                     // 连同里面的 RevealText 一起卸载重挂载，揭示动画重新从隐藏
                     // 态播一遍。repo 地址两种语言一致且互不重复；copy 前缀区分
-                    // 三份克隆——同一张卡的三份各自持有独立的揭示状态
+                    // 五份克隆——同一张卡的五份各自持有独立的揭示状态
                     key={`${copy}-${proj.repo}`}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
