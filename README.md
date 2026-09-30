@@ -31,7 +31,7 @@
 - 🚀 Safari / iOS 性能专项：逐字动画纯 CSS transition（合成器动画）、卡片对 WebKit 去大面积 backdrop 模糊、逐字 blur 超过 48 单元自动关闭，均经 Playwright WebKit 实测归因
 - ✒️ 按钮采用指针扩散填充动画：圆形背景从鼠标进入的位置展开铺满、文字反色（`components/ui/origin-button.tsx`）
 - 📱 完整响应式布局；移动端针对 iOS Safari 的视口与工具栏做了专门处理
-- 🗂️ 三页结构：首页（Hero / 关于我 / 插画作品 / 视频演示 / 联系方式 / 页脚）+ `/skills` 技术栈 + `/projects` 实战项目轮播；技能与项目两块各占一页，页内互相放入口，导航混合路由链接与首页锚点
+- 🧭 单页滚动结构：Hero / 关于我 / 技术能力 / 实战项目 / 插画作品 / 视频演示 / 联系方式 / 页脚，每个板块各占一屏（`min-h-screen`），导航平滑滚动到对应锚点；技术栈与实战项目之间用 CTA 互相跳转
 
 导航是常驻框架，**不参与逐字动画**：它反复出现在视口里，逐字错峰反而显碎，且直接可见。
 
@@ -42,13 +42,7 @@ personal-website/
 ├── .github/workflows/deploy.yml  # GitHub Actions 自动部署（已启用）
 ├── app/                          # Next.js App Router
 │   ├── layout.tsx                # 根布局 + 元信息 + favicon + theme-color + 播放器域名 preconnect
-│   ├── page.tsx                  # 首页：Hero / 关于 / 插画（含灯箱）/ 视频 / 联系 / 页脚
-│   ├── skills/
-│   │   ├── layout.tsx            # 技能页元信息（标题/描述）
-│   │   └── page.tsx              # 技术栈三卡片 + 项目页入口
-│   ├── projects/
-│   │   ├── layout.tsx            # 项目页元信息
-│   │   └── page.tsx              # 实战项目无限轮播 + 技能页入口
+│   ├── page.tsx                  # 单页站点：八个区块（Hero/关于/技能/实战项目/插画/视频/联系/页脚）+ 灯箱
 │   └── globals.css               # shadcn 主题 CSS 变量 + .shader-bg 固定背景规则
 ├── components/
 │   ├── brand-icons.tsx           # Bilibili / Pixiv / X 官方标志（simple-icons, CC0）
@@ -94,8 +88,6 @@ npm run dev
 仓库已包含 `.github/workflows/deploy.yml`：每次 push 到 `main`，GitHub 云端自动执行 `npm install && npm run build`（静态导出到 `out/`）并发布到 Pages。**本地不需要 Node.js 也能部署。**
 
 进度见仓库 **Actions** 标签页。
-
-> 📄 **新增子页面必须保持 `next.config.js` 的 `trailingSlash: true`。** 静态导出默认写成 `skills.html`，Pages 访问 `/skills` 会 404；开启后导出为 `skills/index.html` 目录结构，`/skills/` 才能访问，Next 也会自动给 `<Link>` 补上尾斜杠。
 
 > ⚠️ **Pages 的发布来源必须是「GitHub Actions」**（对应 API 的 `build_type: workflow`）。如果它被改成分支部署，GitHub Pages 会直接发布 `main` 根目录——线上会变成仓库里那个旧版 `index.html`，而不是这里构建的 Next.js 站点，Actions 的部署记录虽显示成功但不生效。若线上内容看起来不像本站（比如带 emoji favicon 的纯静态页），先去 **Settings → Pages** 确认来源。
 

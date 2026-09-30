@@ -1,21 +1,21 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import LiquidMetalHero from "@/components/ui/liquid-metal-hero";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { m, AnimatePresence } from "framer-motion";
-import { Github, Mail } from "lucide-react";
+import { Github, Mail, ExternalLink } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { PROJECT_IMAGES, IMAGE_SIZES } from "@/lib/image-variants";
 import { PixivIcon, XIcon, BilibiliIcon } from "@/components/brand-icons";
 import type { LightboxItem } from "@/components/lightbox";
 import OriginButton from "@/components/ui/origin-button";
 import RevealText from "@/components/ui/reveal-text";
+import ProjectCarousel from "@/components/ui/project-carousel";
 import SiteShell from "@/components/site-shell";
 import { LanguageProvider, useLanguage } from "@/components/language-context";
-import { SECTION_BADGE, TEXT_SHADOW, BODY_SHADOW, GLASS_CARD, GLASS_TAG, trackSpotlight } from "@/lib/ui-kit";
+import { SECTION_BADGE, TEXT_SHADOW, BODY_SHADOW, GLASS_CARD, GLASS_TAG, SECTION_SHELL, trackSpotlight } from "@/lib/ui-kit";
 import dynamic from "next/dynamic";
 
 /*
@@ -55,9 +55,9 @@ const CONTACTS = {
 };
 
 /**
- * 首页：Hero / 关于我 / 插画作品 / 视频演示 / 联系方式 / 页脚。
- * 技术栈与实战项目已拆成独立页面（/skills、/projects，用户要求两块各占
- * 一页），导航见 components/site-nav.tsx。
+ * 首页：Hero / 关于我 / 技术能力 / 实战项目 / 插画作品 / 视频演示 / 联系方式 / 页脚。
+ * 用户要求技能与实战项目不单独成页，各自作为占满一屏（min-h-screen）的滚动
+ * 区块排在这条动线里；技术栈与实战项目之间用 CTA 互相跳转。
  */
 export default function Home() {
   return (
@@ -68,7 +68,6 @@ export default function Home() {
 }
 
 function HomeContent() {
-  const router = useRouter();
   const { t } = useLanguage();
   const [viewing, setViewing] = useState<number | null>(null);
 
@@ -106,7 +105,7 @@ function HomeContent() {
     const conn = (navigator as Navigator & { connection?: { saveData?: boolean } })
       .connection;
     if (conn?.saveData) return;
-    const section = document.getElementById("projects");
+    const section = document.getElementById("gallery");
     if (!section) return;
     const io = new IntersectionObserver(
       (entries) => {
@@ -135,12 +134,12 @@ function HomeContent() {
         subtitle={t.hero.subtitle}
         primaryCtaLabel={t.hero.primaryCta}
         secondaryCtaLabel={t.hero.secondaryCta}
-        onPrimaryCtaClick={() => router.push("/projects")}
+        onPrimaryCtaClick={() => scrollTo("projects")}
         onSecondaryCtaClick={() => scrollTo("contact")}
       />
 
       {/* About Section */}
-      <section id="about" className="min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16">
+      <section id="about" className={SECTION_SHELL}>
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -181,9 +180,252 @@ function HomeContent() {
         </div>
       </section>
 
+      {/* Skills Section */}
+      <section id="skills" className={SECTION_SHELL}>
+        <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
+          <div className="text-center mb-16">
+            <m.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-block"
+            >
+              <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+                <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
+                  {t.skills.badge}
+                </RevealText>
+              </Badge>
+            </m.div>
+            {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
+            <RevealText
+              as="h2"
+              delay={0.15}
+              stagger={0.03}
+              duration={0.65}
+              className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
+            >
+              {t.skills.heading}
+            </RevealText>
+            <RevealText
+              as="p"
+              delay={0.4}
+              stagger={0.01}
+              duration={0.5}
+              blur={6}
+              className={`mt-3 text-white/75 ${BODY_SHADOW}`}
+            >
+              {t.skills.subtitle}
+            </RevealText>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {t.skills.groups.map((group, idx) => (
+              <m.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+              >
+                <Card
+                  className={`group relative h-full overflow-hidden transition-shadow hover:border-white/30 hover:shadow-lg ${GLASS_CARD}`}
+                  onPointerMove={trackSpotlight}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="spotlight pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  />
+                  <CardHeader className="relative z-10">
+                    <CardTitle className="text-white">
+                      <RevealText as="div" stagger={0.03} duration={0.5} blur={6}>
+                        {group.title}
+                      </RevealText>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="relative z-10">
+                    {/* 标签是组件不是纯文本，用 items 模式逐个做揭示，胶囊外观不变 */}
+                    <RevealText
+                      as="div"
+                      items={group.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
+                      ))}
+                      className="flex flex-wrap gap-2"
+                      stagger={0.04}
+                      duration={0.45}
+                      blur={6}
+                    />
+                  </CardContent>
+                </Card>
+              </m.div>
+            ))}
+          </div>
+
+          {/* 实战项目在下一屏，这里放一个入口 */}
+          <m.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-16 text-center"
+          >
+            <button
+              onClick={() => scrollTo("projects")}
+              className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/40 px-5 py-2.5 text-sm font-medium text-white/85 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <RevealText as="span" stagger={0.02} duration={0.45} blur={5}>
+                {t.skills.projects.projectsCta}
+              </RevealText>
+            </button>
+          </m.div>
+        </div>
+      </section>
 
       {/* Projects Section */}
-      <section id="projects" className="min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16">
+      <section id="projects" className={SECTION_SHELL}>
+        <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
+          <div className="text-center mb-16">
+            <m.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-block"
+            >
+              <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+                <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
+                  {t.skills.projects.badge}
+                </RevealText>
+              </Badge>
+            </m.div>
+            <RevealText
+              as="h2"
+              delay={0.15}
+              stagger={0.03}
+              duration={0.65}
+              className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
+            >
+              {t.skills.projects.heading}
+            </RevealText>
+            <RevealText
+              as="p"
+              delay={0.35}
+              stagger={0.01}
+              duration={0.5}
+              blur={6}
+              className={`mt-3 text-white/75 ${BODY_SHADOW}`}
+            >
+              {t.skills.projects.subtitle}
+            </RevealText>
+          </div>
+
+          {/* 真无限轮播：transform 驱动的轨道组件，触屏甩动没有物理边界
+              （原理与交互模型见 components/ui/project-carousel.tsx 顶部
+              注释）。卡片宽 min(30rem, 85vw) + shrink-0，居中吸附。 */}
+          <ProjectCarousel
+            count={t.skills.projects.items.length}
+            prevLabel={t.skills.projects.prevProject}
+            nextLabel={t.skills.projects.nextProject}
+          >
+            {[0, 1, 2, 3, 4]
+              .flatMap((copy) =>
+                t.skills.projects.items.map((proj, idx) => ({ copy, proj, idx }))
+              )
+              .map(({ copy, proj, idx }) => (
+                <m.div
+                  // key 必须跨语言稳定：用项目名会让 React 在切换语言时把卡片
+                  // 连同里面的 RevealText 一起卸载重挂载，揭示动画重新从隐藏
+                  // 态播一遍。repo 地址两种语言一致且互不重复；copy 前缀区分
+                  // 五份克隆——同一张卡的五份各自持有独立的揭示状态
+                  key={`${copy}-${proj.repo}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="w-[min(30rem,85vw)] shrink-0"
+                >
+                  <Card
+                    className={`group relative h-full flex flex-col overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 ${GLASS_CARD}`}
+                    onPointerMove={trackSpotlight}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="spotlight pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    />
+                    <CardHeader className="relative z-10">
+                      <CardTitle className="text-white">
+                        <RevealText as="div" stagger={0.03} duration={0.5} blur={6}>
+                          {proj.name}
+                        </RevealText>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="relative z-10 flex-1 flex flex-col gap-4">
+                      <RevealText
+                        as="p"
+                        stagger={0.01}
+                        duration={0.5}
+                        blur={6}
+                        className={`text-white/75 flex-1 ${BODY_SHADOW}`}
+                      >
+                        {proj.desc}
+                      </RevealText>
+                      <RevealText
+                        as="div"
+                        items={proj.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
+                        ))}
+                        className="flex flex-wrap gap-2"
+                        stagger={0.04}
+                        duration={0.45}
+                        blur={6}
+                      />
+                      <div className="flex flex-wrap gap-3 pt-1">
+                        {/* 传 href 即渲染真实 <a>：可中键/右键新标签、可被爬取 */}
+                        <OriginButton
+                          tone="glass"
+                          href={proj.repo}
+                          className="h-9 px-3 text-xs"
+                        >
+                          <Github className="h-4 w-4" />
+                          <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                            GitHub
+                          </RevealText>
+                        </OriginButton>
+                        <OriginButton
+                          tone="glass"
+                          href={proj.demo}
+                          className="h-9 px-3 text-xs"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                            {t.skills.projects.demoCta}
+                          </RevealText>
+                        </OriginButton>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </m.div>
+              ))}
+          </ProjectCarousel>
+
+          {/* 技术栈在上一屏，这里放一个返回入口 */}
+          <m.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-16 text-center"
+          >
+            <button
+              onClick={() => scrollTo("skills")}
+              className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/40 px-5 py-2.5 text-sm font-medium text-white/85 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <RevealText as="span" stagger={0.02} duration={0.45} blur={5}>
+                {t.skills.projects.skillsCta}
+              </RevealText>
+            </button>
+          </m.div>
+        </div>
+      </section>
+
+      {/* Gallery Section（AI 插画） */}
+      <section id="gallery" className={SECTION_SHELL}>
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <div className="text-center mb-16">
             <m.div
@@ -316,7 +558,7 @@ function HomeContent() {
       </section>
 
       {/* Videos Section */}
-      <section id="videos" className="min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16">
+      <section id="videos" className={SECTION_SHELL}>
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <div className="text-center mb-16">
             <m.div
@@ -379,7 +621,7 @@ function HomeContent() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16">
+      <section id="contact" className={SECTION_SHELL}>
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <m.div
             initial={{ opacity: 0, y: 20 }}
