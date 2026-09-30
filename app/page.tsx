@@ -470,8 +470,11 @@ function HomeContent() {
                       </picture>
                       )}
                     </div>
-                    <CardHeader>
-                      <CardTitle className="text-white">
+                    {/* 文字区缩小一档：标题 18px（CardTitle 默认 24px 在窄卡里
+                        换行难看）、简介 14px、内边距 p-5——封面已是固定 16:9，
+                        文字越克制、图占卡片的比例越高 */}
+                    <CardHeader className="p-5 pb-2">
+                      <CardTitle className="text-lg text-white">
                         <RevealText as="div" stagger={0.03} duration={0.5} blur={6}>
                           {card.title}
                         </RevealText>
@@ -479,13 +482,13 @@ function HomeContent() {
                     </CardHeader>
                     {/* 文字区按内容自然高度即可：封面已是固定 16:9，卡片高度 =
                         图 + 文字，不再需要谁去吸收剩余空间 */}
-                    <CardContent className="flex flex-col gap-4">
+                    <CardContent className="flex flex-col gap-2 p-5 pt-0">
                       <RevealText
                         as="p"
                         stagger={0.01}
                         duration={0.5}
                         blur={6}
-                        className={`text-white/75 ${BODY_SHADOW}`}
+                        className={`text-sm text-white/70 ${BODY_SHADOW}`}
                       >
                         {card.desc}
                       </RevealText>
