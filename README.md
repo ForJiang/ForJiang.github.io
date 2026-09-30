@@ -18,20 +18,19 @@
 
 ## 功能
 
-- 🌊 液态金属着色器全站固定背景（`@paper-design/shaders-react`），滚动全程可见、不随地址栏伸缩而变形位移
-- 🖱️ 白色鼠标流光轨迹特效（遵循 `prefers-reduced-motion`）
-- ✨ 全站文字逐字揭示：每个单元从「透明 + 下移 +（短文本）模糊」过渡到清晰位置，按 stagger 错峰，滚动进入视口时触发。**纯 CSS transition 驱动**（合成器动画），framer 不参与逐帧（`components/ui/reveal-text.tsx`）
-- 🧭 四个内容版块各占满一页（`min-h-screen` + 垂直居中），滚动节奏一致
-- 🌐 中文 / English 双语言切换（**默认英文**，手动切换后记住选择，不再跟随浏览器语言）
-- 🖼️ 插画封面使用 `<picture>` + `srcset` 响应式加载：AVIF → WebP → WebP（480 宽）逐级回退，三档宽度按视口与 DPR 选择，文件名带内容哈希
-- 🔍 点击封面图打开全屏灯箱：**立即显示已缓存的封面变体（轻模糊过渡）**，2400×1352 **WebP 无损**原图在后台下载、就绪后淡入盖住它。图片**左右滑动切换**（也可以用键盘方向键），底部是「上一张 / 页码 / 下一张」合成的一行居中控件，**不自动播放**——切换只由用户操作触发。原图还有两级预热：画廊进入视口后按顺序预载全部原图，桌面端悬停卡片立即预载该张，翻页时相邻原图也已预载——省流量模式（Save-Data）不预热。灯箱代码本身按需加载（`dynamic`），画廊进入视口时顺手把 chunk 拉下来，点开时无需再等网络
-- 🔗 联系方式带 Bilibili / Pixiv / X 官方标志（simple-icons, CC0），入口为真实 `<a>`，可中键新标签打开
-- ↔️ 实战项目横向无限轮播：卡片渲染五份 + 滚出中间份立即按整份宽度无声归位，触屏惯性甩动也撞不到实体边界，滑到最后一张自动接上第一张，两个方向都滑不到头
-- 🪟 全站深色玻璃拟态面板，白色文字系统，任意液滴位置下保持可读（Safari 上大面积卡片自动降级为不透明深色底，见「Safari 性能专项」）
-- 🚀 Safari / iOS 性能专项：逐字动画纯 CSS transition（合成器动画）、卡片对 WebKit 去大面积 backdrop 模糊、逐字 blur 超过 48 单元自动关闭，均经 Playwright WebKit 实测归因
-- ✒️ 按钮采用指针扩散填充动画：圆形背景从鼠标进入的位置展开铺满、文字反色（`components/ui/origin-button.tsx`）
-- 📱 完整响应式布局；移动端针对 iOS Safari 的视口与工具栏做了专门处理（页脚预留 100px 避开底部工具栏；固定背景层踩过 `lvh` 在工具栏收起时少算一截露出黑带的怪癖，用「body 底色 = shader 的 colorBack」接缝，见 `globals.css`）
-- 🧭 单页滚动结构：Hero / 关于我 / 技术能力 / 实战项目 / 插画作品 / 视频演示 / 联系方式 / 页脚，每个板块各占一屏（`min-h-screen`），导航平滑滚动到对应锚点；技术栈与实战项目之间用 CTA 互相跳转
+- 液态金属着色器全站固定背景（`@paper-design/shaders-react`），滚动全程可见、不随地址栏伸缩而变形位移
+- 白色鼠标流光轨迹特效（遵循 `prefers-reduced-motion`）
+- 全站文字逐字揭示：每个单元从「透明 + 下移 +（短文本）模糊」过渡到清晰位置，按 stagger 错峰，滚动进入视口时触发。**纯 CSS transition 驱动**（合成器动画），framer 不参与逐帧（`components/ui/reveal-text.tsx`）
+- 中文 / English 双语言切换（**默认英文**，手动切换后记住选择，不再跟随浏览器语言）
+- 插画封面使用 `<picture>` + `srcset` 响应式加载：AVIF → WebP → WebP（480 宽）逐级回退，三档宽度按视口与 DPR 选择，文件名带内容哈希
+- 点击封面图打开全屏灯箱：**立即显示已缓存的封面变体（轻模糊过渡）**，2400×1352 **WebP 无损**原图在后台下载、就绪后淡入盖住它。图片**左右滑动切换**（也可以用键盘方向键），底部是「上一张 / 页码 / 下一张」合成的一行居中控件，**不自动播放**——切换只由用户操作触发。原图还有两级预热：画廊进入视口后按顺序预载全部原图，桌面端悬停卡片立即预载该张，翻页时相邻原图也已预载——省流量模式（Save-Data）不预热。灯箱代码本身按需加载（`dynamic`），画廊进入视口时顺手把 chunk 拉下来，点开时无需再等网络
+- 联系方式带 Bilibili / Pixiv / X 官方标志（simple-icons, CC0），入口为真实 `<a>`，可中键新标签打开
+- 实战项目横向无限轮播：卡片渲染五份 + 滚出中间份立即按整份宽度无声归位，触屏惯性甩动也撞不到实体边界，滑到最后一张自动接上第一张，两个方向都滑不到头
+- 全站深色玻璃拟态面板，白色文字系统，任意液滴位置下保持可读（Safari 上大面积卡片自动降级为不透明深色底，见「Safari 性能专项」）
+- Safari / iOS 性能专项：逐字动画纯 CSS transition（合成器动画）、卡片对 WebKit 去大面积 backdrop 模糊、逐字 blur 超过 48 单元自动关闭，均经 Playwright WebKit 实测归因
+- 按钮采用指针扩散填充动画：圆形背景从鼠标进入的位置展开铺满、文字反色（`components/ui/origin-button.tsx`）
+- 完整响应式布局；移动端针对 iOS Safari 的视口与工具栏做了专门处理（页脚预留 100px 避开底部工具栏；固定背景层踩过 `lvh` 在工具栏收起时少算一截露出黑带的怪癖，用「body 底色 = shader 的 colorBack」接缝，见 `globals.css`）
+- 单页滚动结构：Hero / 关于我 / 技术能力 / 实战项目 / 插画作品 / 视频演示 / 联系方式 / 页脚，每个板块各占一屏（`min-h-screen` + 垂直居中），导航平滑滚动到对应锚点
 
 导航是常驻框架，**不参与逐字动画**：它反复出现在视口里，逐字错峰反而显碎，且直接可见。
 
@@ -50,8 +49,8 @@ personal-website/
 │   ├── lightbox.tsx              # 全屏原图查看器
 │   ├── liquid-metal-background.tsx # 全站固定液态金属背景 + 画质自适应
 │   ├── mouse-trail.tsx           # 鼠标流光轨迹
-│   ├── site-nav.tsx              # 三页共用的导航（路由 + 首页锚点混合）
-│   ├── site-shell.tsx            # 三页共用的外框（背景 + 轨迹 + 导航 + LazyMotion）
+│   ├── site-nav.tsx              # 全站导航（首页锚点 + 平滑滚动）
+│   ├── site-shell.tsx            # 页面外框（背景 + 轨迹 + 导航 + LazyMotion）
 │   └── ui/
 │       ├── badge.tsx / button.tsx / card.tsx   # shadcn/ui 组件
 │       ├── liquid-metal-hero.tsx               # Hero 区
@@ -62,7 +61,7 @@ personal-website/
 │   ├── favicon-inline.ts         # 主图标的圆角 PNG 内联 data URI
 │   ├── i18n.ts                   # 中英双语文案字典（含实战项目数据）
 │   ├── image-variants.ts         # 由脚本生成的图片变体清单
-│   ├── ui-kit.ts                 # 三页共用的样式常量 + 卡片 spotlight 指针追踪
+│   ├── ui-kit.ts                 # 全站共用样式常量 + 卡片 spotlight 指针追踪
 │   └── utils.ts                  # cn() 工具函数
 ├── public/
 │   ├── favicon.jpg               # apple-touch-icon 用（直角、整幅不透明，256×256）
@@ -89,7 +88,7 @@ npm run dev
 
 进度见仓库 **Actions** 标签页。
 
-> ⚠️ **Pages 的发布来源必须是「GitHub Actions」**（对应 API 的 `build_type: workflow`）。如果它被改成分支部署，GitHub Pages 会直接发布 `main` 根目录——线上会变成仓库里那个旧版 `index.html`，而不是这里构建的 Next.js 站点，Actions 的部署记录虽显示成功但不生效。若线上内容看起来不像本站（比如带 emoji favicon 的纯静态页），先去 **Settings → Pages** 确认来源。
+> **Pages 的发布来源必须是「GitHub Actions」**（对应 API 的 `build_type: workflow`）。如果它被改成分支部署，GitHub Pages 会直接发布 `main` 根目录——线上会变成仓库里那个旧版 `index.html`，而不是这里构建的 Next.js 站点，Actions 的部署记录虽显示成功但不生效。若线上内容看起来不像本站（比如带 emoji favicon 的纯静态页），先去 **Settings → Pages** 确认来源。
 
 ## 插画图片工作流
 
