@@ -11,8 +11,8 @@
     "deploy": "npm run export && gh-pages -d out"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.1.0",
     "@paper-design/shaders-react": "^0.0.81",
+    "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.0.0",
@@ -20,8 +20,7 @@
     "next": "14.2.35",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "tailwind-merge": "^2.4.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwind-merge": "^2.4.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -30,7 +29,6 @@
     "autoprefixer": "^10.4.0",
     "eslint": "^8.0.0",
     "eslint-config-next": "14.2.35",
-    "gh-pages": "^6.1.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.0.0"

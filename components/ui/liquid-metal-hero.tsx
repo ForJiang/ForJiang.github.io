@@ -3,7 +3,6 @@
 import OriginButton from '@/components/ui/origin-button';
 import RevealText from '@/components/ui/reveal-text';
 import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
 import { LazyMotion, domAnimation, m } from 'framer-motion';
 
 interface LiquidMetalHeroProps {
@@ -14,7 +13,6 @@ interface LiquidMetalHeroProps {
   secondaryCtaLabel?: string;
   onPrimaryCtaClick: () => void;
   onSecondaryCtaClick?: () => void;
-  features?: string[];
 }
 
 export default function LiquidMetalHero({
@@ -25,7 +23,6 @@ export default function LiquidMetalHero({
   secondaryCtaLabel,
   onPrimaryCtaClick,
   onSecondaryCtaClick,
-  features = [],
 }: LiquidMetalHeroProps) {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -107,43 +104,6 @@ export default function LiquidMetalHero({
               </m.div>
             )}
           </m.div>
-          
-          {features.length > 0 && (
-            <m.div
-              className="pt-12"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.65, ease: [0.215, 0.61, 0.355, 1] }}
-            >
-              <m.div
-                whileHover={{ y: -4 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Card className="bg-black/40 border-white/15 backdrop-blur-md shadow-2xl">
-                  <div className="p-8">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                      {features.map((feature, index) => (
-                        <m.div
-                          key={index}
-                          className="flex items-center justify-center text-center"
-                        >
-                          <RevealText
-                            as="p"
-                            stagger={0.03}
-                            duration={0.5}
-                            blur={6}
-                            className="text-white/90 font-medium text-lg"
-                          >
-                            {feature}
-                          </RevealText>
-                        </m.div>
-                      ))}
-                    </div>
-                  </div>
-                </Card>
-              </m.div>
-            </m.div>
-          )}
         </div>
       </div>
     </section>
