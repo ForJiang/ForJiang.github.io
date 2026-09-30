@@ -35,7 +35,10 @@ export default function LiquidMetalHero({
                 variant="secondary"
                 className="bg-black/40 px-5 py-2 text-white border-white/25 hover:bg-black/55 transition-colors duration-300 backdrop-blur-sm"
               >
-                <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
+                {/* 徽章排在标题之后出现（用户要求）：标题 0.05s 起、0.75s 的
+                    逐字在 0.8s 收尾，徽章从 0.85s 接上。visibility:hidden 的
+                    隐藏态不占布局变化，徽章晚出现不会让标题闪位 */}
+                <RevealText as="span" delay={0.85} stagger={0.03} duration={0.55} blur={8}>
                   {badge}
                 </RevealText>
               </Badge>
@@ -44,10 +47,10 @@ export default function LiquidMetalHero({
 
           <div className="space-y-6">
             {/* Hero 标题是一次性入场（非滚动触发），逐字揭示用 delay 排成
-                徽章 → 标题 → 副标题 的顺序 */}
+                标题 → 徽章 → 副标题 → 按钮 的顺序 */}
             <RevealText
               as="h1"
-              delay={0.15}
+              delay={0.05}
               stagger={0.045}
               duration={0.75}
               blur={12}
@@ -59,7 +62,7 @@ export default function LiquidMetalHero({
             {subtitle && (
               <RevealText
                 as="p"
-                delay={0.35}
+                delay={1.05}
                 stagger={0.03}
                 duration={0.65}
                 blur={8}
@@ -69,12 +72,12 @@ export default function LiquidMetalHero({
               </RevealText>
             )}
           </div>
-          
+
           <m.div
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5, ease: [0.215, 0.61, 0.355, 1] }}
+            transition={{ duration: 0.6, delay: 1.25, ease: [0.215, 0.61, 0.355, 1] }}
           >
             {/* 悬停时圆形填充从指针处扩散、文字反色；上浮淡入由这一层负责，
                 缩放反馈交给按钮自身，避免双重缩放 */}
