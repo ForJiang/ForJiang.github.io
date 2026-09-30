@@ -679,8 +679,10 @@ export default function Home() {
         </div>
 
         {/* 播放器单独用更宽的容器：视频画面越大越好，而标题/副标题保持适宽
-            才可读（长行文字拉太宽会难以阅读），两者分开约束 */}
-        <div className="container mx-auto px-6 lg:px-8">
+            才可读（长行文字拉太宽会难以阅读），两者分开约束。
+            这里不用 container 类：它自带 xl 断点 1280px 的上限，会把播放器
+            提前截小；改用 w-full + 内层 1440px 上限，宽屏上才是真的满幅。 */}
+        <div className="mx-auto w-full px-6 lg:px-8">
           {/* B 站外链播放器：协议相对地址继承当前协议，http/https 站点都不触发
               混合内容拦截；loading="lazy" 让播放器滚入视野后才联网加载，
               不占用首屏带宽。外层 aspect-video 兜住 16:9 比例，内层绝对定位铺满。
