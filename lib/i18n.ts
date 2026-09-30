@@ -39,19 +39,19 @@ export const translations = {
     skills: {
       badge: "技术栈",
       heading: "我的技术能力",
-      subtitle: "常用的工具与技术，持续学习中",
+      subtitle: "做项目时实际用到的工具与技术，持续学习中",
       groups: [
         {
-          title: "🧭 前端开发",
-          tags: ["HTML5 / CSS3", "JavaScript", "TypeScript", "Vue 3", "React", "小程序", "响应式设计"],
+          title: "🎨 前端与可视化",
+          tags: ["TypeScript / JavaScript", "Canvas 2D", "SVG 动画", "three.js / WebGL", "React / Next.js", "Tailwind CSS"],
         },
         {
-          title: "⚙️ 后端与数据",
-          tags: ["Node.js", "Python", "MySQL", "PostgreSQL", "Redis", "RESTful API", "GraphQL"],
+          title: "🧠 浏览器端 AI 与媒体",
+          tags: ["ONNX Runtime Web", "WebGPU / WASM", "Web Audio API", "IndexedDB", "EXIF / GPS / XMP", "ZIP 打包", "Python 推理服务"],
         },
         {
-          title: "🛠️ 工具与其他",
-          tags: ["Git", "Docker", "Nginx", "Linux", "Figma", "性能优化", "单元测试"],
+          title: "🛠️ 工程与算法",
+          tags: ["单元测试", "符号求导引擎", "性能优化", "Git / GitHub Actions", "零依赖构建"],
         },
       ],
       projects: {
@@ -167,19 +167,19 @@ export const translations = {
     skills: {
       badge: "Tech Stack",
       heading: "My Skills",
-      subtitle: "Tools and technologies I use, always learning",
+      subtitle: "Tools and technologies I actually used in my projects, always learning",
       groups: [
         {
-          title: "🧭 Frontend Development",
-          tags: ["HTML5 / CSS3", "JavaScript", "TypeScript", "Vue 3", "React", "Mini Programs", "Responsive Design"],
+          title: "🎨 Frontend & Visualization",
+          tags: ["TypeScript / JavaScript", "Canvas 2D", "SVG Animation", "three.js / WebGL", "React / Next.js", "Tailwind CSS"],
         },
         {
-          title: "⚙️ Backend & Data",
-          tags: ["Node.js", "Python", "MySQL", "PostgreSQL", "Redis", "RESTful API", "GraphQL"],
+          title: "🧠 In-browser AI & Media",
+          tags: ["ONNX Runtime Web", "WebGPU / WASM", "Web Audio API", "IndexedDB", "EXIF / GPS / XMP", "ZIP Packaging", "Python Inference Service"],
         },
         {
-          title: "🛠️ Tools & More",
-          tags: ["Git", "Docker", "Nginx", "Linux", "Figma", "Performance", "Unit Testing"],
+          title: "🛠️ Engineering & Algorithms",
+          tags: ["Unit Testing", "Symbolic Differentiation", "Performance", "Git / GitHub Actions", "Zero-dependency Builds"],
         },
       ],
       projects: {
