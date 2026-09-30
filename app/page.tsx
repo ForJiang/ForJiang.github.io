@@ -243,23 +243,6 @@ function HomeContent() {
               </m.div>
             ))}
           </div>
-
-          {/* 实战项目在下一屏，这里放一个入口 */}
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-16 text-center"
-          >
-            <button
-              onClick={() => scrollTo("projects")}
-              className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/40 px-5 py-2.5 text-sm font-medium text-white/85 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white"
-            >
-              <RevealText as="span" stagger={0.02} duration={0.45} blur={5}>
-                {t.skills.projects.projectsCta}
-              </RevealText>
-            </button>
-          </m.div>
         </div>
       </section>
 
@@ -388,23 +371,6 @@ function HomeContent() {
                 </m.div>
               ))}
           </ProjectCarousel>
-
-          {/* 技术栈在上一屏，这里放一个返回入口 */}
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-16 text-center"
-          >
-            <button
-              onClick={() => scrollTo("skills")}
-              className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/40 px-5 py-2.5 text-sm font-medium text-white/85 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white"
-            >
-              <RevealText as="span" stagger={0.02} duration={0.45} blur={5}>
-                {t.skills.projects.skillsCta}
-              </RevealText>
-            </button>
-          </m.div>
         </div>
       </section>
 
