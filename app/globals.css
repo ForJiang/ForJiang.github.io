@@ -39,6 +39,14 @@
   }
   body {
     @apply bg-background text-foreground;
+    /*
+     * 与液态金属背景的 colorBack(#0a0a0c) 保持一致。root/body 背景是唯一
+     * 总能铺满整个画布的层——fixed 的 shader 层在 iOS Safari 上会踩视口单位
+     * 怪癖：工具栏收起时 lvh 可能仍按小视口计算且不重算，背景层短一截，
+     * 页面底部就露出这条纯黑带（用户实测）。露出区域用同一底色接上，
+     * 与 shader 的平铺底色完全同色，看不出接缝。
+     */
+    background-color: #0a0a0c;
   }
 }
 
