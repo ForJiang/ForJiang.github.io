@@ -40,6 +40,12 @@ export default function RootLayout({
         */}
         <link rel="apple-touch-icon" href="/favicon.jpg" />
         {/*
+          视频板块的 B 站播放器是懒加载 iframe：滚近视野才发起请求。预连域名
+          把 DNS 查询 + TLS 握手提前到页面空闲时段做完，用户滑到视频时播放器
+          能立即开始下载，省掉一两百毫秒的连接建立时间。
+        */}
+        <link rel="preconnect" href="https://player.bilibili.com" />
+        {/*
           给 WebKit（Safari 及 iOS 上的全部浏览器）打类，供 globals.css 做
           引擎降级：卡片的大面积 backdrop-filter 在滚动时每帧都要重滤背景，
           是 Safari 滚动掉帧的主要来源之一。必须是 head 内联脚本——class 要在

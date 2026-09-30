@@ -23,13 +23,10 @@ interface LightboxProps {
   onNavigate: (index: number) => void;
 }
 
-/** 自动轮播间隔：每 3 秒切一张，循环播放 */
-const AUTOPLAY_MS = 3000;
-
 /**
  * 全屏原图查看器。遮罩点击 / Esc 关闭，左右方向键或底部的按钮切换，
  * 图片本身支持左右滑动切换（pointer 拖拽，松手超过阈值即翻页）。
- * 每 3 秒自动轮播一张、循环播放；拖拽期间自动暂停，松手后重新计时。
+ * 不自动播放：切换只由用户操作触发，看多久都不会被抢走。
  * z 轴必须高于鼠标轨迹画布（z-9999），否则会被轨迹层盖住。
  *
  * 原图是 2400px 无损 WebP（每张 ~3MB），点开才开始下载会白等数秒。
@@ -37,7 +34,9 @@ const AUTOPLAY_MS = 3000;
  * 原图 onLoad 后淡入盖住它；同时预载相邻两张，翻页时无需再等。
  *
  * 没有两侧的悬浮箭头：竖屏手机上它们会被系统工具栏 / 手势区挡住
- * （用户实测），切换入口改为底部按钮 + 图片滑动。
+ * （用户实测），切换入口改为底部按钮 + 图片滑动。信息与控件各自
+ * 水平居中，整组内容在遮罩里垂直居中：pb 只留 iOS 工具栏的余量，
+ * 不再为旧版自动轮播预留大段空白。
  */
 export default function Lightbox({ items, index, onClose, onNavigate }: LightboxProps) {
   const current = items[index];
@@ -46,9 +45,8 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
   const fullRef = useRef<HTMLImageElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const [fullLoaded, setFullLoaded] = useState(false);
-  // 拖拽状态：active 区分「点按」与「真的拖了」；draggingRef 供自动轮播跳过
+  // 拖拽状态：区分「点按」与「真的拖了」只需 startX 与指针 id 即可判断
   const dragRef = useRef<{ id: number; startX: number } | null>(null);
-  const draggingRef = useRef(false);
   // 滑动翻页会让带 key 的舞台重挂载，浏览器随后派发的 click 会落到遮罩上
   // （down/up 的目标节点已不是同一个）——用标记吞掉这一次 click，防止误关
   const suppressClickRef = useRef(false);
@@ -86,13 +84,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
       }
     });
 
-    // 自动轮播：3 秒一张循环；拖拽期间跳过，避免切换打断手势
-    const timer = window.setInterval(() => {
-      if (!draggingRef.current) step(1);
-    }, AUTOPLAY_MS);
-
     return () => {
-      window.clearInterval(timer);
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
       (restoreRef.current as HTMLElement | null)?.focus?.();
@@ -102,13 +94,16 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
 
   const onStagePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
+    // 手势面盖住整个遮罩，但落在按钮/链接上的按下不是拖拽：一旦这里捕获指针，
+    // 整颗指针序列（含兼容鼠标事件与最终 click）都会被重定向到 stage 元素，
+    // 按钮就永远收不到 click——实测点「下一张」毫无反应即此原因。
+    if ((e.target as Element | null)?.closest?.("button, a")) return;
     try {
       stageRef.current?.setPointerCapture(e.pointerId);
     } catch {
       /* 指针已释放时无需捕获 */
     }
     dragRef.current = { id: e.pointerId, startX: e.clientX };
-    draggingRef.current = true;
     const s = stageRef.current;
     if (s) s.style.transition = "none";
   };
@@ -124,7 +119,6 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
     const d = dragRef.current;
     if (!d || d.id !== e.pointerId) return;
     dragRef.current = null;
-    draggingRef.current = false;
     const dx = e.clientX - d.startX;
     const s = stageRef.current;
     if (Math.abs(dx) > 60) {
@@ -141,7 +135,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
 
   return (
     <m.div
-      className="fixed inset-0 z-[10000] flex flex-col items-center justify-center gap-4 bg-black/90 p-4 pb-24 backdrop-blur-md [touch-action:pan-y]"
+      className="fixed inset-0 z-[10000] flex flex-col items-center justify-center gap-4 bg-black/90 p-4 pb-8 backdrop-blur-md [touch-action:pan-y]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -172,8 +166,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
 
       {/* stopPropagation：点图片 itself 不关闭，只有点遮罩才关。
           尺寸由 thumb 撑起，原图绝对定位铺在其上——两者长宽比相同
-          （同一母版缩出），淡入时几何完全重合。滑动手势面在容器上
-          （外层），拖拽位移作用在这个 stage 上。 */}
+          （同一母版缩出），淡入时几何完全重合。 */}
       <m.div
         key={current.src}
         className="relative max-h-[80vh] max-w-[92vw] shadow-2xl"
@@ -182,12 +175,10 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
         transition={{ duration: 0.25 }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* 只做定位：指针手势统一由外层遮罩处理（见 onStagePointerDown 的
+            按钮守卫），这里不再重复绑定同一套 handler */}
         <div
           ref={stageRef}
-          onPointerDown={onStagePointerDown}
-          onPointerMove={onStagePointerMove}
-          onPointerUp={endStageDrag}
-          onPointerCancel={endStageDrag}
           className="relative [touch-action:pan-y]"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -223,16 +214,13 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
       >
         <p className="text-lg font-semibold text-white">{current.title}</p>
         <p className="mt-1 text-sm text-white/70">{current.desc}</p>
-        <p className="mt-2 text-xs text-white/45">
-          {index + 1} / {items.length}
-        </p>
       </div>
 
-      {/* 底部切换按钮：竖屏手机上两侧悬浮箭头会被系统工具栏挡住，移到这里；
-          pb-24 让整组内容避开 iOS 底部工具栏 */}
+      {/* 底部控制条：切换按钮与页码合成一行，整组水平居中；
+          pb-8 让控件避开 iOS 底部工具栏 */}
       {items.length > 1 && (
         <div
-          className="flex items-center justify-center gap-10"
+          className="flex items-center justify-center gap-6"
           onClick={(e) => e.stopPropagation()}
         >
           <button
@@ -242,6 +230,9 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
+          <p className="min-w-[3rem] text-center text-xs text-white/45">
+            {index + 1} / {items.length}
+          </p>
           <button
             onClick={() => step(1)}
             aria-label="下一张"

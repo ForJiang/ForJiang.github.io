@@ -1,7 +1,6 @@
 "use client";
 
 import LiquidMetalHero from "@/components/ui/liquid-metal-hero";
-import MouseTrail from "@/components/mouse-trail";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +11,7 @@ import dynamic from "next/dynamic";
 import { translations, type Lang } from "@/lib/i18n";
 import { PROJECT_IMAGES, IMAGE_SIZES } from "@/lib/image-variants";
 import { PixivIcon, XIcon, BilibiliIcon } from "@/components/brand-icons";
-import Lightbox, { type LightboxItem } from "@/components/lightbox";
+import type { LightboxItem } from "@/components/lightbox";
 import OriginButton from "@/components/ui/origin-button";
 import RevealText from "@/components/ui/reveal-text";
 import ProjectCarousel from "@/components/ui/project-carousel";
@@ -24,6 +23,20 @@ import ProjectCarousel from "@/components/ui/project-carousel";
 const LiquidMetalBackground = dynamic(
   () => import("@/components/liquid-metal-background")
 );
+
+/*
+ * 鼠标流光轨迹同样是纯装饰，且要在 hydration 后才开始跑：拆成独立 chunk，
+ * 不占首屏 JS，页面文字可更早达到可交互。
+ */
+const MouseTrail = dynamic(() => import("@/components/mouse-trail"));
+
+/*
+ * 灯箱只在点开图片时才出现，同样按需加载：其代码（双图淡入、滑动翻页、
+ * 预载逻辑）不参与首屏。为避免点击后多等一个 chunk，画廊（#projects）
+ * 进入视口时就顺手预载——那时用户还在看封面，点开时模块早已就绪。
+ * 类型仍从原模块引入，仅运行期加载被延后。
+ */
+const Lightbox = dynamic(() => import("@/components/lightbox"));
 
 const NAV_IDS = ["about", "skills", "projects", "videos", "contact"] as const;
 
@@ -87,8 +100,6 @@ export default function Home() {
     document.documentElement.lang = next === "zh" ? "zh-CN" : "en";
   };
 
-  // 项目卡片横向滚动：一按走一张卡（卡宽 + gap），用 scrollBy 让浏览器自己
-  // 处理平滑与边界，比手算 scrollLeft 稳
   // 卡片 hover 光晕跟随指针：只写 CSS 变量，不 setState——每次 pointermove
   // 触发一次重渲染会让卡片里的逐字 span 全部重新 diff，代价不值。
   const trackSpotlight = (e: React.PointerEvent<HTMLElement>) => {
@@ -140,6 +151,10 @@ export default function Home() {
       (entries) => {
         if (!entries.some((e) => e.isIntersecting)) return;
         io.disconnect();
+        // 灯箱代码按需加载（见顶部 dynamic 导入）：这里先把 chunk 拉下来，
+        // 用户点开图片时不必再等一次网络往返。与动态 import 走同一模块图，
+        // webpack 会复用已下载的实例，不会重复请求。
+        void import("@/components/lightbox");
         PROJECT_IMAGES.forEach((_, i) => {
           window.setTimeout(() => prefetchFull(i), i * 2500);
         });

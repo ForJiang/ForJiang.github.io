@@ -24,7 +24,7 @@
 - 🧭 四个内容版块各占满一页（`min-h-screen` + 垂直居中），滚动节奏一致
 - 🌐 中文 / English 双语言切换（**默认英文**，手动切换后记住选择，不再跟随浏览器语言）
 - 🖼️ 插画封面使用 `<picture>` + `srcset` 响应式加载：AVIF → WebP → WebP（480 宽）逐级回退，三档宽度按视口与 DPR 选择，文件名带内容哈希
-- 🔍 点击封面图打开全屏灯箱：**立即显示已缓存的封面变体（轻模糊过渡）**，2400×1352 **WebP 无损**原图在后台下载、就绪后淡入盖住它。图片**左右滑动切换**（也可以用键盘方向键），底部有上一张 / 下一张按钮，**每 3 秒自动轮播一张并循环**，拖拽期间自动暂停。原图还有两级预热：画廊进入视口后按顺序预载全部原图，桌面端悬停卡片立即预载该张，翻页时相邻原图也已预载——省流量模式（Save-Data）不预热
+- 🔍 点击封面图打开全屏灯箱：**立即显示已缓存的封面变体（轻模糊过渡）**，2400×1352 **WebP 无损**原图在后台下载、就绪后淡入盖住它。图片**左右滑动切换**（也可以用键盘方向键），底部是「上一张 / 页码 / 下一张」合成的一行居中控件，**不自动播放**——切换只由用户操作触发。原图还有两级预热：画廊进入视口后按顺序预载全部原图，桌面端悬停卡片立即预载该张，翻页时相邻原图也已预载——省流量模式（Save-Data）不预热。灯箱代码本身按需加载（`dynamic`），画廊进入视口时顺手把 chunk 拉下来，点开时无需再等网络
 - 🔗 联系方式带 Bilibili / Pixiv / X 官方标志（simple-icons, CC0），入口为真实 `<a>`，可中键新标签打开
 - ↔️ 实战项目横向无限轮播：卡片渲染五份 + 滚出中间份立即按整份宽度无声归位，触屏惯性甩动也撞不到实体边界，滑到最后一张自动接上第一张，两个方向都滑不到头
 - 🪟 全站深色玻璃拟态面板，白色文字系统，任意液滴位置下保持可读（Safari 上大面积卡片自动降级为不透明深色底，见「Safari 性能专项」）
@@ -42,7 +42,7 @@ personal-website/
 ├── .github/workflows/deploy.yml  # GitHub Actions 自动部署（已启用）
 ├── app/                          # Next.js App Router
 │   ├── layout.tsx                # 根布局 + 元信息 + favicon + theme-color
-│   ├── page.tsx                  # 主页（导航、四个版块、页脚、灯箱都在这里）
+│   ├── page.tsx                  # 主页（导航、五个版块、页脚、灯箱都在这里）
 │   └── globals.css               # shadcn 主题 CSS 变量 + .shader-bg 固定背景规则
 ├── components/
 │   ├── brand-icons.tsx           # Bilibili / Pixiv / X 官方标志（simple-icons, CC0）
@@ -163,6 +163,7 @@ node scripts/generate-images.mjs
 6. **默认语言的服务端与客户端必须一致**。改 `useState<Lang>` 的同时必须改 `app/layout.tsx` 的 `<html lang>`：服务端按 layout 的 lang 渲染首帧，客户端按 `useState` 的初值 hydrate，两边不同就是一次 React 注水失败——整棵服务端树被丢弃，`useInView` 的观察器跟着失效，全站文字停在不可见状态。另外首帧语言不要由 `navigator.language` / `localStorage` 决定，那必然造成两边不一致。
 7. **任何「静止状态」下的 filter 都会让 Safari 显出与文字等大的灰色方块**——不管是 framer 留下的内联 `blur(0px)`，还是隐藏态里带 blur 的 CSS。方块是 WebKit 为带 filter 的元素建的合成层的空层贴片，首屏加载等注水的那一两秒最明显。对策是让静止状态彻底不带 filter：隐藏态加 `visibility: hidden`（整个元素不画），blur=0 的文本不设 `--reveal-blur` 变量（CSS 落到 `filter: none`），播放态目标直接写 `filter: none`（规范规定 none 与 blur 列表插值时补恒等值，blur(10px)→none 观感等同 blur(10)→blur(0)）。**另一个坑：`var()` 是字面替换**，`--reveal-blur` 的值必须是完整的 `blur(8px)`——只写 `8px` 会把 `filter: var(--reveal-blur, none)` 替换成非法的 `filter: 8px`，静默回退成 `none`，模糊效果整个消失。
 8. **不要用 framer 给上百个单元做逐帧动画**。framer 会为每个单元跑一个 JS rAF 循环、每帧写一次内联 style，长段落揭示时主线程每帧要做上百次样式写入 + 重算，WebKit 实测掉到 55fps 以下、最差帧 300ms（blur 本身反而不是主因——`filter: none` 掉帧依旧）。现在整段动画是**纯 CSS transition**：组件只在容器上切换一次 `reveal-play` class，`opacity/transform` 的逐帧工作交给合成器；错峰用 `transition-delay: calc(var(--reveal-delay) + var(--ri) * var(--reveal-stagger))`，动画参数全部经 CSS 变量下发（render 里算好，服务端客户端一致，不破坏注水）。代价是 reveal-text 不再依赖 framer，只保留 `useInView` 这一个 hook。
+9. **拖拽容器里 `setPointerCapture` 会吞掉内部按钮的 click**。全屏滑动手势面（灯箱遮罩、轮播轨道）为了顺畅拖拽会调用 `setPointerCapture`，而规范规定捕获期间后续的指针事件、兼容鼠标事件与最终 `click` 全部重定向到捕获元素——于是按在卡片「GitHub」链接上的点击，`click` 落到了轨道容器上，链接永远点不开；灯箱底部的「下一张」同理。现象是按钮看得见、点得住、就是没反应，且不报任何错。对策：`onPointerDown` 里先判断 `e.target.closest("a, button")`，落在交互元素上直接 return，不进入拖拽分支（`lightbox.tsx`、`project-carousel.tsx`）。
 
 切换语言会换掉整套单元，单元 `key` 用索引而非文本，避免 ~790 个 span 全部卸载重挂载。但**列表的 `key` 同样必须跨语言稳定**：实战项目卡片原来写 `key={proj.name}`，中文名和英文名不同，切换语言时 React 会把三张卡片连同里面的 `RevealText` 组件一起卸载重挂载——组件自己记住「已揭示过」的 ref 也随之一块丢，文字重新从隐藏态播一遍，刚摘掉的 filter 也跟着回来。现在改用 `repo` 地址做 key。
 

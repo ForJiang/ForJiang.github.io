@@ -121,6 +121,10 @@ export default function ProjectCarousel({ count, prevLabel, nextLabel, children 
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
+    // 卡片里的 GitHub / Demo 链接与按钮：按下即激活，不进拖拽分支。否则
+    // wrap 一旦捕获指针，整颗指针序列（含最终 click）都会被重定向到卡片
+    // 元素，链接永远收不到 click——实测点卡片链接毫无反应即此原因。
+    if ((e.target as Element | null)?.closest?.("a, button")) return;
     const track = trackRef.current;
     if (!track) return;
     movedRef.current = false;

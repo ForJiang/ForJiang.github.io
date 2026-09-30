@@ -22,17 +22,6 @@ function getCoverDiameter(width: number, height: number, x: number, y: number) {
   );
 }
 
-function hasTextContent(node: React.ReactNode): boolean {
-  if (typeof node === "string" || typeof node === "number") {
-    return String(node).trim().length > 0;
-  }
-  if (Array.isArray(node)) return node.some(hasTextContent);
-  if (React.isValidElement<{ children?: React.ReactNode }>(node)) {
-    return hasTextContent(node.props.children);
-  }
-  return false;
-}
-
 /** 原生拖拽/动画事件名与 framer-motion 的 HTMLMotionProps 冲突，需剔除 */
 type ButtonHTMLAttributesForMotion = Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -89,11 +78,6 @@ export default function OriginButton({
   const [coverSize, setCoverSize] = React.useState(0);
   const isDisabled = Boolean(disabled);
 
-  React.useEffect(() => {
-    if (process.env.NODE_ENV !== "production") return;
-    return;
-  }, []);
-
   const updateOrigin = React.useCallback((x: number, y: number) => {
     const node = nodeRef.current;
     if (!node) return;
@@ -142,9 +126,7 @@ export default function OriginButton({
       ? "border-transparent bg-white text-zinc-950 shadow-2xl"
       : "border-white/40 bg-black/40 text-white";
   const fillClasses =
-    tone === "solid"
-      ? "bg-zinc-950 dark:bg-neutral-950"
-      : "bg-white dark:bg-neutral-50";
+    tone === "solid" ? "bg-zinc-950" : "bg-white";
   const filledTextClasses = tone === "solid" ? "text-white" : "text-zinc-950";
 
   const shared = {
