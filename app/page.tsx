@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
-import { Github, Mail, ExternalLink, Menu, Languages, ChevronLeft } from "lucide-react";
+import { Github, Mail, ExternalLink, Menu, Languages } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { translations, type Lang } from "@/lib/i18n";
@@ -15,6 +15,7 @@ import { PixivIcon, XIcon, BilibiliIcon } from "@/components/brand-icons";
 import Lightbox, { type LightboxItem } from "@/components/lightbox";
 import OriginButton from "@/components/ui/origin-button";
 import RevealText from "@/components/ui/reveal-text";
+import ProjectCarousel from "@/components/ui/project-carousel";
 
 /*
  * 液态金属背景异步加载：@paper-design/shaders-react 体积大且纯装饰，
@@ -96,55 +97,6 @@ export default function Home() {
     el.style.setProperty("--spot-x", `${e.clientX - r.left}px`);
     el.style.setProperty("--spot-y", `${e.clientY - r.top}px`);
   };
-
-  const scrollerRef = useRef<HTMLDivElement | null>(null);
-  const scrollByCard = (dir: -1 | 1) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const card = el.firstElementChild as HTMLElement | null;
-    const step = card ? card.offsetWidth + 24 : el.clientWidth * 0.8;
-    el.scrollBy({ left: dir * step, behavior: "smooth" });
-  };
-
-  // 无限轮播的归位：卡片渲染五份，加载后把 scrollLeft 定位到「中间份第一张
-  // 恰好居中」的位置；一旦滚出中间份（band = 第三份的范围）立即按一整份的
-  // 宽度无声平移回去——五份内容完全相同，肉眼不可见，于是「最后一张之后」
-  // 接着的就是第一张，两个方向都滑不到头。
-  // 为什么立即归位、不等滚动停稳：触屏上用力一甩的惯性可达数千 px，而三份
-  // 结构的实体滚动区间只有一份宽的余量，惯性会直接撞到 scrollLeft 的物理
-  // 边界——防抖归位在手势/惯性途中又永远等不到触发，表现为「滑到尽头卡
-  // 住」（用户实测）。改成立即归位后，任意时刻距边界都有两份（~5000px）
-  // 的余量，甩不到头；惯性途中归位最多让长甩的惯性提前收尾，画面无任何
-  // 跳变。跳变距离恒为 setWidth 的整数倍，落在 snap 吸附点上，不会引起
-  // 吸附跳动。程序化平滑滚动途中被归位覆盖也无需担心：动画每帧按原目标
-  // 绝对定位，结束时最后一次 scroll 事件会把位置拉回带内。
-  // 吸附用 snap-center（见卡片 className）：静止时当前卡片居中、两侧邻居
-  // 等量露出，排布对称。定位/归位都以居中态为基准：scrollLeft 需要加上
-  // centerOffset（卡片半宽 − 滚动口半宽），归位带宽随之整体平移。
-  const projectCount = t.skills.projects.items.length;
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const first = el.children[0] as HTMLElement | undefined;
-    const nextSet = el.children[projectCount] as HTMLElement | undefined;
-    if (!first || !nextSet) return;
-    const setWidth =
-      nextSet.getBoundingClientRect().left - first.getBoundingClientRect().left;
-    if (!setWidth) return;
-    // 居中偏移：卡片几何中心对齐滚动口中心所需的额外滚动量。
-    // padL 用 rect 差值取（offsetLeft 的参照系是 offsetParent，不一定是滚动容器）
-    const padL = first.getBoundingClientRect().left - el.getBoundingClientRect().left;
-    const centerOffset = padL + first.offsetWidth / 2 - el.clientWidth / 2;
-    const low = setWidth * 2 + centerOffset;
-    const high = setWidth * 3 + centerOffset;
-    el.scrollLeft = low;
-    const normalize = () => {
-      while (el.scrollLeft >= high) el.scrollLeft -= setWidth;
-      while (el.scrollLeft < low) el.scrollLeft += setWidth;
-    };
-    el.addEventListener("scroll", normalize, { passive: true });
-    return () => el.removeEventListener("scroll", normalize);
-  }, [projectCount]);
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -452,20 +404,13 @@ export default function Home() {
               </RevealText>
             </div>
 
-            {/*
-              项目卡片做成横向滑动的无限轮播：容器 overflow-x-auto + snap-mandatory，
-              内容渲染五份（见下面 useEffect 的归位逻辑），中间份是常驻视区，
-              左右各两份是回路缓冲——触屏惯性甩动也撞不到实体边界，滑到最后
-              一张之后接着的还是第一张。卡片宽 min(30rem, 85vw) + shrink-0，
-              末尾一张露出的一角与左右箭头按钮共同承担可滑的提示。py-4 不能省：
-              overflow-x:auto 会把 overflow-y 隐式提成 auto，而卡片 hover 要上浮
-              4px，没有纵向内边距时那 4px 会溢出 padding box 被裁掉——表现为
-              卡片上边缘少一截。
-            */}
-            <div
-              ref={scrollerRef}
-              tabIndex={0}
-              className="-mx-2 flex snap-x snap-mandatory gap-6 overflow-x-auto px-2 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            {/* 真无限轮播：transform 驱动的轨道组件，触屏甩动没有物理边界
+                （原理与交互模型见 components/ui/project-carousel.tsx 顶部
+                注释）。卡片宽 min(30rem, 85vw) + shrink-0，居中吸附。 */}
+            <ProjectCarousel
+              count={t.skills.projects.items.length}
+              prevLabel={t.skills.projects.prevProject}
+              nextLabel={t.skills.projects.nextProject}
             >
               {[0, 1, 2, 3, 4]
                 .flatMap((copy) =>
@@ -482,7 +427,7 @@ export default function Home() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.1 }}
-                    className="w-[min(30rem,85vw)] shrink-0 snap-center"
+                    className="w-[min(30rem,85vw)] shrink-0"
                   >
                   <Card
                     className={`group relative h-full flex flex-col overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 ${GLASS_CARD}`}
@@ -546,21 +491,7 @@ export default function Home() {
                   </Card>
                 </m.div>
               ))}
-            </div>
-
-            {/* 桌面没有触摸屏，露角不足以提示可滑，把切换按钮放在卡片下方 */}
-            <div className="mt-6 flex justify-center gap-3">
-              {([-1, 1] as const).map((dir) => (
-                <button
-                  key={dir}
-                  onClick={() => scrollByCard(dir)}
-                  aria-label={dir === -1 ? t.skills.projects.prevProject : t.skills.projects.nextProject}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white/80 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white"
-                >
-                  <ChevronLeft className={dir === -1 ? "h-4 w-4" : "h-4 w-4 rotate-180"} />
-                </button>
-              ))}
-            </div>
+            </ProjectCarousel>
           </m.div>
         </div>
       </section>
