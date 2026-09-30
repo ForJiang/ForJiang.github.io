@@ -26,24 +26,8 @@ import dynamic from "next/dynamic";
  */
 const Lightbox = dynamic(() => import("@/components/lightbox"));
 
-const PROJECT_META = [
-  {
-    image: "yuntu",
-    tags: ["AI Art", "Illustration", "ComfyUI"],
-  },
-  {
-    image: "tick",
-    tags: ["AI Art", "Illustration", "ComfyUI"],
-  },
-  {
-    image: "pixelboard",
-    tags: ["AI Art", "Illustration", "ComfyUI"],
-  },
-  {
-    image: "solar",
-    tags: ["AI Art", "Illustration", "ComfyUI"],
-  },
-];
+// 插画卡片与图片变体的对应关系（按卡片顺序，取 lib/image-variants.ts 里的 name）
+const CARD_IMAGE_NAMES = ["yuntu", "tick", "pixelboard", "solar"];
 
 const CONTACTS = {
   email: "jianghaoda.1@outlook.com",
@@ -464,8 +448,7 @@ function HomeContent() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {t.projects.cards.map((card, idx) => {
-              const meta = PROJECT_META[idx];
-              const img = PROJECT_IMAGES.find((i) => i.name === meta.image);
+              const img = PROJECT_IMAGES.find((i) => i.name === CARD_IMAGE_NAMES[idx]);
               return (
                 <m.div
                   key={idx}
@@ -534,20 +517,10 @@ function HomeContent() {
                         stagger={0.01}
                         duration={0.5}
                         blur={6}
-                        className={`text-white/75 flex-1 ${BODY_SHADOW}`}
+                        className={`text-white/75 ${BODY_SHADOW}`}
                       >
                         {card.desc}
                       </RevealText>
-                      <RevealText
-                        as="div"
-                        items={meta.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
-                        ))}
-                        className="flex flex-wrap gap-2"
-                        stagger={0.04}
-                        duration={0.45}
-                        blur={6}
-                      />
                     </CardContent>
                   </Card>
                 </m.div>
