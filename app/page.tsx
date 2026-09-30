@@ -376,7 +376,9 @@ function HomeContent() {
 
       {/* Gallery Section（AI 插画） */}
       <section id="gallery" className={SECTION_SHELL}>
-        <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
+        {/* 容器比其它区块窄一档（5xl）：插画卡片适当缩小，桌面两列也更克制；
+            图片固定 16:9 后卡片高度由宽度决定，窄容器直接让整卡变小 */}
+        <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <div className="text-center mb-16">
             <m.div
               initial={{ opacity: 0, y: 20 }}
@@ -426,11 +428,10 @@ function HomeContent() {
                 >
                   <Card className={`group h-full flex flex-col overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
                     {/* 封面图：AVIF → WebP → JPEG 逐级回退，按视口宽度取合适档位。
-                        flex-1 + min-h：图片吃掉卡片里文字之外的剩余高度（行内各卡
-                        等高拉伸时同步放大），18rem 是下限——插画是宽幅的，容器越高
-                        object-cover 裁掉的越少，预览越完整；原来固定 h-52 且文字区
-                        也吃 flex-1，图片只占六成左右 */}
-                    <div className="relative min-h-[18rem] flex-1 overflow-hidden shrink-0">
+                        固定 aspect-video（16:9）：插画母版就是 16:9 附近，容器同比例
+                        时 object-cover 几乎不裁切；此前 flex-1 + min-h 让比例随卡片
+                        高度浮动（手机上接近 1:1，左右裁掉一大截）。 */}
+                    <div className="relative aspect-video overflow-hidden shrink-0">
                       {img && (
                       <picture>
                         {img.avif && (
@@ -476,7 +477,8 @@ function HomeContent() {
                         </RevealText>
                       </CardTitle>
                     </CardHeader>
-                    {/* 不带 flex-1：文字区按内容自然高度，剩余空间全给封面图 */}
+                    {/* 文字区按内容自然高度即可：封面已是固定 16:9，卡片高度 =
+                        图 + 文字，不再需要谁去吸收剩余空间 */}
                     <CardContent className="flex flex-col gap-4">
                       <RevealText
                         as="p"
