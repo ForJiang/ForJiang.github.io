@@ -25,7 +25,7 @@ const LiquidMetalBackground = dynamic(
   () => import("@/components/liquid-metal-background")
 );
 
-const NAV_IDS = ["about", "skills", "projects", "contact"] as const;
+const NAV_IDS = ["about", "skills", "projects", "videos", "contact"] as const;
 
 const PROJECT_META = [
   {
@@ -620,6 +620,61 @@ export default function Home() {
                 </m.div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Videos Section */}
+      <section id="videos" className="min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16">
+        <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
+          <div className="text-center mb-16">
+            <m.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-block"
+            >
+              <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+                <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
+                  {t.videos.badge}
+                </RevealText>
+              </Badge>
+            </m.div>
+            {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
+            <RevealText
+              as="h2"
+              delay={0.15}
+              stagger={0.03}
+              duration={0.65}
+              className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
+            >
+              {t.videos.heading}
+            </RevealText>
+            <RevealText
+              as="p"
+              delay={0.4}
+              stagger={0.01}
+              duration={0.5}
+              blur={6}
+              className={`mt-3 text-white/75 ${BODY_SHADOW}`}
+            >
+              {t.videos.subtitle}
+            </RevealText>
+          </div>
+
+          {/* B 站外链播放器：协议相对地址继承当前协议，http/https 站点都不触发
+              混合内容拦截；loading="lazy" 让播放器滚入视野后才联网加载，
+              不占用首屏带宽。外层 aspect-video 兜住 16:9 比例，内层绝对定位铺满。 */}
+          <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-white/15 shadow-2xl bg-black">
+            <iframe
+              src="//player.bilibili.com/player.html?isOutside=true&aid=117346962312416&bvid=BV1F9ai6REo8&cid=42340451929&p=1"
+              scrolling="no"
+              frameBorder={0}
+              allowFullScreen
+              loading="lazy"
+              title={t.videos.heading}
+              className="absolute inset-0 h-full w-full"
+            />
           </div>
         </div>
       </section>

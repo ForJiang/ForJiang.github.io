@@ -11,8 +11,14 @@ export const translations = {
       about: "关于",
       skills: "技能",
       projects: "项目",
+      videos: "视频",
       contact: "联系",
       menu: "打开菜单",
+    },
+    videos: {
+      badge: "视频",
+      heading: "视频演示",
+      subtitle: "发布在 Bilibili 的演示视频，在这里就能直接看",
     },
     hero: {
       badge: "👋 你好，我是",
@@ -131,8 +137,14 @@ export const translations = {
       about: "About",
       skills: "Skills",
       projects: "Projects",
+      videos: "Videos",
       contact: "Contact",
       menu: "Menu",
+    },
+    videos: {
+      badge: "Videos",
+      heading: "Video demos",
+      subtitle: "Demos published on Bilibili — watch them right here",
     },
     hero: {
       badge: "👋 Hi, I'm",
