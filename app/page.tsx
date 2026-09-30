@@ -234,8 +234,12 @@ function HomeContent() {
                   onMouseEnter={() => prefetchFull(idx)}
                 >
                   <Card className={`group h-full flex flex-col overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
-                    {/* 封面图：AVIF → WebP → JPEG 逐级回退，按视口宽度取合适档位 */}
-                    <div className="relative h-52 overflow-hidden shrink-0">
+                    {/* 封面图：AVIF → WebP → JPEG 逐级回退，按视口宽度取合适档位。
+                        flex-1 + min-h：图片吃掉卡片里文字之外的剩余高度（行内各卡
+                        等高拉伸时同步放大），18rem 是下限——插画是宽幅的，容器越高
+                        object-cover 裁掉的越少，预览越完整；原来固定 h-52 且文字区
+                        也吃 flex-1，图片只占六成左右 */}
+                    <div className="relative min-h-[18rem] flex-1 overflow-hidden shrink-0">
                       {img && (
                       <picture>
                         {img.avif && (
@@ -281,7 +285,8 @@ function HomeContent() {
                         </RevealText>
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="flex-1 flex flex-col gap-4">
+                    {/* 不带 flex-1：文字区按内容自然高度，剩余空间全给封面图 */}
+                    <CardContent className="flex flex-col gap-4">
                       <RevealText
                         as="p"
                         stagger={0.01}
