@@ -122,7 +122,7 @@ personal-website/
 ### 3.5 图片与灯箱
 
 - 封面: `<picture>` + AVIF/WebP srcset (`lib/image-variants.ts` 的 `IMAGE_SIZES`)，容器固定 16:9
-- 灯箱: `dynamic()` 按需加载；`gallery` 区块进入视口时预载 chunk + 按 2.5s 间隔预热全部 2400px 无损原图（Save-Data 不预热）；桌面端悬停卡片立即预热该张
+- 灯箱: `dynamic()` 按需加载；`gallery` 区块进入视口时预载 chunk + 按 2.5s 间隔预热全部 3864×2176 无损原图（四张约 28MB；Save-Data 不预热）；桌面端悬停卡片立即预热该张
 - 灯箱/轮播的滑动手势用 `setPointerCapture`，必须在 `onPointerDown` 里 `closest("a, button")` 放行，否则内部按钮点击被吞
 
 ## 4. 依赖清单
@@ -152,21 +152,22 @@ personal-website/
 ## 5. Git 历史摘要 (最近 15 条)
 
 ```
-3984a56 perf: 全站瘦身——HTML -33%、CSS -17%，净删 90 行冗余代码（本地 sha cc871e9）
-28b7428 fix: 修卡片链接时灵时不灵——指针捕获三连坑（本地 sha 28b7428）
-8868e56 docs: 更新 README 与 RELAY 至现状，修正过时注释
-419ba3e chore: 死依赖与死脚本清理 + 修正过时注释
-21eac44 perf: 清理死代码 + 封面 sizes 校准，包体与流量双减
-a4c401e fix: 中文逐字之间的多余间距——reveal-gap 改为按源文本空格决定
-98780c4 docs: README 与简介去除全部 Emoji，仅保留网页正文 Emoji
-d27c340 fix: 修 iOS 底部露黑带——body 底色与 shader 的 colorBack 对齐
-08b24a4 style: 缩小插画卡片文字部分
-cfe296b fix: Tailwind content 补扫 lib/——恢复区块上下 96px 留白与暗色底色
-54eb9ce style: 插画卡片缩小 + 封面图固定 16:9
-c9a5e4a style: 全站统一文字行距——正文 1.625 / 标题 1.375，消除行间挤压
-ac9dc96 style: 去掉技能/实战项目两屏底部多余的互跳按钮
-55d49b0 style: 去掉插画卡片底部的标签行（AI Art / Illustration / ComfyUI）
-93cd8d4 revert: 技能与实战项目合并回单页滚动，各占一屏
+（本地 sha）最近 15 条：
+df9e361 feat: 灯箱原图 1:1 加载这四张照片（3864×2176 直出分辨率）
+cab0f00 docs: README 目录结构补齐配置文件条目
+a3af7ac docs: RELAY 记录「已评估不做的优化」
+3aff6fc chore: 第五轮巡检——源图移出 public，部署体积 -868KB
+e7b4f09 style: 站点标题改为 ForJiang
+8700298 feat: 补 Open Graph / Twitter Card——iMessage 等分享链接出预览大卡
+b6ca1eb perf: 动画库清退——framer-motion 整个移除，First Load JS 146kB→120kB
+e98b132 style: 站点图标换为插画头像
+91ac4ed docs: README/RELAY 同步瘦身轮与现状
+cc871e9 perf: 全站瘦身——HTML -33%、CSS -17%，净删 90 行冗余代码
+28b7428 fix: 修卡片链接时灵时不灵——指针捕获三连坑
+8868e56 docs: 更新 README 与 RELAY 至现状
+419ba3e chore: 死依赖与死脚本清理
+21eac44 perf: 清理死代码 + 封面 sizes 校准
+a4c401e fix: 中文逐字之间的多余间距——reveal-gap 按源文本空格决定
 ```
 
 > 注意：本仓库 git push 直连经常超时，实际推送走 GitHub API（`/tmp/pushfull.cjs`，
@@ -185,7 +186,7 @@ ac9dc96 style: 去掉技能/实战项目两屏底部多余的互跳按钮
 | 关于我 | ✅ | app/page.tsx, lib/i18n.ts | 高中生身份, 玻璃面板 |
 | 技能展示 | ✅ | app/page.tsx, lib/i18n.ts | 3 组卡片, 按真实项目技术栈 |
 | 实战项目轮播 | ✅ | components/ui/project-carousel.tsx | 5 个项目, 无限轮播 |
-| AI 插画 + 灯箱 | ✅ | app/page.tsx, components/lightbox.tsx | 4 张插画, 16:9 封面, 无损原图 |
+| AI 插画 + 灯箱 | ✅ | app/page.tsx, components/lightbox.tsx | 4 张插画, 16:9 封面, 原图 1:1 无损（3864×2176） |
 | 视频板块 | ✅ | app/page.tsx, app/layout.tsx | B 站外链播放器, lazy + preconnect |
 | 联系方式 | ✅ | app/page.tsx | 邮件/GitHub/Bilibili/Pixiv/X |
 | 中英双语 | ✅ | components/language-context.tsx | 默认英文, localStorage 持久化 |
@@ -225,7 +226,7 @@ ac9dc96 style: 去掉技能/实战项目两屏底部多余的互跳按钮
 
 ### 已评估、明确不做（避免重复评估）
 - i18n 中文字典按需加载：translations 整体仅占页面 chunk ~8%（≈1.6KB gzip），不值异步切换的复杂度（2026-10 实测）
-- 插画 -full 无损原图（共 12MB）：灯箱「点开秒开」是产品决策，预载已带 Save-Data 闸门
+- ~~插画 -full 缩到 2400 省体积~~ → 2026-10 用户要求原图 1:1，已改存直出分辨率（四张约 28MB）；若要回到省体积版，把 generate-images.mjs 的 FULL_W 改回 2400 重跑即可
 - Inter 字体子集：next/font 按 unicode-range 只发浏览器需要的子集，无法再省
 - 产物 CSS：死类扫描为 0；HTML 剩余体积即逐字揭示设计的固有开销
 
