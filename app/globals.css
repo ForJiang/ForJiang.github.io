@@ -217,6 +217,42 @@ h4 {
 }
 
 /*
+ * 移动端菜单开合（components/site-nav.tsx）。面板常驻 DOM，用
+ * grid-template-rows 0fr → 1fr 做高度过渡：内容高度未知也能平滑展开，
+ * 比 max-height 估高精确。0fr 态 visibility:hidden——收起后链接不进 Tab
+ * 焦点序；visibility 自身无过渡但有 0.32s 延迟，两个方向都是
+ * 「先播动画、再切换可见性」。此前菜单是条件渲染瞬现瞬失，非常生硬
+ * （用户反馈），背景也不再单独叠层（见 site-nav 头注释的色差成因）。
+ */
+.menu-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.22s ease,
+    visibility 0s linear 0.32s;
+}
+
+.menu-collapse-open {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  opacity: 1;
+  transition:
+    grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.22s ease 0.06s,
+    visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-collapse,
+  .menu-collapse-open {
+    transition: none;
+  }
+}
+
+/*
  * 灯箱（components/lightbox.tsx）的进出动画：遮罩淡入淡出、舞台轻微缩放浮现。
  * 原先是 framer 的 initial/animate + AnimatePresence 退出——退出那一下的语义
  * 是「先播 0.2s 淡出再真正卸载」，现在由组件的 closing 状态挂 .lb-closing、
