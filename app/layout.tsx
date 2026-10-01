@@ -17,7 +17,7 @@ export const metadata: Metadata = {
    * 没有这组标签时 iMessage 只出「标题 + 小图标」的普通链接泡，出不了
    * apple.com 那种带大图和摘要的预览卡。og:image 用 1200×630（各平台卡片
    * 的通用比例），构图呼应站点 Hero（暗底 + 圆角头像 + 字标），源图由
-   * public/images/favicon-master.png 合成，脚本见 README「分享卡片」。
+   * assets/favicon-master.png 合成，脚本见 README「分享卡片」。
    */
   openGraph: {
     type: "website",

@@ -56,6 +56,8 @@ personal-website/
 ├── public/
 │   ├── favicon.jpg / favicon-rounded.png
 │   └── images/                   # 4 张插画的 2400px 无损原图 + AVIF/WebP 变体
+├── assets/
+│   └── favicon-master.png       # 图标/分享卡源图（故意不进 public/：运行时无请求）
 ├── scripts/generate-images.mjs   # 母版 → 响应式变体生成脚本 (需 --no-save 装 sharp)
 ├── docs/deploy-workflow.yml     # 部署工作流模板副本
 ├── README.md / RELAY.md          # 项目文档 (README 是主文档，坑与实测都在里面)

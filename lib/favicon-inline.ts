@@ -7,7 +7,7 @@
  *  apple-touch-icon 不走这里：iOS 会自己给图标套圆角 mask，预先裁圆的源图会被
  *  二次裁切，透明角还会透出桌面壁纸，所以它必须是直角且整幅不透明（见 favicon.jpg）。
  *
- *  源图是 public/images/favicon-master.png（832×832）。重新生成用 sharp 一次出
+ *  源图是 assets/favicon-master.png（832×832，不进 public/——运行时没人取它，只作生成源）。重新生成用 sharp 一次出
  *  三档：256 直角 JPEG（apple-touch）、128 圆角 PNG（高分屏降级）、32 圆角 PNG
  *  内联在下面。圆角遮罩是 SVG rect rx=边长 20%（iOS squircle 比例）经
  *  `composite: dest-in` 贴上去的；封面那种「重跑脚本幂等」的管线在

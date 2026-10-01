@@ -76,7 +76,7 @@ export default function ProjectCarousel({ count, prevLabel, nextLabel, children 
     track.style.transform = `translateX(${metrics.current.base - posRef.current}px)`;
   }, []);
 
-  /** 把 renderPos 回绕到 [-W, W) 并静默重贴轨道：五份内容相同，零视觉差 */
+  /** 把 renderPos 回绕到 [-W, W) 并静默重贴轨道：各份内容相同，零视觉差 */
   const normalize = useCallback(() => {
     const { step, W } = metrics.current;
     if (!W) return;

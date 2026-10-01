@@ -13,7 +13,7 @@ export const BODY_SHADOW = "[text-shadow:0_1px_12px_rgba(0,0,0,0.72),0_0_6px_rgb
 export const GLASS_CARD = "glass-soft border-white/15 bg-black/40 backdrop-blur-sm";
 export const GLASS_TAG = "bg-white/10 text-white/85 border-transparent";
 
-/** 区块标题组的统一样式：徽章 + 逐字标题 + 副标题，三个页面一致 */
+/** 区块标题组的统一样式：徽章 + 逐字标题 + 副标题，各区块一致 */
 export const SECTION_SHELL = "min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16";
 
 /**
