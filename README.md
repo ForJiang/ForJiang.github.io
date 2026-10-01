@@ -68,7 +68,7 @@ personal-website/
 ├── public/
 │   ├── favicon.jpg               # apple-touch-icon 用（直角、整幅不透明，256×256）
 │   ├── favicon-rounded.png       # 标签页图标（128×128 圆角，四角透明）
-│   └── images/                   # 4 张插画的 2400px 无损原图 + AVIF/WebP 变体
+│   └── images/                   # 4 张插画的 2400px 无损原图 + AVIF/WebP 变体 + favicon-master.png（站点图标源图）
 ├── scripts/
 │   └── generate-images.mjs       # 母版 → 响应式变体生成脚本
 ├── docs/deploy-workflow.yml     # 部署工作流模板副本
@@ -129,7 +129,22 @@ node scripts/generate-images.mjs
 - **主图标必须内联成 data URI。** 浏览器把 favicon 按「页面 URL」缓存在自己的图标数据库里，只把引用换成新文件路径往往不足以让已经打开着的标签页重取；内联后图标跟着 HTML 一起到达，没有可被缓存的单独请求。`app/layout.tsx` 里是用原生 `<link rel="icon">` 而不是 `metadata.icons`——后者会把 `url` 当路径 normalize，`data:image/png;base64,` 前缀会被剥掉。
 - **`apple-touch-icon` 必须保持直角且整幅不透明。** iOS 会自己给主屏图标套圆角 mask，预先裁圆的源图会被二次裁切，透明角还会透出用户的桌面壁纸。
 
-圆角图由 canvas 从 `favicon.jpg` 生成：读图 → 设 `globalCompositeOperation = 'destination-in'` → `roundRect(0, 0, size, size, size * 0.2)` 填充做遮罩 → `toDataURL('image/png')`。半径取边长的 20%（iOS squircle 的比例）。
+三个文件都从 `public/images/favicon-master.png`（832×832 源图）生成，本地用 sharp 一次性出档：
+
+```bash
+npm i --no-save sharp
+node -e '
+const sharp = require("sharp");
+const mask = (s) => Buffer.from(`<svg width="${s}" height="${s}"><rect width="${s}" height="${s}" rx="${s * 0.2}"/></svg>`);
+const M = "public/images/favicon-master.png";
+sharp(M).resize(256, 256, { fit: "cover" }).jpeg({ quality: 90 }).toFile("public/favicon.jpg");
+sharp(M).resize(128, 128, { fit: "cover" }).composite([{ input: mask(128), blend: "dest-in" }]).png().toFile("public/favicon-rounded.png");
+sharp(M).resize(32, 32, { fit: "cover" }).composite([{ input: mask(32), blend: "dest-in" }]).png().toBuffer()
+  .then((b) => console.log("data:image/png;base64," + b.toString("base64")));
+'
+```
+
+输出的 base64 整段替换 `lib/favicon-inline.ts` 里的 `INLINE_ICON_32`。半径取边长的 20%（iOS squircle 的比例）；圆角遮罩是 SVG `<rect rx>` 经 `composite: dest-in` 贴上去的（等价于 canvas 的 `destination-in` + `roundRect`）。换图只换 `favicon-master.png` 再重跑。
 
 ## 如何改成你自己的信息
 
