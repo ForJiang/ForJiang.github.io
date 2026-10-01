@@ -81,11 +81,9 @@ function splitRevealUnits(input: string): RevealUnit[] {
   return units;
 }
 
-type RevealTag = "h1" | "h2" | "h3" | "h4" | "p" | "span" | "div";
+type RevealTag = "h1" | "h2" | "p" | "span" | "div";
 
 export interface RevealTextProps {
-  /** 要揭示的文本。传 children 为字符串时优先用 children。 */
-  text?: string;
   /**
    * 任意子元素模式：数组里每个元素作为独立动画单元，不再拆字。
    * 用于标签徽章、按钮这类本身是组件的场景。
@@ -101,13 +99,8 @@ export interface RevealTextProps {
   duration?: number;
   /** 相邻单元的间隔（秒）。中文按字算，长文本宜调小。 */
   stagger?: number;
-  /** 上浮起始位移（px）。 */
-  yOffset?: number;
   /** 模糊强度（px）。单元数超过 BLUR_UNIT_CAP 时自动降为 0。 */
   blur?: number;
-  /** 是否只在首次进入视口时播放。 */
-  once?: boolean;
-  style?: CSSProperties;
 }
 
 /**
@@ -124,7 +117,6 @@ export interface RevealTextProps {
  * 数百个提升层的开销比不加提示更大，交由浏览器自行决定合成时机。
  */
 export default function RevealText({
-  text,
   items,
   children,
   className,
@@ -132,16 +124,14 @@ export default function RevealText({
   delay = 0,
   duration = 0.65,
   stagger = 0.03,
-  yOffset = 24,
   blur = 10,
-  once = true,
-  style,
 }: RevealTextProps) {
   const ref = useRef<HTMLElement | null>(null);
   // 不缩放视口边界：缩进会把「已滚到页面最底」的贴底内容（页脚版权文字）
   // 排除在外——用户明明看得见它，IntersectionObserver 却判它不相交，
   // 文字就永远停在隐藏态。顶部同理，fixed 导航会被负的上边距漏掉。
-  const isInView = useInView(ref, { once, margin: "0px" });
+  // once 固定 true：全站场景都是揭示一次后保持，滚出视口不再回放。
+  const isInView = useInView(ref, { once: true, margin: "0px" });
   // 首次入场播完后置位：切换语言会让文本换成另一套单元，新挂载的单元若再从
   // hidden 起跳，父级已经播放完、不会再切换一次 class，它们就会永远停在隐藏态。
   // 所以重挂载的单元直接以可见状态出现（挂载时容器已带 reveal-play，无过渡）。
@@ -152,7 +142,7 @@ export default function RevealText({
 
   const textUnits: RevealUnit[] = items
     ? []
-    : splitRevealUnits(collectText(children) || text || "");
+    : splitRevealUnits(collectText(children));
   const unitCount = items ? items.length : textUnits.length;
   const effBlur = unitCount > BLUR_UNIT_CAP ? 0 : blur;
 
@@ -163,11 +153,10 @@ export default function RevealText({
   // 动画参数全部走 CSS 变量下发：在 render 里算好，服务端与客户端一致，
   // 每个单元的错峰延迟用 calc(var(--reveal-delay) + var(--ri) * var(--reveal-stagger))
   const hostStyle = {
-    ...style,
     "--reveal-delay": `${delay}s`,
     "--reveal-dur": `${duration}s`,
     "--reveal-stagger": `${stagger}s`,
-    "--reveal-y": `${yOffset}px`,
+    // 上浮位移由 CSS 侧的 --reveal-y 默认值（24px）兜底，组件不再单独收 prop
     // blur=0 时刻意不设 --reveal-blur：CSS 落到 filter: none。blur(0px) 也算
     // filter，WebKit 照样给隐藏态的单元建合成层、显出灰框（首屏加载最明显）。
     // 值必须自带 blur() 包装——var() 是字面替换，裸的 "8px" 会把

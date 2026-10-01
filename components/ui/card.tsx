@@ -8,10 +8,10 @@ const Card = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn(
-      "rounded-lg border bg-card text-card-foreground shadow-sm",
-      className,
-    )}
+    // 底色与文字色不设默认：全站卡片都经 GLASS_CARD（lib/ui-kit.ts）提供
+    // 半透明深色底，shadcn 原版的 bg-card / text-card-foreground 在深色站点
+    // 上要么每次被覆盖、要么给出近黑文字色，纯多余
+    className={cn("rounded-lg border shadow-sm", className)}
     {...props}
   />
 ))

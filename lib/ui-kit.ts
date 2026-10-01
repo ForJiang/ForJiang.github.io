@@ -1,8 +1,9 @@
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 /**
- * 拆页后三个页面（首页 / /skills / /projects）共用的样式片段与交互辅助。
- * 原先是 page.tsx 里的模块级常量，拆页后多处引用，集中到这里。
+ * 单页各区块（Hero 之外的六个 section）共用的样式片段与交互辅助。
+ * 原先是 page.tsx 里的模块级常量；注意 tailwind.config.ts 的 content 必须
+ * 扫到 lib/，这里的类字符串才会进产物（见该文件内的说明）。
  */
 
 export const SECTION_BADGE = "bg-white/10 text-white border-white/25";

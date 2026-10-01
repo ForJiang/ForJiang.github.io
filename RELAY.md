@@ -75,7 +75,7 @@ personal-website/
 |------|------|
 | `about` | 玻璃拟态自我介绍面板，高中生/学习者身份 |
 | `skills` | 技术栈分组卡片（前端与可视化 / 浏览器端 AI 与媒体 / 工程与算法） |
-| `projects` | 实战项目横向无限轮播（5 个项目 × 5 份副本 + 静默归位） |
+| `projects` | 实战项目横向无限轮播（5 个项目 × 3 份克隆 + 静默归位；甩动限幅 ±2 张 < 一份缓冲，3 份即够） |
 | `gallery` | AI 插画卡片（4 张，封面固定 16:9，点击开灯箱） |
 | `videos` | B 站外链播放器（协议相对地址 + lazy + preconnect，1440px 上限） |
 | `contact` | 邮件 / GitHub / Bilibili / Pixiv / X 五个按钮 + 页脚同款图标 |
@@ -131,11 +131,10 @@ personal-website/
 | @paper-design/shaders-react | ^0.0.81 | 液态金属 WebGL shader |
 | framer-motion | ^11.0.0 | 按钮填充与卡片入场（逐字动画不用） |
 | lucide-react | ^0.400.0 | 图标 |
-| class-variance-authority | ^0.7.0 | shadcn 变体 |
 | clsx | ^2.1.1 | 类名合并 |
 | tailwind-merge | ^2.4.0 | Tailwind 类名去重 |
 
-已删除: `@radix-ui/react-slot`（asChild 无人用）、`tailwindcss-animate`（无 animate 类）。
+已删除: `@radix-ui/react-slot`（asChild 无人用）、`tailwindcss-animate`（无 animate 类）、`class-variance-authority`（Button 只剩页脚图标一种用法、Badge 只剩胶囊外形，cva 变体系统整个拆掉了）。
 
 ### 开发依赖
 | 包 | 版本 | 用途 |

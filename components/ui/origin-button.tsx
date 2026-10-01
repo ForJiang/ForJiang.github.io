@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { LazyMotion, domAnimation, m } from "framer-motion";
+import { m } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const FILL_DURATION = 0.5;
@@ -50,8 +50,9 @@ interface OriginButtonProps extends ButtonHTMLAttributesForMotion {
 
 /**
  * 悬停/按下时，圆形背景从指针位置扩散铺满按钮，同时文字反色。
- * 用 m.* 而非 motion.*：配合外层 LazyMotion+domAnimation，避免把 framer-motion
- * 里未使用的 drag/layout 代码重新打进包。
+ * 用 m.* 而非 motion.*：LazyMotion + domAnimation 由 SiteShell 在根部统一
+ * 提供（此前本组件自己又包了一层 LazyMotion，纯多余——每个按钮实例都挂一个
+ * context，对动画没有任何额外收益）。
  */
 export default function OriginButton({
   tone = "glass",
@@ -239,33 +240,29 @@ export default function OriginButton({
   const extraProps = { ...props };
   delete (extraProps as { "aria-label"?: string })["aria-label"];
 
-  return (
-    <LazyMotion features={domAnimation}>
-      {href ? (
-        <m.a
-          {...(extraProps as AnchorHTMLAttributesForMotion)}
-          {...shared}
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          ref={nodeRef as React.Ref<HTMLAnchorElement>}
-          whileTap={isDisabled ? undefined : { scale: 0.985 }}
-        >
-          {fill}
-          {inner}
-        </m.a>
-      ) : (
-        <m.button
-          {...extraProps}
-          {...shared}
-          ref={nodeRef as React.Ref<HTMLButtonElement>}
-          type={(props as React.ButtonHTMLAttributes<HTMLButtonElement>).type ?? "button"}
-          whileTap={isDisabled ? undefined : { scale: 0.985 }}
-        >
-          {fill}
-          {inner}
-        </m.button>
-      )}
-    </LazyMotion>
+  return href ? (
+    <m.a
+      {...(extraProps as AnchorHTMLAttributesForMotion)}
+      {...shared}
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      ref={nodeRef as React.Ref<HTMLAnchorElement>}
+      whileTap={isDisabled ? undefined : { scale: 0.985 }}
+    >
+      {fill}
+      {inner}
+    </m.a>
+  ) : (
+    <m.button
+      {...extraProps}
+      {...shared}
+      ref={nodeRef as React.Ref<HTMLButtonElement>}
+      type={(props as React.ButtonHTMLAttributes<HTMLButtonElement>).type ?? "button"}
+      whileTap={isDisabled ? undefined : { scale: 0.985 }}
+    >
+      {fill}
+      {inner}
+    </m.button>
   );
 }

@@ -20,9 +20,10 @@ const LiquidMetalBackground = dynamic(
 const MouseTrail = dynamic(() => import("@/components/mouse-trail"));
 
 /**
- * 三个页面共用的外框：固定液态金属背景 + 鼠标轨迹 + 全站导航。
+ * 页面外框：固定液态金属背景 + 鼠标轨迹 + 全站导航。
  * 包一层 LazyMotion + domAnimation：页面内容用 m.* 驱动入场动画时不会把
- * framer-motion 里未使用的 drag/layout 代码拖进包（约 22KB）。
+ * framer-motion 里未使用的 drag/layout 代码拖进包（约 22KB）。全站的 m.*
+ * （Hero、卡片入场、OriginButton、灯箱）都挂在这棵子树下。
  */
 export default function SiteShell({ children }: { children: ReactNode }) {
   return (

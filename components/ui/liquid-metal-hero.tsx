@@ -32,7 +32,6 @@ export default function LiquidMetalHero({
           {badge && (
             <div className="flex justify-center">
               <Badge
-                variant="secondary"
                 className="bg-black/40 px-5 py-2 text-white border-white/25 hover:bg-black/55 transition-colors duration-300 backdrop-blur-sm"
               >
                 {/* 徽章排在标题之后出现（用户要求）：标题 0.05s 起、0.75s 的

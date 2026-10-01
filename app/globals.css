@@ -6,14 +6,6 @@
   :root {
     --background: 0 0% 0%;
     --foreground: 0 0% 100%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 84% 4.9%;
     --border: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
@@ -24,10 +16,10 @@
    * 会挂 dark class，且重新引入主题切换会遮住固定的液态金属背景
    * （见下面「移动端」一节的说明）。
    *
-   * 变量只留仍在引用的：--popover / --muted / --destructive / --input
-   * 随着 CardDescription、CardFooter、按钮的 destructive / outline 变体
-   * 一起删掉而失效（Tailwind content 扫的是类字符串，变量留着也只会
-   * 生成没人用的工具类）。--accent 仍被按钮 ghost 变体的 hover 底色用着。
+   * 变量只留仍在引用的：--card / --primary / --secondary / --accent 等
+   * 随着 Card 的 bg-card、Badge 的 secondary 底色、按钮 ghost 的 hover
+   * 底色一起删掉而失效（Tailwind content 扫的是类字符串，变量留着也只会
+   * 生成没人用的工具类）。组件的真实颜色全部由调用方以白色系类提供。
    */
 }
 

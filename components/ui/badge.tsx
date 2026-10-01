@@ -1,37 +1,24 @@
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
 /**
- * 徽章只保留站点真正在用的变体。全站统一深色主题，shadcn 默认的
- * destructive / outline 从未使用，连同类一起清掉（--destructive /
- * --accent 等主题变量也一并从 globals.css 移除），少一类工具类就少一份 CSS。
+ * 徽章只剩「胶囊外形」这一层职责：颜色（底、字、边）全站各处都不一样
+ * （区块徽章 bg-white/10、技能标签 GLASS_TAG、Hero 徽章 bg-black/40），一律
+ * 由调用方的 className 提供，基础样式里不再带 bg-secondary 之类的默认色——
+ * 否则每次都被 tailwind-merge 覆盖，纯多余，还让 cva 变体系统和一串从未
+ * 使用的主题变量（primary/secondary）为它们陪葬。徽章是纯展示 div，不可
+ * 聚焦，旧默认样式里的 focus:ring 全是死代码，一并去掉。
  */
-const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  },
-)
-
-export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
-
-function Badge({ className, variant, ...props }: BadgeProps) {
+function Badge({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+    <div
+      className={cn(
+        "inline-flex items-center rounded-full border border-transparent px-2.5 py-0.5 text-xs font-semibold transition-colors",
+        className,
+      )}
+      {...props}
+    />
   )
 }
 

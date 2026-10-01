@@ -132,7 +132,7 @@ function HomeContent() {
             transition={{ duration: 0.5 }}
             className={`max-w-4xl mx-auto text-center space-y-6 rounded-3xl px-6 py-10 md:px-12 ${GLASS_CARD}`}
           >
-            <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+            <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
               <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
                 {t.about.badge}
               </RevealText>
@@ -174,7 +174,7 @@ function HomeContent() {
               viewport={{ once: true }}
               className="inline-block"
             >
-              <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+              <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
                 <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
                   {t.skills.badge}
                 </RevealText>
@@ -231,7 +231,7 @@ function HomeContent() {
                     <RevealText
                       as="div"
                       items={group.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
+                        <Badge key={tag} className={GLASS_TAG}>{tag}</Badge>
                       ))}
                       className="flex flex-wrap gap-2"
                       stagger={0.04}
@@ -256,7 +256,7 @@ function HomeContent() {
               viewport={{ once: true }}
               className="inline-block"
             >
-              <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+              <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
                 <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
                   {t.skills.projects.badge}
                 </RevealText>
@@ -291,7 +291,9 @@ function HomeContent() {
             prevLabel={t.skills.projects.prevProject}
             nextLabel={t.skills.projects.nextProject}
           >
-            {[0, 1, 2, 3, 4]
+            {/* 克隆份数必须与 ProjectCarousel 的 COPIES 一致（中间份 + 两侧缓冲）：
+                份数决定 SSR 出多少张卡的 DOM，3 份已覆盖无限循环的越界余量 */}
+            {[0, 1, 2]
               .flatMap((copy) =>
                 t.skills.projects.items.map((proj, idx) => ({ copy, proj, idx }))
               )
@@ -336,7 +338,7 @@ function HomeContent() {
                       <RevealText
                         as="div"
                         items={proj.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className={GLASS_TAG}>{tag}</Badge>
+                          <Badge key={tag} className={GLASS_TAG}>{tag}</Badge>
                         ))}
                         className="flex flex-wrap gap-2"
                         stagger={0.04}
@@ -386,7 +388,7 @@ function HomeContent() {
               viewport={{ once: true }}
               className="inline-block"
             >
-              <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+              <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
                 <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
                   {t.projects.badge}
                 </RevealText>
@@ -511,7 +513,7 @@ function HomeContent() {
               viewport={{ once: true }}
               className="inline-block"
             >
-              <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+              <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
                 <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
                   {t.videos.badge}
                 </RevealText>
@@ -574,7 +576,7 @@ function HomeContent() {
             transition={{ duration: 0.5 }}
             className="max-w-3xl mx-auto text-center space-y-6"
           >
-            <Badge variant="secondary" className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+            <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
               <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
                 {t.contact.badge}
               </RevealText>
@@ -669,19 +671,19 @@ function HomeContent() {
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-white/75 [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">© {new Date().getFullYear()} ForJiang</p>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" aria-label="GitHub" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.github, "_blank")}>
+            <Button aria-label="GitHub" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.github, "_blank")}>
               <Github className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" aria-label="哔哩哔哩" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.bilibili, "_blank")}>
+            <Button aria-label="哔哩哔哩" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.bilibili, "_blank")}>
               <BilibiliIcon className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" aria-label="Pixiv" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.pixiv, "_blank")}>
+            <Button aria-label="Pixiv" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.pixiv, "_blank")}>
               <PixivIcon className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" aria-label="X" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.x, "_blank")}>
+            <Button aria-label="X" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.x, "_blank")}>
               <XIcon className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" aria-label="Email" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.location.href = `mailto:${CONTACTS.email}`}>
+            <Button aria-label="Email" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.location.href = `mailto:${CONTACTS.email}`}>
               <Mail className="h-4 w-4" />
             </Button>
           </div>

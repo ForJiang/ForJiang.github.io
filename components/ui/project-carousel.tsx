@@ -16,7 +16,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
  * 边界，触屏上用力一甩的惯性会撞到边界（橡皮筋卡住），而惯性途中程序化
  * 改 scrollLeft 在 iOS 上要么被忽略要么掐断惯性，防抖归位又等不到事件
  * 停歇。transform 方案里位置是无界的：轨道按 renderPos 平移，越过一份
- * 宽度就静默回绕（内容五份完全相同，肉眼不可见），物理上不存在边界。
+ * 宽度就静默回绕（内容几份完全相同，肉眼不可见），物理上不存在边界。
  *
  * 交互模型：
  * - 拖拽：pointerdown 冻结当前过渡并从 computed transform 反推真实位置，
@@ -26,13 +26,20 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
  * - 每次 transform 过渡结束都把 renderPos 回绕到 [-W, W)：两侧永远有整份
  *   缓冲，单次手势（手指行程 + 吸附动画）物理上不可能触底。
  *
+ * 为什么是 3 份而不是更多：renderPos 全程被 normalize 压在 [-W, W)，拖拽
+ * 结束的甩动投影又被 endDrag 限幅到 ±2 张——单侧最大越界 2 张 < 一份缓冲
+ * （count 张），所以两侧各一份缓冲就够。份数直接决定 SSR 出多少张卡的
+ * DOM（每张卡上百个逐字 span，曾占整页 HTML 的 76%），少两份就省一半轮播
+ * 体积。三份在超宽屏下也成立：可见窗口宽 vw ≤ 3W 才不会露边，W = 卡宽
+ * 30rem 时 3W = 7.5K px，远超任何在售显示器。
+ *
  * 卡片的入场揭示（RevealText / whileInView）基于 IntersectionObserver，
  * 对 transform 位移同样生效，无需感知轨道机制。touch-action: pan-y 让
  * 纵向页面滚动照常、横向手势归轨道。
  */
 
-const COPIES = 5; // 内容克隆份数：中间份常驻视区，两侧各两份缓冲
-const MID = 2; // 常驻份的下标
+const COPIES = 3; // 内容克隆份数：中间份常驻视区，两侧各一份缓冲
+const MID = 1; // 常驻份的下标
 
 interface ProjectCarouselProps {
   /** 单份的项目数（一份宽度 = count × 卡片步长） */

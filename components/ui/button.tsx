@@ -1,52 +1,28 @@
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
 /**
- * 按钮样式只保留站点真正在用的组合。清掉的死代码：
- * - asChild + @radix-ui/react-slot：全站没有一处用 asChild，Slot 是纯粹
- *   为它引的依赖，去掉后它不进包；
- * - destructive / outline / link 变体与 sm / lg 尺寸：从未用过，类字符串却
- *   会被 Tailwind 扫出来生成一整套工具类（bg-destructive、border-input、
- *   underline-offset-4……），白占 CSS。
+ * 站点对 shadcn Button 的唯一用法是页脚的图标按钮（ghost + icon），因此不再
+ * 需要 cva 变体系统：default / secondary 变体与 default 尺寸从未用过，它们的
+ * 类字符串（bg-primary、bg-secondary……）却会被 Tailwind 扫进产物 CSS。
+ * 全部收敛成一组固定样式，连 cva 依赖也一并省掉（badge 同步简化后整个依赖
+ * 就移除了）。颜色全部交给调用方：页脚按钮自带 text-white / hover:bg-white/10。
+ * 另：asChild + @radix-ui/react-slot 早前已清——全站没有一处用 asChild。
  */
-const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-      },
-      size: {
-        default: "h-10 px-4 py-2",
-        icon: "h-10 w-10",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
-  },
-)
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {}
-
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
-    return (
-      <button
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
-    )
-  },
-)
+const Button = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, ...props }, ref) => (
+  <button
+    className={cn(
+      "inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+      className,
+    )}
+    ref={ref}
+    {...props}
+  />
+))
 Button.displayName = "Button"
 
 export { Button }
