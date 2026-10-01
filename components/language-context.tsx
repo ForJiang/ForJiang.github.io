@@ -14,9 +14,9 @@ interface LanguageValue {
 const LanguageContext = createContext<LanguageValue | null>(null);
 
 /**
- * 全站语言状态。技能与实战项目拆成独立页面后，导航与各页正文都需要同一份
- * 语言，所以提到 context；每个页面根部分别包一层 Provider（静态导出没有
- * 跨页面保持状态的客户端根布局，各自挂载即可，localStorage 保证选择不丢）。
+ * 全站语言状态。导航与页面各区块都要同一份语言，所以提到 context；单页站点
+ * 包一层 Provider 即可（曾经拆成多页时每个页面根部分别挂），localStorage
+ * 保证手动切换过的选择不丢。
  */
 export function LanguageProvider({ children }: { children: ReactNode }) {
   // 默认英文，且服务端也渲染英文（见 layout 的 <html lang="en">）。两边必须

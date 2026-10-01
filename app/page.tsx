@@ -74,7 +74,7 @@ function HomeContent() {
   });
 
   // 无损原图每张 ~3MB，点开才开始下载要白等数秒。两个预热入口：
-  // ① 画廊（#projects）进入视口后按顺序预热全部原图——用户浏览插画的
+  // ① 画廊（#gallery）进入视口后按顺序预热全部原图——用户浏览插画的
   //    那几秒里下载大多已完成，点开即是秒开；② 桌面端鼠标悬停某张卡时
   //    立即预热那一张。省流量模式（Save-Data）不预热。
   const prefetchDoneRef = useRef<Set<string>>(new Set());

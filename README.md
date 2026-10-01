@@ -20,17 +20,19 @@
 
 - 液态金属着色器全站固定背景（`@paper-design/shaders-react`），滚动全程可见、不随地址栏伸缩而变形位移
 - 白色鼠标流光轨迹特效（遵循 `prefers-reduced-motion`）
-- 全站文字逐字揭示：每个单元从「透明 + 下移 +（短文本）模糊」过渡到清晰位置，按 stagger 错峰，滚动进入视口时触发。**纯 CSS transition 驱动**（合成器动画），framer 不参与逐帧（`components/ui/reveal-text.tsx`）
+- 全站文字逐字揭示：每个单元从「透明 + 下移 +（短文本）模糊」过渡到清晰位置，按 stagger 错峰，滚动进入视口时触发。**纯 CSS transition 驱动**（合成器动画），framer 不参与逐帧（`components/ui/reveal-text.tsx`）。间距只在源文本真有空白的位置出现——汉字之间不加、英文词间与中英文交界保留（见下面第 13 条）
 - 中文 / English 双语言切换（**默认英文**，手动切换后记住选择，不再跟随浏览器语言）
-- 插画封面使用 `<picture>` + `srcset` 响应式加载：AVIF → WebP → WebP（480 宽）逐级回退，三档宽度按视口与 DPR 选择，文件名带内容哈希
+- 全站行距统一收口在 `globals.css`：正文 `p` 1.625、标题 `h1~h4` 1.375——用 `!important` 压过 Tailwind 字号工具类自带的 1.1 行高（两行中文原本挤成一团），全站一个出处
+- 插画封面使用 `<picture>` + `srcset` 响应式加载：AVIF → WebP → WebP（480 宽）逐级回退。封面容器固定 16:9（与插画母版同比例，`object-cover` 几乎不裁切），卡片收进 `max-w-5xl` 容器、文字缩到标题 18px / 简介 14px，图占卡片约 68%
 - 点击封面图打开全屏灯箱：**立即显示已缓存的封面变体（轻模糊过渡）**，2400×1352 **WebP 无损**原图在后台下载、就绪后淡入盖住它。图片**左右滑动切换**（也可以用键盘方向键），底部是「上一张 / 页码 / 下一张」合成的一行居中控件，**不自动播放**——切换只由用户操作触发。原图还有两级预热：画廊进入视口后按顺序预载全部原图，桌面端悬停卡片立即预载该张，翻页时相邻原图也已预载——省流量模式（Save-Data）不预热。灯箱代码本身按需加载（`dynamic`），画廊进入视口时顺手把 chunk 拉下来，点开时无需再等网络
-- 联系方式带 Bilibili / Pixiv / X 官方标志（simple-icons, CC0），入口为真实 `<a>`，可中键新标签打开
+- 联系方式带 Bilibili / Pixiv / X 官方标志（simple-icons, CC0），入口为真实 `<a>`，可中键新标签打开；页脚另有一组同款图标按钮
+- 视频板块内嵌 B 站外链播放器：协议相对地址（http/https 都不触发混合内容拦截）、`loading="lazy"` 滚入视野才加载、域名 `preconnect` 提前建连，播放器容器 1440px 上限，宽屏接近满幅
 - 实战项目横向无限轮播：卡片渲染五份 + 滚出中间份立即按整份宽度无声归位，触屏惯性甩动也撞不到实体边界，滑到最后一张自动接上第一张，两个方向都滑不到头
 - 全站深色玻璃拟态面板，白色文字系统，任意液滴位置下保持可读（Safari 上大面积卡片自动降级为不透明深色底，见「Safari 性能专项」）
 - Safari / iOS 性能专项：逐字动画纯 CSS transition（合成器动画）、卡片对 WebKit 去大面积 backdrop 模糊、逐字 blur 超过 48 单元自动关闭，均经 Playwright WebKit 实测归因
-- 按钮采用指针扩散填充动画：圆形背景从鼠标进入的位置展开铺满、文字反色（`components/ui/origin-button.tsx`）
-- 完整响应式布局；移动端针对 iOS Safari 的视口与工具栏做了专门处理（页脚预留 100px 避开底部工具栏；固定背景层踩过 `lvh` 在工具栏收起时少算一截露出黑带的怪癖，用「body 底色 = shader 的 colorBack」接缝，见 `globals.css`）
-- 单页滚动结构：Hero / 关于我 / 技术能力 / 实战项目 / 插画作品 / 视频演示 / 联系方式 / 页脚，每个板块各占一屏（`min-h-screen` + 垂直居中），导航平滑滚动到对应锚点
+- 按钮采用指针扩散填充动画：圆形背景从鼠标进入的位置展开铺满、文字反色（`components/ui/origin-button.tsx`）；Hero 按用户要求的顺序出场——标题先出、徽章后出
+- 完整响应式布局；移动端针对 iOS Safari 的视口与工具栏做了专门处理（页脚预留 100px 避开底部工具栏；固定背景层踩过 `lvh` 在工具栏收起时少算一截露出黑带的怪癖，用「body 底色 = shader 的 colorBack」接缝，见 `globals.css` 与下面第 14 条）
+- 单页滚动结构：Hero / 关于我 / 技术能力 / 实战项目 / 插画作品 / 视频演示 / 联系方式 / 页脚，每个板块各占一屏（`min-h-screen` + 垂直居中，相邻区块内容净间距 192px），导航平滑滚动到对应锚点
 
 导航是常驻框架，**不参与逐字动画**：它反复出现在视口里，逐字错峰反而显碎，且直接可见。
 
@@ -147,7 +149,7 @@ node scripts/generate-images.mjs
 | 着色器画质档位 | `components/liquid-metal-background.tsx` 的 `QUALITY_TIERS`（最高档为库默认的 ≈8.3MP，覆盖 1440p 级 Retina 原生精度） |
 | 液态金属背景参数 | `components/liquid-metal-background.tsx` |
 | 网站文案（中文 / English） | `lib/i18n.ts` 的 `translations`，两个语言都要补齐 |
-| 默认语言 | `app/page.tsx` 的 `useState<Lang>` **和** `app/layout.tsx` 的 `<html lang>`，两处必须一起改（见下面第 6 条） |
+| 默认语言 | `components/language-context.tsx` 的 `useState<Lang>` **和** `app/layout.tsx` 的 `<html lang>`，两处必须一起改（见下面第 6 条） |
 
 ## 实现上值得注意的几点
 
@@ -157,20 +159,22 @@ node scripts/generate-images.mjs
 
 **framer-motion 的一般纪律**：带动画的组件（按钮、卡片入场、灯箱）用 `LazyMotion` + `domAnimation` 按需加载 framer-motion，剔除了未使用的 drag / layout 代码。新增带动画的组件请用 `m.*` 而非 `motion.*`，否则会把完整版拖回包里。另注意 framer-motion 会接管元素的 `transform` 属性，不要同时用 Tailwind 的 `-translate-x-1/2` 之类的工具类做定位（`origin-button.tsx` 里踩过，改用 `x/y` 由它统一管理）。**但 framer 不适合驱动大量元素的逐帧动画**——它会为每个元素跑一个 JS rAF 循环逐帧写内联样式，逐字揭示因此改成了纯 CSS transition（见下面第 8 条与「Safari 性能专项」），`reveal-text.tsx` 里只保留了 `useInView` 这一个 hook。
 
-**逐字揭示动画（`reveal-text.tsx`）**，八个坑都实测过，改这个文件前值得先看：
+**逐字揭示动画（`reveal-text.tsx`）**，十四个坑都实测过，改这个文件前值得先看：
 
 1. **拆字必须按码点**（`Array.from(input)`），不能用正则的 `[\s\S]`——后者按 UTF-16 码元匹配，会把 emoji 拆成孤立代理项，而孤立代理项在服务端序列化与客户端 hydrate 时结果不同，触发 React 注水失败，整棵服务端树被丢弃后 `useInView` 的观察器全部失效，表现为全站文字停在不可见状态。
 2. **每个单元自己驱动动画**，不要依赖 framer 的父子 variant 传播——传播只在父级首次切换 variant 时发生，之后新挂载的子元素（切换语言时就会出现）接不上，会永远停在 hidden。
 3. **`IntersectionObserver` 不要给 margin 设负值**。负的 top margin 会漏掉 fixed 导航，负的 bottom margin 会在「已滚到页面最底」时漏掉页脚版权文字——用户看得见它，IO 却判它不相交。
 4. **`as="span"` 时不能加 `w-full`**：span 是 inline，`width:100%` 会让浏览器把容器算成只有一行宽，中文逐字必然竖排。
 5. **`delay` 写在 variants 的 visible 分支里**，不要放 `transition` prop，否则它对 `hidden` 的初始应用同样生效。
-6. **默认语言的服务端与客户端必须一致**。改 `useState<Lang>` 的同时必须改 `app/layout.tsx` 的 `<html lang>`：服务端按 layout 的 lang 渲染首帧，客户端按 `useState` 的初值 hydrate，两边不同就是一次 React 注水失败——整棵服务端树被丢弃，`useInView` 的观察器跟着失效，全站文字停在不可见状态。另外首帧语言不要由 `navigator.language` / `localStorage` 决定，那必然造成两边不一致。
+6. **默认语言的服务端与客户端必须一致**。改 `components/language-context.tsx` 里 `useState<Lang>` 的初值的同时必须改 `app/layout.tsx` 的 `<html lang>`：服务端按 layout 的 lang 渲染首帧，客户端按 `useState` 的初值 hydrate，两边不同就是一次 React 注水失败——整棵服务端树被丢弃，`useInView` 的观察器跟着失效，全站文字停在不可见状态。另外首帧语言不要由 `navigator.language` / `localStorage` 决定，那必然造成两边不一致；用户的选择只在挂载后的 `useEffect` 里恢复。
 7. **任何「静止状态」下的 filter 都会让 Safari 显出与文字等大的灰色方块**——不管是 framer 留下的内联 `blur(0px)`，还是隐藏态里带 blur 的 CSS。方块是 WebKit 为带 filter 的元素建的合成层的空层贴片，首屏加载等注水的那一两秒最明显。对策是让静止状态彻底不带 filter：隐藏态加 `visibility: hidden`（整个元素不画），blur=0 的文本不设 `--reveal-blur` 变量（CSS 落到 `filter: none`），播放态目标直接写 `filter: none`（规范规定 none 与 blur 列表插值时补恒等值，blur(10px)→none 观感等同 blur(10)→blur(0)）。**另一个坑：`var()` 是字面替换**，`--reveal-blur` 的值必须是完整的 `blur(8px)`——只写 `8px` 会把 `filter: var(--reveal-blur, none)` 替换成非法的 `filter: 8px`，静默回退成 `none`，模糊效果整个消失。
 8. **不要用 framer 给上百个单元做逐帧动画**。framer 会为每个单元跑一个 JS rAF 循环、每帧写一次内联 style，长段落揭示时主线程每帧要做上百次样式写入 + 重算，WebKit 实测掉到 55fps 以下、最差帧 300ms（blur 本身反而不是主因——`filter: none` 掉帧依旧）。现在整段动画是**纯 CSS transition**：组件只在容器上切换一次 `reveal-play` class，`opacity/transform` 的逐帧工作交给合成器；错峰用 `transition-delay: calc(var(--reveal-delay) + var(--ri) * var(--reveal-stagger))`，动画参数全部经 CSS 变量下发（render 里算好，服务端客户端一致，不破坏注水）。代价是 reveal-text 不再依赖 framer，只保留 `useInView` 这一个 hook。
 9. **拖拽容器里 `setPointerCapture` 会吞掉内部按钮的 click**。全屏滑动手势面（灯箱遮罩、轮播轨道）为了顺畅拖拽会调用 `setPointerCapture`，而规范规定捕获期间后续的指针事件、兼容鼠标事件与最终 `click` 全部重定向到捕获元素——于是按在卡片「GitHub」链接上的点击，`click` 落到了轨道容器上，链接永远点不开；灯箱底部的「下一张」同理。现象是按钮看得见、点得住、就是没反应，且不报任何错。对策：`onPointerDown` 里先判断 `e.target.closest("a, button")`，落在交互元素上直接 return，不进入拖拽分支（`lightbox.tsx`、`project-carousel.tsx`）。
 10. **Tailwind 的 `content` 必须覆盖放共享类名的目录**。共用样式抽成常量（`lib/ui-kit.ts` 的 `SECTION_SHELL` 等）后，如果 `tailwind.config.ts` 的 content 只扫了 `app/` 和 `components/`，常量字符串里的类根本不会进产物——不报错、不警告，页面只是静默丢样式。实测 `py-24`、`bg-black/35` 因此消失，所有区块的上下 96px 留白和暗色底色一起没了，几大部分挤在一起（用户反馈「靠得太近」）。排查方法是直接在 `out/_next/static/css/*.css` 里 grep 类名，而不是看页面猜。`lib/` 已加进 content。
 11. **Tailwind 连注释里的类名也会扫**。删除死代码时留下的说明文字（「CardDescription 用的 `text-muted-foreground`」）会让这个被删掉用途的工具类重新出现在产物 CSS 里—— Tailwind 的候选提取器不区分代码与注释。写这类注释时避开完整的类名写法（如写成「muted 系文字色」），否则删了也白删。
 12. **删 shadcn 组件的未用变体时，连带删主题变量**。`button.tsx` / `badge.tsx` 的 cva 变体字符串是 Tailwind 的扫描源：destructive / outline 等从未使用的变体会各自生成一整套工具类（`bg-destructive`、`border-input`、`underline-offset-4`……）白占 CSS；对应的 `--destructive` / `--popover` / `--muted` / `--input` 变量也一起失效。同理 `asChild` 没人用就别引 `@radix-ui/react-slot`——它是纯为 asChild 存在的依赖。变量删完记得 grep 一遍 `out/_next/static/css/*.css` 确认没漏。
+13. **中文之间不能加间距 margin，英文词间必须有**。「逐字」把 `日本を旅する` 拆成单字后，若统一给每个单元加 `margin-left`，中文会被插进本不存在的空隙（用户反馈「文字与文字的间隔过大」）；而纯英文 `Hello World` 拆成单词后没有间距又会全部糊在一起。对策是拆字时按**源文本是否有空白**给单元打 `gap` 标记：只有源文本里跟着空白的单元才加 `.reveal-gap` margin——汉字之间不加、英文词间与中英文交界都保留（`reveal-text.tsx` 的 `splitRevealUnits`）。判据必须是源文本，不能按「字符是否 CJK」猜：中英混排时一个汉字后面跟英文单词，交界处的空白同样要留。
+14. **固定背景用 `lvh` 也会在 iOS 上露出黑带，最终靠 body 底色接缝**。`100lvh` 取的是工具栏收起后的视口高，滚动全程恒定不抖，但工具栏处于收起状态时 fixed 元素仍可能按未收起的高度少算一截，页面底部露出一条背景画布盖不到的黑带（用户 iOS 截图反馈「背景没有铺满屏幕」）。根元素与 body 的底色是唯一保证铺满画布的层，把 `body` 的 `background-color` 设成着色器本身的 `colorBack`（`#0a0a0c`），黑带与画布边缘同色即看不出接缝——比继续跟视口单位较劲可靠（`app/globals.css`）。
 
 切换语言会换掉整套单元，单元 `key` 用索引而非文本，避免 ~790 个 span 全部卸载重挂载。但**列表的 `key` 同样必须跨语言稳定**：实战项目卡片原来写 `key={proj.name}`，中文名和英文名不同，切换语言时 React 会把三张卡片连同里面的 `RevealText` 组件一起卸载重挂载——组件自己记住「已揭示过」的 ref 也随之一块丢，文字重新从隐藏态播一遍，刚摘掉的 filter 也跟着回来。现在改用 `repo` 地址做 key。
 

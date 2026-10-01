@@ -1,7 +1,7 @@
 # 项目接力文档 — Personal Website
 
-> 最后更新：2026-09-20 | 模式A 快速源码测绘
-> Commit: `bdb12b1` (main)
+> 最后更新：2026-10-01 | 模式A 快速源码测绘（随每次大改动同步刷新）
+> Commit: 见 git log（本文末「Git 历史摘要」）
 
 ---
 
@@ -12,15 +12,15 @@
 | 项目名 | personal-website |
 | 仓库 | `ForJiang/ForJiang.github.io` |
 | 线上地址 | https://forjiang.github.io |
-| 框架 | Next.js 14.2.35 (App Router, 静态导出) |
+| 框架 | Next.js 14.2.35 (App Router, 静态导出，`output: "export"`) |
 | 语言 | TypeScript 5 |
 | UI 库 | shadcn/ui (default style, slate color) + Tailwind CSS 3.4 |
 | 视觉特效 | `@paper-design/shaders-react` 0.0.81 (LiquidMetal shader) + Canvas 鼠标轨迹 |
-| 动画 | Framer Motion 11 |
-| 国际化 | 客户端中英双语切换 (lib/i18n.ts) |
-| 部署 | GitHub Actions → GitHub Pages (静态导出 `out/`) |
-| 包管理 | npm (有 package-lock.json, node_modules 已安装) |
-| Git 分支 | main, 工作区干净 |
+| 动画 | Framer Motion 11（仅按钮填充与卡片入场；逐字揭示已改纯 CSS transition） |
+| 国际化 | 客户端中英双语切换，默认英文，localStorage 记住手动选择（`components/language-context.tsx`） |
+| 部署 | GitHub Actions → GitHub Pages (静态导出 `out/`)，用户主站根路径，无 basePath |
+| 包管理 | npm (有 package-lock.json，`--no-save` 装 sharp / playwright 不写进依赖) |
+| Git 分支 | main |
 
 ## 2. 目录结构
 
@@ -28,27 +28,38 @@
 personal-website/
 ├── .github/workflows/deploy.yml  # GitHub Actions 自动部署
 ├── app/                           # Next.js App Router (无 src/ 前缀)
-│   ├── layout.tsx                 # 根布局: Inter 字体, metadata, lang="zh-CN"
-│   ├── page.tsx                   # 整站单页: Nav + Hero + About + Skills + Projects + Contact + Footer
-│   └── globals.css                # Tailwind directives + shadcn CSS 变量主题
+│   ├── layout.tsx                 # 根布局: Inter 字体, metadata, lang="en", favicon 内联 data URI, 播放器 preconnect, WebKit 打类脚本
+│   ├── page.tsx                   # 整站单页(692 行): Hero/关于/技能/实战项目/插画/视频/联系/页脚 + 灯箱
+│   └── globals.css               # Tailwind directives + shadcn CSS 变量 + 行距收口 + .shader-bg + reveal 动画
 ├── components/
-│   ├── liquid-metal-background.tsx # 全站固定液态金属 WebGL 背景 (自适应画质)
-│   ├── mouse-trail.tsx            # 白色流光鼠标轨迹 (Canvas, 叠加发光)
+│   ├── brand-icons.tsx           # Bilibili / Pixiv / X 官方标志 (simple-icons, CC0)
+│   ├── language-context.tsx      # 全站语言状态 (Provider + useLanguage)
+│   ├── lightbox.tsx              # 全屏原图查看器 (247 行, dynamic 按需加载)
+│   ├── liquid-metal-background.tsx # 全站固定液态金属背景 + 画质自适应
+│   ├── mouse-trail.tsx           # 鼠标流光轨迹
+│   ├── site-nav.tsx              # 全站导航 (锚点 + 平滑滚动 + 语言按钮)
+│   ├── site-shell.tsx            # 页面外框 (背景 + 轨迹 + 导航 + LazyMotion domAnimation)
 │   └── ui/
-│       ├── badge.tsx              # shadcn Badge
-│       ├── button.tsx             # shadcn Button
-│       ├── card.tsx               # shadcn Card 系列
-│       └── liquid-metal-hero.tsx  # Hero 区组件 (Framer Motion 入场动画)
+│       ├── badge.tsx / button.tsx / card.tsx   # shadcn/ui 组件 (已裁掉未用变体)
+│       ├── liquid-metal-hero.tsx               # Hero 区 (标题先出、徽章后出)
+│       ├── origin-button.tsx                   # 指针扩散填充按钮
+│       ├── project-carousel.tsx                # transform 驱动的无限轮播轨道
+│       └── reveal-text.tsx                     # 逐字模糊上浮揭示动画 (纯 CSS transition)
 ├── lib/
-│   ├── i18n.ts                    # 中英双语文案字典
-│   └── utils.ts                   # cn() 工具函数 (clsx + tailwind-merge)
-├── public/images/                 # 4 张 AI 插画封面 (yuntu/tick/pixelboard/solar.jpg)
-├── out/                           # 静态构建产物 (被 .gitignore 但实际存在)
-├── docs/deploy-workflow.yml       # 部署工作流模板副本
-├── index.html                     # 旧版纯 HTML 页面 (已废弃, 可删)
+│   ├── favicon-inline.ts         # 主图标的圆角 PNG 内联 data URI
+│   ├── i18n.ts                   # 中英双语文案字典 + 实战项目数据 (260 行)
+│   ├── image-variants.ts         # 由脚本生成的图片变体清单
+│   ├── ui-kit.ts                 # 全站共用样式常量 + 卡片 spotlight 指针追踪
+│   └── utils.ts                  # cn() 工具函数
+├── public/
+│   ├── favicon.jpg / favicon-rounded.png
+│   └── images/                   # 4 张插画的 2400px 无损原图 + AVIF/WebP 变体
+├── scripts/generate-images.mjs   # 母版 → 响应式变体生成脚本 (需 --no-save 装 sharp)
+├── docs/deploy-workflow.yml     # 部署工作流模板副本
+├── README.md / RELAY.md          # 项目文档 (README 是主文档，坑与实测都在里面)
 ├── components.json                # shadcn/ui 配置
 ├── next.config.js                 # output:"export", images.unoptimized
-├── tailwind.config.ts             # darkMode:"class", shadcn HSL colors, animate 插件
+├── tailwind.config.ts             # content 必须含 app/ components/ lib/ 三处
 ├── postcss.config.js              # tailwindcss + autoprefixer
 ├── tsconfig.json                  # strict, @/* → ./*
 └── package.json
@@ -56,33 +67,37 @@ personal-website/
 
 ## 3. 架构分析
 
-### 3.1 单页应用架构
+### 3.1 单页滚动架构
 
-整站是一个客户端组件 (`app/page.tsx`, "use client", 363 行)，所有板块内联渲染：
-- **导航栏**: 内联在 page.tsx (非独立组件), fixed 定位, 桌面端水平导航 + 移动端汉堡菜单
-- **Hero**: `<LiquidMetalHero>` 组件, Framer Motion 逐项入场
-- **关于我**: 玻璃拟态面板, 高中生/学习者身份
-- **技能**: 3 列卡片 (前端/后端/工具), 每列含标签
-- **项目**: 2×2 网格, AI 插画作品展示 (非代码项目)
-- **联系**: 邮件/GitHub/Bilibili 三个按钮
-- **页脚**: 版权 + 社交图标
+整站是单页（`app/page.tsx` 顶部 `"use client"`），`Home()` 包 `LanguageProvider` → `HomeContent` 渲染 `SiteShell`（LazyMotion + 固定背景 + 鼠标轨迹 + 导航）+ 六个锚点区块：
 
-板块间通过 `scrollIntoView({ behavior: "smooth" })` 平滑跳转。
+| 锚点 | 内容 |
+|------|------|
+| `about` | 玻璃拟态自我介绍面板，高中生/学习者身份 |
+| `skills` | 技术栈分组卡片（前端与可视化 / 浏览器端 AI 与媒体 / 工程与算法） |
+| `projects` | 实战项目横向无限轮播（5 个项目 × 5 份副本 + 静默归位） |
+| `gallery` | AI 插画卡片（4 张，封面固定 16:9，点击开灯箱） |
+| `videos` | B 站外链播放器（协议相对地址 + lazy + preconnect，1440px 上限） |
+| `contact` | 邮件 / GitHub / Bilibili / Pixiv / X 五个按钮 + 页脚同款图标 |
+
+导航常驻但**不参与逐字动画**（反复进入视口，错峰显碎）。Hero 两个按钮平滑滚动到 `projects` / `contact`。**用户明确要求过：技能与实战项目不拆子路由**（曾拆成 /skills、/projects 又合并回来，不要重做）。
 
 ### 3.2 视觉系统
 
-**核心设计不变量** (来自 memory, 不可破坏):
+**核心设计不变量** (不可破坏):
 1. 液态金属 shader 是全站 **fixed 固定背景** (`-z-10`), 不在 Hero 内部
 2. 全站 **单一深色主题**, 暗色/亮色切换已移除
 3. 所有内容区使用 **半透明深色玻璃面板** (`bg-black/35~40 + backdrop-blur`), 不能用不透明背景
 4. 文字系统全部 **白色** + text-shadow, 不能引入 `bg-background`/`text-foreground` 等主题色
-5. 鼠标轨迹是 **纯白色** (lighter 混合模式), 不要重新引入颜色分支
+5. 鼠标轨迹是 **纯白色** (lighter 混合模式), 没有深浅色分支
+6. `body` 底色 = 着色器 `colorBack`（`#0a0a0c`），兜住 iOS 工具栏收起时 fixed 背景露出的黑带
 
-**样式常量** (定义在 page.tsx 顶部):
+**样式常量** (定义在 `lib/ui-kit.ts`，注意: 这个目录必须进 `tailwind.config.ts` 的 content):
 - `SECTION_BADGE = "bg-white/10 text-white border-white/25"`
 - `TEXT_SHADOW = "[text-shadow:0_2px_12px_rgba(0,0,0,0.5)]"`
 - `GLASS_CARD = "border-white/15 bg-black/40 backdrop-blur-sm"`
 - `GLASS_TAG = "bg-white/10 text-white/85 border-transparent"`
+- `SECTION_SHELL = "min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16"`
 
 ### 3.3 自适应画质系统
 
@@ -95,9 +110,16 @@ personal-website/
 ### 3.4 国际化
 
 `lib/i18n.ts` 导出 `translations` 字典, 类型 `Lang = "zh" | "en"`:
-- 检测顺序: localStorage → navigator.language → 默认 zh
-- 切换按钮在导航栏 (桌面端和移动端都有)
+- 首帧固定英文（`useState<Lang>("en")`，与 `layout.tsx` 的 `<html lang="en">` 一致，否则注水失败）
+- 挂载后 `useEffect` 只恢复 localStorage 里手动切过的选择，不再跟随浏览器语言
+- 切换按钮在导航栏 (桌面端和移动端都有)，同时改 `document.documentElement.lang`
 - 所有 UI 文案通过 `t.xxx` 引用, 新增文案需中英都补
+
+### 3.5 图片与灯箱
+
+- 封面: `<picture>` + AVIF/WebP srcset (`lib/image-variants.ts` 的 `IMAGE_SIZES`)，容器固定 16:9
+- 灯箱: `dynamic()` 按需加载；`gallery` 区块进入视口时预载 chunk + 按 2.5s 间隔预热全部 2400px 无损原图（Save-Data 不预热）；桌面端悬停卡片立即预热该张
+- 灯箱/轮播的滑动手势用 `setPointerCapture`，必须在 `onPointerDown` 里 `closest("a, button")` 放行，否则内部按钮点击被吞
 
 ## 4. 依赖清单
 
@@ -107,13 +129,13 @@ personal-website/
 | next | 14.2.35 | 框架 |
 | react / react-dom | ^18.2.0 | UI 运行时 |
 | @paper-design/shaders-react | ^0.0.81 | 液态金属 WebGL shader |
-| framer-motion | ^11.0.0 | 动画 |
+| framer-motion | ^11.0.0 | 按钮填充与卡片入场（逐字动画不用） |
 | lucide-react | ^0.400.0 | 图标 |
-| @radix-ui/react-slot | ^1.1.0 | shadcn Button 多态 |
 | class-variance-authority | ^0.7.0 | shadcn 变体 |
 | clsx | ^2.1.1 | 类名合并 |
 | tailwind-merge | ^2.4.0 | Tailwind 类名去重 |
-| tailwindcss-animate | ^1.0.7 | 动画工具类 |
+
+已删除: `@radix-ui/react-slot`（asChild 无人用）、`tailwindcss-animate`（无 animate 类）。
 
 ### 开发依赖
 | 包 | 版本 | 用途 |
@@ -122,31 +144,27 @@ personal-website/
 | tailwindcss | ^3.4.0 | CSS 框架 |
 | postcss + autoprefixer | ^8.4 / ^10.4 | CSS 处理 |
 | eslint + eslint-config-next | ^8 / 14.2.35 | 代码检查 |
-| gh-pages | ^6.1.0 | 备用手动部署 |
 
-## 5. Git 历史摘要 (最近 20 条)
+已删除: `gh-pages` 与 `package.json` 里的 `deploy` 脚本（部署走 Actions，脚本引的是已卸载的包）。本地按需 `npm i --no-save` 的: `sharp`（生成图片变体）、`playwright`（WebKit 帧率测量）。
+
+## 5. Git 历史摘要 (最近 15 条)
 
 ```
-bdb12b1 鼠标轨迹改为白色流光（统一叠加发光混合，移除深浅色分支）
-1359f00 重新触发 Pages 部署
-def124a 新增中英双语模式
-95e0330 插画卡片文字改为描述图片内容（中英双语）
-a526186 全站中英双语
-23737de 关于我改为高中生学习者身份；统一深色底
-61a2f4c 项目封面替换为四张插画图
-69f6a38 Hero 副标题改为 web coding...
-73aa15e 移除 Hero 副标题文字
-06728be 画质自适应：从 2.5K 最高档起步
-dc7b528 流畅性优化：着色器缓冲压至 720p
-3c1f768 液态金属扩展为全站固定背景
-31f5979 页脚只保留版权信息
-06c1306 移除 Hero 底部技能芯片卡片
-cd2a23b Hero 可读性优化
-78af1a4 Hero 对齐参考设计
-db81bf6 修复 CI 构建
-a1703d3 Add GitHub Actions workflow for deploying pages
-20321d5 工作流模板加 configure-pages 自动启用
-fb340af 升级为 Next.js 液态金属主站
+419ba3e chore: 死依赖与死脚本清理 + 修正过时注释
+21eac44 perf: 清理死代码 + 封面 sizes 校准，包体与流量双减
+a4c401e fix: 中文逐字之间的多余间距——reveal-gap 改为按源文本空格决定
+98780c4 docs: README 与简介去除全部 Emoji，仅保留网页正文 Emoji
+d27c340 fix: 修 iOS 底部露黑带——body 底色与 shader 的 colorBack 对齐
+08b24a4 style: 缩小插画卡片文字部分
+cfe296b fix: Tailwind content 补扫 lib/——恢复区块上下 96px 留白与暗色底色
+54eb9ce style: 插画卡片缩小 + 封面图固定 16:9
+c9a5e4a style: 全站统一文字行距——正文 1.625 / 标题 1.375，消除行间挤压
+ac9dc96 style: 去掉技能/实战项目两屏底部多余的互跳按钮
+55d49b0 style: 去掉插画卡片底部的标签行（AI Art / Illustration / ComfyUI）
+93cd8d4 revert: 技能与实战项目合并回单页滚动，各占一屏
+bff2985 content: 技能页按项目实际技术栈重写
+96c79e1 style: 插画卡片封面图占比提高
+dea4ac2 style: Hero 徽章改为标题之后出场
 ```
 
 ## 6. 当前完成度
@@ -154,49 +172,51 @@ fb340af 升级为 Next.js 液态金属主站
 | 功能模块 | 状态 | 文件 | 说明 |
 |----------|------|------|------|
 | 项目脚手架 | ✅ | 根目录配置文件 | Next.js + TS + Tailwind + shadcn |
-| 导航栏 | ✅ | app/page.tsx:97-152 | 响应式, 中英切换, 平滑滚动 |
+| 导航栏 | ✅ | components/site-nav.tsx | 响应式, 中英切换, 平滑滚动锚点 |
 | 液态金属背景 | ✅ | components/liquid-metal-background.tsx | 全站 fixed, 自适应画质 |
-| 鼠标轨迹 | ✅ | components/mouse-trail.tsx | 白色流光 + 水晶碎粒 |
-| Hero 区 | ✅ | components/ui/liquid-metal-hero.tsx | Framer Motion 入场动画 |
-| 关于我 | ✅ | app/page.tsx:166-187, lib/i18n.ts | 高中生身份, 玻璃面板 |
-| 技能展示 | ✅ | app/page.tsx:189-232, lib/i18n.ts | 3 列卡片, 标签 |
-| 项目/插画 | ✅ | app/page.tsx:234-290, lib/i18n.ts | 4 张 AI 插画, 2×2 网格 |
-| 联系方式 | ✅ | app/page.tsx:292-340 | 邮件/GitHub/Bilibili |
-| 页脚 | ✅ | app/page.tsx:342-360 | 版权 + 社交图标 |
-| 中英双语 | ✅ | lib/i18n.ts | localStorage 持久化 |
+| 鼠标轨迹 | ✅ | components/mouse-trail.tsx | 纯白流光 + 水晶碎粒 |
+| Hero 区 | ✅ | components/ui/liquid-metal-hero.tsx | 标题先出、徽章后出 |
+| 关于我 | ✅ | app/page.tsx, lib/i18n.ts | 高中生身份, 玻璃面板 |
+| 技能展示 | ✅ | app/page.tsx, lib/i18n.ts | 3 组卡片, 按真实项目技术栈 |
+| 实战项目轮播 | ✅ | components/ui/project-carousel.tsx | 5 个项目, 无限轮播 |
+| AI 插画 + 灯箱 | ✅ | app/page.tsx, components/lightbox.tsx | 4 张插画, 16:9 封面, 无损原图 |
+| 视频板块 | ✅ | app/page.tsx, app/layout.tsx | B 站外链播放器, lazy + preconnect |
+| 联系方式 | ✅ | app/page.tsx | 邮件/GitHub/Bilibili/Pixiv/X |
+| 中英双语 | ✅ | components/language-context.tsx | 默认英文, localStorage 持久化 |
 | GitHub Pages 部署 | ✅ | .github/workflows/deploy.yml | Actions 自动构建部署 |
-| 暗色主题 | ✅ (设计决策) | — | 单一深色主题, 切换已移除 |
-| SEO/元数据 | ⚠️ 基础 | app/layout.tsx:7-12 | 仅有 title + description, 缺 OG |
-| 子页面/路由 | ❌ 缺失 | — | 仅单页, 无博客等子路由 |
-| 无障碍 | ⚠️ 基础 | — | 有 aria-label, 缺 skip-nav 等 |
+| 逐字揭示动画 | ✅ | components/ui/reveal-text.tsx | 纯 CSS transition, 按源文本空格决定间距 |
+| 深色主题 | ✅ (设计决策) | — | 单一深色主题, 切换已移除 |
+| SEO/元数据 | ⚠️ 基础 | app/layout.tsx | 有 title + description + favicon + theme-color, 缺 OG / Twitter Card |
+| 无障碍 | ⚠️ 基础 | — | 图片/图标有 aria-label 与键盘支持, 缺 skip-nav |
+| 子页面/路由 | ❌ 不做 | — | 用户要求保持单页滚动, 不拆子路由 |
+| npm audit | ⚠️ 5 项 (4 high + 1 critical) | Next 14.2.35 传递依赖 | 需破坏性升级 next 大版本才能修, 已知未处理 |
 
 ## 7. 关键约束 (红线)
 
-1. **无 Node.js 环境** — 默认环境没有 node, 但可通过下载便携 Node 到 /tmp 解决 (见 memory: node-env-limitation)
-2. **GitHub 推送** — github.com:443 偶尔连不上, 可用 GitHub API 分步推送 (见 memory: github-api-push-workaround)
+1. **Node.js 环境** — 默认环境没有 node, 需下载便携 Node 到 /tmp（每次 bash 调用都要重新 export PATH；/tmp 会被清空）
+2. **GitHub 推送** — github.com:443 偶尔连不上, 可用 GitHub API 分步推送（POST blob/tree/commit + PATCH ref，响应务必 `Buffer.concat` 再 `toString('utf8')`，否则多字节字符被 chunk 切断显示成乱码）
 3. **shadcn 组件** — 不能用 `npx shadcn@latest add`, 需手动创建
 4. **shader 包版本** — `@paper-design/shaders-react` 只到 0.0.81, ^1.0.0 不存在
-5. **preset API** — liquidMetalPresets 条目是 `{ name, params }`, 要展开 `.params` 而不是整个对象
+5. **preset API** — `liquidMetalPresets` 条目是 `{ name, params }`, 要展开 `.params`
 6. **全站深色不变量** — 不能引入不透明背景/主题色切换, 会遮住固定的液态金属背景
-7. **鼠标轨迹纯白** — 不要重新引入颜色分支, 全部 white + lighter 混合
-8. **layout.tsx metadata description** — 当前仍写着"全栈开发工程师", 与实际身份(高中生)不一致
+7. **鼠标轨迹纯白** — 不要重新引入颜色分支
+8. **Tailwind content 必须含 `lib/`** — `lib/ui-kit.ts` 里的共享类名字符串不进 content 就静默丢失（曾丢 `py-24` / `bg-black/35`，区块挤成一团）；且 Tailwind 连注释里的类名也扫，删死代码时注释里别写完整类名
+9. **行距收口在 globals.css 且必须 `!important`** — Tailwind 字号工具类自带 1.1 行高，元素选择器压不过；`p` 1.625 / `h1~h4` 1.375 是全站唯一出处
+10. **注水一致性** — 首帧语言由 `layout.tsx` 的 `<html lang>` 与 `language-context.tsx` 的 `useState` 初值共同决定，两边必须同为 `en`；同理 reveal 动画参数全部经 CSS 变量在 render 时算好下发，不在客户端读 `window` 尺寸之类首帧才有的数据
+11. **单页结构 / 无 basePath** — 部署在用户主站根路径，不要加 `basePath` 或 `trailingSlash`；不要重新拆 /skills、/projects 子路由
+12. **用户对 Emoji 的偏好** — README 与简介（meta description + 仓库 description）零 Emoji；网页正文的技能分组徽章保留 🎨/🧠/🛠️，别改成别的
 
 ## 8. 建议的下一步工作
 
 ### P0 — 一致性修复
-1. `app/layout.tsx:9` description 改为与"关于我"一致的高中生身份描述
-2. 技能栈标签 (i18n.ts) 里 Docker/K8s/PostgreSQL 等偏专业的标签是否需要调整
-3. 删除已废弃的 `index.html`
+（本轮已全部完成：description 与高中生身份一致 / 技能栈按真实项目重写 / 旧 index.html 早已删除）
 
-### P1 — 内容增强
-4. 增加真实代码项目展示 (目前只有 AI 插画)
-5. 添加 Open Graph / Twitter Card 元数据
-6. 添加 favicon (当前是 SVG emoji)
-7. 添加 sitemap.xml
+### P1 — 内容与元数据增强
+1. 添加 Open Graph / Twitter Card 元数据（分享链接带封面图）
+2. 添加 `sitemap.xml` 与 robots
+3. 无障碍补 skip-nav 跳主内容
 
 ### P2 — 功能扩展
-8. 博客/文章子页面
-9. 项目详情页
-10. 更多 shadcn 组件 (如需表单: Input, Textarea)
-11. 页面过渡动画优化
-12. 性能优化 (图片 WebP/AVIF, 字体子集化)
+4. 升级 next 大版本以消掉 npm audit 的 5 项告警（破坏性，需回归全站）
+5. 更多插画作品页 / 项目详情（若用户不再坚持单页）
+6. 视频板块增加多个视频切换（目前单个 B 站外链播放器）
