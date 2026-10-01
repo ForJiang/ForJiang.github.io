@@ -24,25 +24,45 @@ function collectText(node: ReactNode): string {
   return "";
 }
 
+/** 一个揭示单元：文本 + 「源文本里它后面是否有空格」 */
+interface RevealUnit {
+  text: string;
+  /** 后面紧跟空白时才为 true：渲染时只在真有空格的位置还原词间距 */
+  gap: boolean;
+}
+
 /**
- * 把文本拆成动画的最小单元。
+ * 把文本拆成动画的最小单元，并记录每个单元后面在源文本里是否有空白。
  * 英文按空白拆词；中日韩按「字」拆——中文没有空格，若按空白拆会把整句当成
  * 一个单元，逐字动画就失效了。混排时两类规则同时生效。
+ *
+ * gap 标记很关键：中文逐字单元之间靠字体自带的方块字距就够，再统一加
+ * margin 会把字距撑得过大（用户反馈「中文文字与文字的间隔过大」）。因此
+ * 间距只出现在源文本真有空白的地方——英文词与词之间、中英文交界处；
+ * 汉字与汉字、汉字与中文标点之间完全不加。
  *
  * 用 Array.from 按码点遍历而不是正则的 [\s\S]：后者按 UTF-16 码元匹配，会把
  * emoji 拆成两个孤立代理项，而孤立代理项在服务端序列化与客户端 hydrate 时
  * 结果不同，直接触发整棵树注水失败。
  */
-function splitRevealUnits(input: string): string[] {
+function splitRevealUnits(input: string): RevealUnit[] {
   if (!input) return [];
-  const units: string[] = [];
+  const units: RevealUnit[] = [];
   let word = "";
+  const pushWord = (gap: boolean) => {
+    if (word) {
+      units.push({ text: word, gap });
+      word = "";
+    }
+  };
   for (const ch of Array.from(input)) {
-    // 空白不产生单元，间距由每个单元的 margin-right 提供
+    // 空白不产生单元，但把「前一个单元之后有空白」记下来
     if (ch.trim() === "") {
       if (word) {
-        units.push(word);
+        units.push({ text: word, gap: true });
         word = "";
+      } else if (units.length) {
+        units[units.length - 1].gap = true;
       }
       continue;
     }
@@ -54,13 +74,10 @@ function splitRevealUnits(input: string): string[] {
       word += ch;
       continue;
     }
-    if (word) {
-      units.push(word);
-      word = "";
-    }
-    units.push(ch);
+    pushWord(false);
+    units.push({ text: ch, gap: false });
   }
-  if (word) units.push(word);
+  pushWord(false);
   return units;
 }
 
@@ -133,9 +150,10 @@ export default function RevealText({
     if (isInView) revealedRef.current = true;
   }, [isInView]);
 
-  const textUnits = items ? [] : splitRevealUnits(collectText(children) || text || "");
-  const units: ReactNode[] = items ?? textUnits;
-  const unitCount = units.length;
+  const textUnits: RevealUnit[] = items
+    ? []
+    : splitRevealUnits(collectText(children) || text || "");
+  const unitCount = items ? items.length : textUnits.length;
   const effBlur = unitCount > BLUR_UNIT_CAP ? 0 : blur;
 
   // span 是 inline，width:100% 会让浏览器把容器算成只有一行的宽度，
@@ -167,15 +185,28 @@ export default function RevealText({
       )}
       style={hostStyle}
     >
-      {units.map((unit, i) => (
-        <span
-          key={i}
-          className={cn("reveal-unit", !items && "reveal-gap")}
-          style={{ "--ri": i } as CSSProperties}
-        >
-          {unit}
-        </span>
-      ))}
+      {items
+        ? // items 模式：每个子元素是一个单元，组件不是纯文本、从不带词间距
+          items.map((unit, i) => (
+            <span
+              key={i}
+              className="reveal-unit"
+              style={{ "--ri": i } as CSSProperties}
+            >
+              {unit}
+            </span>
+          ))
+        : // 文本模式：间距只在源文本真有空白的位置出现（splitRevealUnits 的
+          // gap 标记），汉字之间靠字体自带字距，不再统一加 margin
+          textUnits.map((unit, i) => (
+            <span
+              key={i}
+              className={cn("reveal-unit", unit.gap && "reveal-gap")}
+              style={{ "--ri": i } as CSSProperties}
+            >
+              {unit.text}
+            </span>
+          ))}
     </Tag>
   );
 }
