@@ -72,5 +72,12 @@ export const PROJECT_IMAGES = [
   },
 ] as const;
 
+/**
+ * 封面图在布局里的真实宽度，供 <img sizes> 挑选变体档位：
+ * - ≤639px（sm 断点以下）单列：卡宽 = 视口 - 左右各 24px 容器内边距；
+ * - ≥640px 双列，画廊容器 max-w-5xl（1024px）：卡宽 = 容器 - 32px 栏间距
+ *   后除以 2，最大约 496px。此前按满屏宽度估算（(100vw-4rem)/2），容器
+ *   收窄后桌面端会下载比所需大一级的封面，白费流量。
+ */
 export const IMAGE_SIZES =
-  "(max-width: 639px) calc(100vw - 3rem), calc((100vw - 4rem) / 2)";
+  "(max-width: 639px) calc(100vw - 3rem), min(496px, calc((100vw - 4rem) / 2))";

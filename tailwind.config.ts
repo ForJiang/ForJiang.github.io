@@ -1,7 +1,9 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: ["class"],
+  // darkMode 已删：站点是单一深色主题，globals.css 里的 .dark 覆盖块早先
+  // 已移除，全站也没有一处挂 dark class 或用 dark: 工具类，留着只会让
+  // 人误以为支持主题切换
   content: [
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
