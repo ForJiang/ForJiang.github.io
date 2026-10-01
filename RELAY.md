@@ -1,6 +1,6 @@
 # 项目接力文档 — Personal Website
 
-> 最后更新：2026-10-01 | 模式A 快速源码测绘（随每次大改动同步刷新）
+> 最后更新：2026-10-02 | 模式A 快速源码测绘（随每次大改动同步刷新）
 > Commit: 见 git log（本文末「Git 历史摘要」）
 
 ---
@@ -30,7 +30,7 @@ personal-website/
 ├── app/                           # Next.js App Router (无 src/ 前缀)
 │   ├── layout.tsx                 # 根布局: Inter 字体, metadata, lang="en", favicon 内联 data URI, 播放器 preconnect, WebKit 打类脚本
 │   ├── page.tsx                   # 整站单页(约 690 行): Hero/关于/技能/实战项目/插画/视频/联系/页脚 + 灯箱
-│   └── globals.css               # Tailwind directives + shadcn CSS 变量 + 行距收口 + .shader-bg + reveal 动画
+│   └── globals.css               # Tailwind directives + shadcn CSS 变量 + 行距收口 + .shader-bg + reveal 动画 + .menu-collapse（移动端菜单开合）
 ├── components/
 │   ├── brand-icons.tsx           # Bilibili / Pixiv / X 官方标志 (simple-icons, CC0)
 │   ├── enter-block.tsx           # 区块级入场包装（IO 触发一次 + CSS 过渡）
@@ -38,7 +38,7 @@ personal-website/
 │   ├── lightbox.tsx              # 全屏原图查看器 (dynamic 按需加载)
 │   ├── liquid-metal-background.tsx # 全站固定液态金属背景 + 画质自适应
 │   ├── mouse-trail.tsx           # 鼠标流光轨迹
-│   ├── site-nav.tsx              # 全站导航 (锚点 + 平滑滚动 + 语言按钮)
+│   ├── site-nav.tsx              # 全站导航 (锚点 + 平滑滚动 + 语言按钮 + 移动端菜单开合过渡)
 │   ├── site-shell.tsx            # 页面外框 (背景 + 轨迹 + 导航)
 │   └── ui/
 │       ├── badge.tsx / button.tsx / card.tsx   # shadcn/ui 组件 (已裁掉未用变体)
@@ -153,6 +153,9 @@ personal-website/
 
 ```
 （本地 sha）最近 15 条：
+4447fe6 fix: 图标文件改内容哈希名，绕开 Safari 按 URL 的图标缓存
+f80964b fix: 移动端菜单与标题行色差 + 开合动画生硬
+bf03dc3 docs: RELAY 同步换图轮——预热体积、1:1 决策反转记录、历史摘要刷新
 df9e361 feat: 灯箱原图 1:1 加载这四张照片（3864×2176 直出分辨率）
 cab0f00 docs: README 目录结构补齐配置文件条目
 a3af7ac docs: RELAY 记录「已评估不做的优化」
@@ -170,16 +173,19 @@ cc871e9 perf: 全站瘦身——HTML -33%、CSS -17%，净删 90 行冗余代码
 a4c401e fix: 中文逐字之间的多余间距——reveal-gap 按源文本空格决定
 ```
 
-> 注意：本仓库 git push 直连经常超时，实际推送走 GitHub API（`/tmp/pushfull.cjs`，
-> 带远端树与本地 HEAD~1 树一致性校验）。API 重建的提交 sha 与本地不同但树相同，
-> 所以远端 sha 与本地对不上是正常现象，别据此判断分叉。
+> 注意：本仓库 git push 直连经常超时，实际推送走 GitHub API（`/tmp/pushfull.cjs`）。
+> 两道校验：前置的远端树与本地 HEAD~1 树一致性 + **建树后全量校验**（重建树必须与
+> 本地 `git ls-tree -r HEAD` 逐条 path+sha 相同，否则拒绝提交）。rename 必须显式
+> 发旧路径的 `"sha": null` 删除项——只传新路径会让旧文件永远留在远端树上继续被
+> 提供（2026-10-02 图标改名踩过，残留靠收尾的删除提交清掉）。API 重建的提交 sha
+> 与本地不同但树相同，所以远端 sha 与本地对不上是正常现象，别据此判断分叉。
 
 ## 6. 当前完成度
 
 | 功能模块 | 状态 | 文件 | 说明 |
 |----------|------|------|------|
 | 项目脚手架 | ✅ | 根目录配置文件 | Next.js + TS + Tailwind + shadcn |
-| 导航栏 | ✅ | components/site-nav.tsx | 响应式, 中英切换, 平滑滚动锚点 |
+| 导航栏 | ✅ | components/site-nav.tsx | 响应式, 中英切换, 平滑滚动锚点, 移动端菜单开合过渡（单一背景层无色差） |
 | 液态金属背景 | ✅ | components/liquid-metal-background.tsx | 全站 fixed, 自适应画质 |
 | 鼠标轨迹 | ✅ | components/mouse-trail.tsx | 纯白流光 + 水晶碎粒 |
 | Hero 区 | ✅ | components/ui/liquid-metal-hero.tsx | 标题先出、徽章后出 |
@@ -201,7 +207,7 @@ a4c401e fix: 中文逐字之间的多余间距——reveal-gap 按源文本空�
 ## 7. 关键约束 (红线)
 
 1. **Node.js 环境** — 默认环境没有 node, 需下载便携 Node 到 /tmp（每次 bash 调用都要重新 export PATH；/tmp 会被清空）
-2. **GitHub 推送** — github.com:443 偶尔连不上, 可用 GitHub API 分步推送（POST blob/tree/commit + PATCH ref，响应务必 `Buffer.concat` 再 `toString('utf8')`，否则多字节字符被 chunk 切断显示成乱码）
+2. **GitHub 推送** — github.com:443 偶尔连不上, 可用 GitHub API 分步推送（POST blob/tree/commit + PATCH ref，响应务必 `Buffer.concat` 再 `toString('utf8')`，否则多字节字符被 chunk 切断显示成乱码）。两条硬规矩：**git rename 必须同时发旧路径删除项（`"sha": null`）**，只传新路径旧文件会永远挂在远端；**建树后必须全量校验**（`GET /git/trees/<sha>?recursive=1` 与本地 `git ls-tree -r HEAD` 逐条比 path+sha），前置的「远端树 == 本地 HEAD~1 树」守卫挡不住 rename 残留
 3. **shadcn 组件** — 不能用 `npx shadcn@latest add`, 需手动创建
 4. **shader 包版本** — `@paper-design/shaders-react` 只到 0.0.81, ^1.0.0 不存在
 5. **preset API** — `liquidMetalPresets` 条目是 `{ name, params }`, 要展开 `.params`

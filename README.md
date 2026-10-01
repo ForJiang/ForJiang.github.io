@@ -53,7 +53,7 @@ personal-website/
 │   ├── lightbox.tsx              # 全屏原图查看器
 │   ├── liquid-metal-background.tsx # 全站固定液态金属背景 + 画质自适应
 │   ├── mouse-trail.tsx           # 鼠标流光轨迹
-│   ├── site-nav.tsx              # 全站导航（首页锚点 + 平滑滚动）
+│   ├── site-nav.tsx              # 全站导航（首页锚点 + 平滑滚动 + 移动端菜单开合过渡）
 │   ├── site-shell.tsx            # 页面外框（背景 + 轨迹 + 导航）
 │   └── ui/
 │       ├── badge.tsx / button.tsx / card.tsx   # shadcn/ui 组件（按站点实际用法裁剪，无变体系统）
@@ -229,6 +229,8 @@ iMessage 对链接预览缓存很凶：部署后老会话里可能仍是旧样�
 **液态金属背景**：`scale` 控制液滴相对视口的大小（0.5 时直径约为视口短边的 67%，漂移全程不触边）；`offsetX/offsetY` 为 0 时液滴群在视口正中央。容器高度用 `100lvh`（工具栏收起后的视口高，滚动全程恒定）而非 `100vh`/`100dvh`——后两者会让 canvas 在滚动中反复 resize，表现为背景滑动与卡顿。抗锯齿依赖渲染缓冲超采样，因此画质档位只影响边缘锐度、不产生锯齿。
 
 **移动端**：底部工具栏是覆盖在视口上的不透明浮层，iOS Safari 在普通浏览下 `env(safe-area-inset-bottom)` 恒为 0，因此用固定值兜底（见 `globals.css` 中 `@media (hover: none) and (pointer: coarse)`）。站点为单一深色主题，不要重新引入 `bg-background` / 主题色切换，否则会遮住固定的液态金属背景。
+
+**移动端菜单（`site-nav.tsx`）**：两个用户截图反馈过的观感问题，根因都不在「菜单」本身。① 色差：标题行自带 `bg-black/50`，展开的菜单面板又自带一层 `bg-black/70` + 模糊，两层半透明合成后面板比标题行黑一截，交界一道缝——半透明背景不能跟着 DOM 嵌套各自带一份，面板会和祖先层复合。改成标题行与菜单共用外层唯一一层背景，任何状态同色。② 生硬：面板原是 `{menuOpen && …}` 条件渲染，一出现就是终态、没有中间帧。改为面板常驻 DOM + `grid-template-rows: 0fr → 1fr` 过渡（内容高度未知也能平滑展开，比 `max-height` 估高精确），0fr 态 `visibility: hidden` 并用 `transition: visibility 0s linear 0.32s` 延迟切换，两个方向都先播动画再改可见性；`prefers-reduced-motion` 下直接关过渡。配套的回归断言也要跟着换：面板常驻后 DOM 里同类链接恒为全量，「收起」不能再数元素个数，要看高度 + `visibility` + `aria-hidden` + 不可聚焦（顺带一个 WebKit 探针坑：`checkVisibility()` 不认祖先的 `visibility: hidden`，判定隐藏要用继承后的计算值；零高裁剪容器里的链接也仍有布局矩形，命中测试扫描必须先按可见性过滤候选）。
 
 **动画零依赖**：站点曾用 framer-motion 驱动按钮填充、卡片入场与灯箱，后来发现它不适合大量元素的逐帧动画（见下面第 8 条与「Safari 性能专项」），先把逐字揭示改成了纯 CSS；再盘点剩余用途——区块入场是「透明 + 下移 → 原位」的一次性淡入、按钮填充是 transform 过渡、按下反馈是 :active、灯箱是遮罩淡入淡出——全都是 CSS 原生表达，为一个按钮动画背整座库不值，于是 framer-motion 整个移除（First Load JS 146kB → 120kB，页面代码块 58.6kB → 32.4kB）。现在的分工：进入视口的触发用自写 IO 钩子 `lib/use-in-view.ts`，区块入场包装在 `components/enter-block.tsx`，过渡本体全在 `globals.css`。**新增动画先问一句能不能一行 CSS 写出来**；确实需要 JS 驱动的，也别为此重新引入动画库。注意 CSS 动画不要用 Tailwind 的 `-translate-x-1/2` 之类工具类与内联 transform 混写同一属性（`origin-button.tsx` 的填充圆是「平移居中 + 缩放」写进同一个 transform 的例子）。
 
