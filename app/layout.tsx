@@ -6,7 +6,7 @@ import { INLINE_ICON_32 } from "@/lib/favicon-inline";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ForJiang · 个人主页",
+  title: "ForJiang",
   // metadataBase 把 openGraph/twitter 里的相对图片路径解析成绝对 URL——
   // 链接卡片（iMessage / X / Slack…）抓取时要求绝对地址
   metadataBase: new URL("https://forjiang.github.io"),
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: "ForJiang",
-    title: "ForJiang · 个人主页",
+    title: "ForJiang",
     description:
       "五个纯静态、可离线使用的网页工具 + AI 插画作品与演示视频。高中生，热爱编程的学习者。",
     locale: "zh_CN",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ForJiang · 个人主页",
+    title: "ForJiang",
     description:
       "五个纯静态、可离线使用的网页工具 + AI 插画作品与演示视频。高中生，热爱编程的学习者。",
     images: ["/og-image.jpg"],
