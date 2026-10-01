@@ -69,8 +69,8 @@ personal-website/
 │   ├── use-in-view.ts            # 自写 IntersectionObserver「进入视口一次」钩子
 │   └── utils.ts                  # cn() 工具函数
 ├── public/
-│   ├── favicon.jpg               # apple-touch-icon 用（直角、整幅不透明，256×256）
-│   ├── favicon-rounded.png       # 标签页图标（128×128 圆角，四角透明）
+│   ├── favicon-<hash8>.jpg        # apple-touch-icon 用（直角、整幅不透明，256×256）
+│   ├── favicon-rounded-<hash8>.png # 标签页图标（128×128 圆角，四角透明）
 │   └── images/                   # 4 张插画的 3864×2176 无损原图（1:1）+ AVIF/WebP 封面变体
 ├── assets/
 │   └── favicon-master.png       # 站点图标/分享卡源图（不进 public/，运行时无请求）
@@ -133,13 +133,14 @@ node scripts/generate-images.mjs
 | 文件 | 用途 | 要求 |
 | --- | --- | --- |
 | `lib/favicon-inline.ts` | 标签页主图标 | 32×32 **圆角** PNG，内联成 data URI |
-| `public/favicon-rounded.png` | 高分屏降级 | 128×128 圆角 PNG，四角透明 |
-| `public/favicon.jpg` | `apple-touch-icon` | **直角 + 整幅不透明** |
+| `public/favicon-rounded-<hash8>.png` | 高分屏降级 | 128×128 圆角 PNG，四角透明 |
+| `public/favicon-<hash8>.jpg` | `apple-touch-icon` | **直角 + 整幅不透明** |
 
-两个要点：
+三个要点：
 
 - **主图标必须内联成 data URI。** 浏览器把 favicon 按「页面 URL」缓存在自己的图标数据库里，只把引用换成新文件路径往往不足以让已经打开着的标签页重取；内联后图标跟着 HTML 一起到达，没有可被缓存的单独请求。`app/layout.tsx` 里是用原生 `<link rel="icon">` 而不是 `metadata.icons`——后者会把 `url` 当路径 normalize，`data:image/png;base64,` 前缀会被剥掉。
 - **`apple-touch-icon` 必须保持直角且整幅不透明。** iOS 会自己给主屏图标套圆角 mask，预先裁圆的源图会被二次裁切，透明角还会透出用户的桌面壁纸。
+- **两个文件版文件名带内容哈希。** 浏览器和 Safari 的「触摸图标」数据库都按 URL 缓存图标，同 URL 换内容永远不重取——实测换新头像后线上字节已是新图，Safari 阅读列表的卡片却仍显示旧头像，直到 URL 变化才刷新（`app/layout.tsx` 里有完整注释）。哈希名让「换图」天然等于「换 URL」，各级缓存自动失效；代价是每次重生成要把新文件名同步进 `app/layout.tsx`，所以下面的脚本会自己打印要粘贴的两行 `href`，并顺手删掉上一轮的旧文件。
 
 三个文件都从 `assets/favicon-master.png`（832×832 源图）生成，本地用 sharp 一次性出档：
 
@@ -147,16 +148,32 @@ node scripts/generate-images.mjs
 npm i --no-save sharp
 node -e '
 const sharp = require("sharp");
+const crypto = require("crypto");
+const fs = require("fs");
 const mask = (s) => Buffer.from(`<svg width="${s}" height="${s}"><rect width="${s}" height="${s}" rx="${s * 0.2}"/></svg>`);
 const M = "assets/favicon-master.png";
-sharp(M).resize(256, 256, { fit: "cover" }).jpeg({ quality: 90 }).toFile("public/favicon.jpg");
-sharp(M).resize(128, 128, { fit: "cover" }).composite([{ input: mask(128), blend: "dest-in" }]).png().toFile("public/favicon-rounded.png");
-sharp(M).resize(32, 32, { fit: "cover" }).composite([{ input: mask(32), blend: "dest-in" }]).png().toBuffer()
-  .then((b) => console.log("data:image/png;base64," + b.toString("base64")));
+// 内容哈希命名：文件内容变了 URL 才变，浏览器/Safari 的图标缓存自动失效
+const save = (buf, stem, ext) => {
+  for (const f of fs.readdirSync("public")) {
+    if (f.startsWith(stem + "-") && f.endsWith("." + ext)) fs.unlinkSync("public/" + f); // 清上一轮旧文件
+  }
+  const h = crypto.createHash("sha256").update(buf).digest("hex").slice(0, 8);
+  const f = `${stem}-${h}.${ext}`;
+  fs.writeFileSync("public/" + f, buf);
+  return "/" + f;
+};
+sharp(M).resize(256, 256, { fit: "cover" }).jpeg({ quality: 90 }).toBuffer()
+  .then((jpg) => sharp(M).resize(128, 128, { fit: "cover" }).composite([{ input: mask(128), blend: "dest-in" }]).png().toBuffer()
+    .then((png) => {
+      console.log("apple-touch-icon href =", save(jpg, "favicon", "jpg"));
+      console.log("rel=icon(128)  href =", save(png, "favicon-rounded", "png"));
+      return sharp(M).resize(32, 32, { fit: "cover" }).composite([{ input: mask(32), blend: "dest-in" }]).png().toBuffer();
+    })
+    .then((b) => console.log("\nINLINE_ICON_32 =\ndata:image/png;base64," + b.toString("base64"))));
 '
 ```
 
-输出的 base64 整段替换 `lib/favicon-inline.ts` 里的 `INLINE_ICON_32`。半径取边长的 20%（iOS squircle 的比例）；圆角遮罩是 SVG `<rect rx>` 经 `composite: dest-in` 贴上去的（等价于 canvas 的 `destination-in` + `roundRect`）。换图只换 `assets/favicon-master.png` 再重跑。
+脚本打印三样东西：两个 `<link>` 的新 `href`（粘进 `app/layout.tsx` 对应两行）和一段 base64（整段替换 `lib/favicon-inline.ts` 里的 `INLINE_ICON_32`）。半径取边长的 20%（iOS squircle 的比例）；圆角遮罩是 SVG `<rect rx>` 经 `composite: dest-in` 贴上去的（等价于 canvas 的 `destination-in` + `roundRect`）。换图只换 `assets/favicon-master.png` 再重跑。
 
 ## 分享链接预览卡（Open Graph）
 

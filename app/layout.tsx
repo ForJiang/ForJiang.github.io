@@ -67,12 +67,20 @@ export default function RootLayout({
           不存在可被缓存的单独请求。
         */}
         <link rel="icon" type="image/png" sizes="32x32" href={INLINE_ICON_32} />
-        <link rel="icon" type="image/png" sizes="128x128" href="/favicon-rounded.png" />
+        {/*
+          128×128 与 apple-touch-icon 的文件名带内容哈希（favicon-rounded-<hash8>.png
+          / favicon-<hash8>.jpg）：浏览器和 Safari 的「触摸图标」数据库都是按 URL
+          缓存图标的，同 URL 换内容永远不重取。实测教训——换成新头像后线上字节
+          已是新图，Safari 阅读列表的卡片却仍是旧头像，直到 URL 变化才刷新。
+          哈希名让「换图」天然等于「换 URL」，各级缓存自动失效；代价是换图后要把
+          新哈希名同步进这两行（README 的重生成脚本会打印出来）。
+        */}
+        <link rel="icon" type="image/png" sizes="128x128" href="/favicon-rounded-6a03c9d9.png" />
         {/*
           apple-touch-icon 保持直角且整幅不透明：iOS 会自己给图标套圆角 mask，
           预先裁圆的源图会被二次裁切，透明角还会透出用户的桌面壁纸。
         */}
-        <link rel="apple-touch-icon" href="/favicon.jpg" />
+        <link rel="apple-touch-icon" href="/favicon-9fc345ee.jpg" />
         {/*
           视频板块的 B 站播放器是懒加载 iframe：滚近视野才发起请求。预连域名
           把 DNS 查询 + TLS 握手提前到页面空闲时段做完，用户滑到视频时播放器

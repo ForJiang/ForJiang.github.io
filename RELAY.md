@@ -54,7 +54,7 @@ personal-website/
 │   ├── use-in-view.ts            # 自写 IntersectionObserver「进入视口一次」钩子
 │   └── utils.ts                  # cn() 工具函数
 ├── public/
-│   ├── favicon.jpg / favicon-rounded.png
+│   ├── favicon-<hash8>.jpg / favicon-rounded-<hash8>.png   # apple-touch / 高分辨率图标（内容哈希命名，见 README「换站点图标」）
 │   └── images/                   # 4 张插画的 3864×2176 无损原图（1:1，约 27MB）+ AVIF/WebP 封面变体
 ├── assets/
 │   └── favicon-master.png       # 图标/分享卡源图（故意不进 public/：运行时无请求）
