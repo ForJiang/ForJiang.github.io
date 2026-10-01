@@ -6,13 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "export": "next build",
-    "deploy": "npm run export && gh-pages -d out"
+    "lint": "next lint"
   },
   "dependencies": {
     "@paper-design/shaders-react": "^0.0.81",
-    "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.0.0",
