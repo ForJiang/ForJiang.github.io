@@ -137,6 +137,151 @@ h4 {
 }
 
 /*
+ * 区块级入场（透明 + 下移 20px → 原位），由 components/enter-block.tsx 挂
+ * play 类：lib/use-in-view.ts 的 IO 钩子触发一次后锁存。这一层此前用
+ * framer-motion 的 whileInView 驱动——全站需要的只是几个一次性淡入，为它
+ * 背着整个动画库不值（framer 是首屏 JS 最大的可削减项，移除后整个依赖退场）。
+ * 时长与错峰经 --enter-dur / --enter-delay 下发，transition 只写在 play 态，
+ * 初始态不带过渡，避免刷新/回滚时反向播放。
+ */
+.enter-block {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.enter-block-play {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--enter-dur, 0.3s) cubic-bezier(0.215, 0.61, 0.355, 1) var(--enter-delay, 0s),
+    transform var(--enter-dur, 0.3s) cubic-bezier(0.215, 0.61, 0.355, 1) var(--enter-delay, 0s);
+}
+
+/*
+ * Hero 按钮组入场：标题 → 副标题之后接按钮（1.25s 延迟）。它不在视口滚动
+ * 流程里（首屏必现），所以用纯 CSS animation + both 填充——样式表一生效就
+ * 开始排队，比等注水再由 JS 触发更早、也不依赖任何脚本。
+ */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise-in {
+  animation: rise-in var(--enter-dur, 0.6s) cubic-bezier(0.215, 0.61, 0.355, 1) var(--enter-delay, 0s) both;
+}
+
+/*
+ * 按钮指针扩散填充的缩放过渡（origin-button.tsx 的填充圆）。此前由 framer
+ * 的 animate={{ scale }} 驱动，同样是 CSS transition 的活：圆从 scale(0)
+ * 展开到 scale(1)，transform 全程合成器执行。
+ */
+.origin-fill {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/*
+ * 按下反馈（原 framer whileTap 的替身）：按住时轻微缩小，松手弹回。
+ */
+.origin-press {
+  transition: transform 0.12s ease-out;
+}
+
+.origin-press:active {
+  transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter-block {
+    opacity: 1;
+    transform: none;
+  }
+  .rise-in {
+    animation: none;
+  }
+  .origin-fill {
+    transition: none;
+  }
+  .origin-press {
+    transition: none;
+  }
+  .origin-press:active {
+    transform: none;
+  }
+}
+
+/*
+ * 灯箱（components/lightbox.tsx）的进出动画：遮罩淡入淡出、舞台轻微缩放浮现。
+ * 原先是 framer 的 initial/animate + AnimatePresence 退出——退出那一下的语义
+ * 是「先播 0.2s 淡出再真正卸载」，现在由组件的 closing 状态挂 .lb-closing、
+ * 计时到点后调 onClose 实现（见该文件）。舞台带 key，翻页即重挂载，CSS
+ * animation 随着重播，天然获得逐张浮现效果。
+ */
+@keyframes lb-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lb-overlay {
+  /* 不用 both 填充：无延迟的入场动画播完即回到基础值（opacity:1），关闭时
+     .lb-closing 的 transition 才有一个干净的起点（1 → 0）；若用 both，
+     动画填充值会压过过渡目标，部分引擎里淡出会瞬间跳变 */
+  animation: lb-fade-in 0.2s ease-out;
+}
+
+.lb-closing {
+  /* 淡出也用 animation 而非 transition：类的切换同时移除了入场动画，
+     transition 的起始值在不同引擎里对「刚失去动画填充」的元素处理不一，
+     实测 WebKit 会瞬间跳到 0；animation 从 from(1) 到 to(0) 播放，没有
+     起始值依赖，跨引擎行为一致 */
+  animation: lb-fade-out 0.2s ease-in both;
+}
+
+@keyframes lb-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes lb-stage-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.lb-stage {
+  animation: lb-stage-in 0.25s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lb-overlay,
+  .lb-stage {
+    animation: none;
+  }
+  .lb-closing {
+    animation: none;
+  }
+}
+
+/*
  * 逐字揭示的单元间距。只加在「源文本里真有空格」的位置（由 reveal-text.tsx 的
  * splitRevealUnits 打 gap 标记决定）：英文词与词之间、中英文交界处还原空格；
  * 汉字与汉字、汉字与中文标点之间完全不加——中文逐字单元各带 0.24em 右间距会

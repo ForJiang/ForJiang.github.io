@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { LazyMotion, domAnimation } from "framer-motion";
 import dynamic from "next/dynamic";
 import SiteNav from "./site-nav";
 
@@ -21,19 +20,19 @@ const MouseTrail = dynamic(() => import("@/components/mouse-trail"));
 
 /**
  * 页面外框：固定液态金属背景 + 鼠标轨迹 + 全站导航。
- * 包一层 LazyMotion + domAnimation：页面内容用 m.* 驱动入场动画时不会把
- * framer-motion 里未使用的 drag/layout 代码拖进包（约 22KB）。全站的 m.*
- * （Hero、卡片入场、OriginButton、灯箱）都挂在这棵子树下。
+ * 历史上这里包过一层 LazyMotion + domAnimation——那时入场动画靠
+ * framer-motion 的 m.*，LazyMotion 能把动画库的 drag/layout 代码挡在包外。
+ * 后来入场/填充/灯箱动画全部改成纯 CSS（globals.css 的 .enter-block /
+ * .rise-in / .origin-fill / .lb-*），framer-motion 依赖整个移除，这层包装
+ * 随之退场。
  */
 export default function SiteShell({ children }: { children: ReactNode }) {
   return (
-    <LazyMotion features={domAnimation}>
-      <main className="relative min-h-screen text-white">
-        <LiquidMetalBackground />
-        <MouseTrail />
-        <SiteNav />
-        {children}
-      </main>
-    </LazyMotion>
+    <main className="relative min-h-screen text-white">
+      <LiquidMetalBackground />
+      <MouseTrail />
+      <SiteNav />
+      {children}
+    </main>
   );
 }

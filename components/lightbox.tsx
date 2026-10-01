@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 export interface LightboxItem {
@@ -54,6 +53,19 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
   // 点得住、就是没反应。改成时间窗：浏览器补发的 click 就在翻页后几毫秒，
   // 而人不可能在同一瞬间又去点按钮。
   const suppressClickUntilRef = useRef(0);
+  // 退出淡出：原先交给 framer 的 AnimatePresence（卸载前播 exit），现在自己
+  // 管——挂 .lb-closing 播 0.2s 淡出，计时到点再调真正的 onClose。closing
+  // 期间忽略后续关闭请求，避免计时器叠着发。
+  const [closing, setClosing] = useState(false);
+  const closeTimerRef = useRef(0);
+
+  const requestClose = () => {
+    if (closing) return;
+    setClosing(true);
+    closeTimerRef.current = window.setTimeout(onClose, 220);
+  };
+
+  useEffect(() => () => window.clearTimeout(closeTimerRef.current), []);
 
   const step = (dir: number) => {
     onNavigate((index + dir + items.length) % items.length);
@@ -73,7 +85,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
     document.body.style.overflow = "hidden";
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { onClose(); }
+      if (e.key === "Escape") { requestClose(); }
       else if (e.key === "ArrowRight") step(1);
       else if (e.key === "ArrowLeft") step(-1);
     };
@@ -138,17 +150,15 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
   if (!current) return null;
 
   return (
-    <m.div
-      className="fixed inset-0 z-[10000] flex flex-col items-center justify-center gap-4 bg-black/90 p-4 pb-8 backdrop-blur-md [touch-action:pan-y]"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
+    <div
+      className={`fixed inset-0 z-[10000] flex flex-col items-center justify-center gap-4 bg-black/90 p-4 pb-8 backdrop-blur-md [touch-action:pan-y] ${
+        closing ? "lb-closing" : "lb-overlay"
+      }`}
       onClick={(e) => {
         // 翻页后浏览器补发的那一次 click 落在遮罩上，不吞就会误关灯箱；
         // 窗口只有 700ms，正常点击不会受影响（见 suppressClickUntilRef）
         if (e.timeStamp < suppressClickUntilRef.current) return;
-        onClose();
+        requestClose();
       }}
       role="dialog"
       aria-modal="true"
@@ -156,7 +166,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
     >
       <button
         ref={closeRef}
-        onClick={onClose}
+        onClick={requestClose}
         aria-label="关闭"
         className="absolute right-4 top-4 rounded-lg border border-white/25 p-2 text-white transition-colors hover:bg-white/10"
       >
@@ -166,12 +176,9 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
       {/* stopPropagation：点图片 itself 不关闭，只有点遮罩才关。
           尺寸由 thumb 撑起，原图绝对定位铺在其上——两者长宽比相同
           （同一母版缩出），淡入时几何完全重合。 */}
-      <m.div
+      <div
         key={current.src}
-        className="relative max-h-[80vh] max-w-[92vw] shadow-2xl"
-        initial={{ opacity: 0, scale: 0.97 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.25 }}
+        className="lb-stage relative max-h-[80vh] max-w-[92vw] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 滑动手势面只覆盖图片本身，绝不铺满整个遮罩：捕获指针会把随后的
@@ -212,7 +219,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
             </span>
           )}
         </div>
-      </m.div>
+      </div>
 
       <div
         className="max-w-[92vw] text-center"
@@ -248,6 +255,6 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
           </button>
         </div>
       )}
-    </m.div>
+    </div>
   );
 }

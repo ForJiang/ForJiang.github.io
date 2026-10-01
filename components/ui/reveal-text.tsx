@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import type { CSSProperties, ReactNode } from "react";
-import { useInView } from "framer-motion";
+import { useInViewOnce } from "@/lib/use-in-view";
 import { cn } from "@/lib/utils";
 
 const WORD_HEAD = /[A-Za-z0-9]/;
@@ -108,10 +107,11 @@ export interface RevealTextProps {
  * 过渡到清晰位置，单元之间按 stagger 错开；滚动进入视口时触发。
  *
  * 动画完全由 CSS transition 驱动（globals.css 的 .reveal-unit / .reveal-play），
- * 而不是 framer-motion：framer 会为每个单元跑一个 JS rAF 循环逐帧写内联样式，
- * 上百个单元同时过渡时主线程每帧要做上百次样式写入 + 重算，Safari 上直接掉帧；
- * 换成 CSS 后主线程只在容器上切换一次 class，opacity/transform 的逐帧工作
- * 全部移到合成器。组件的 props API 与 framer 版本保持一致。
+ * 不用任何动画库：动画库（framer-motion）会为每个单元跑一个 JS rAF 循环、每帧
+ * 写一次内联 style，上百个单元同时过渡时主线程每帧要做上百次样式写入 + 重算，
+ * Safari 上直接掉帧；换成 CSS 后主线程只在容器上切换一次 class，opacity/transform
+ * 的逐帧工作全部移到合成器。组件的 props API 保持原样。触发用的
+ * IntersectionObserver 钩子在 lib/use-in-view.ts（无第三方依赖）。
  *
  * 全站文字共用此效果，单元数量很多，因此刻意不给单个 span 加 will-change：
  * 数百个提升层的开销比不加提示更大，交由浏览器自行决定合成时机。
@@ -126,19 +126,11 @@ export default function RevealText({
   stagger = 0.03,
   blur = 10,
 }: RevealTextProps) {
-  const ref = useRef<HTMLElement | null>(null);
-  // 不缩放视口边界：缩进会把「已滚到页面最底」的贴底内容（页脚版权文字）
-  // 排除在外——用户明明看得见它，IntersectionObserver 却判它不相交，
-  // 文字就永远停在隐藏态。顶部同理，fixed 导航会被负的上边距漏掉。
-  // once 固定 true：全站场景都是揭示一次后保持，滚出视口不再回放。
-  const isInView = useInView(ref, { once: true, margin: "0px" });
-  // 首次入场播完后置位：切换语言会让文本换成另一套单元，新挂载的单元若再从
+  const { ref, inView } = useInViewOnce<HTMLElement>();
+  // 触发一次后锁存：切换语言会让文本换成另一套单元，新挂载的单元若再从
   // hidden 起跳，父级已经播放完、不会再切换一次 class，它们就会永远停在隐藏态。
   // 所以重挂载的单元直接以可见状态出现（挂载时容器已带 reveal-play，无过渡）。
-  const revealedRef = useRef(false);
-  useEffect(() => {
-    if (isInView) revealedRef.current = true;
-  }, [isInView]);
+  // useInViewOnce 的 state 本身就是锁存的（触发后滚出视口不回退），无需额外 ref。
 
   const textUnits: RevealUnit[] = items
     ? []
@@ -169,7 +161,7 @@ export default function RevealText({
       ref={ref as never}
       className={cn(
         !isInline && "w-full",
-        isInView || revealedRef.current ? "reveal-play" : undefined,
+        inView ? "reveal-play" : undefined,
         className,
       )}
       style={hostStyle}

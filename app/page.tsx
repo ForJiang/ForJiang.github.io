@@ -4,7 +4,6 @@ import LiquidMetalHero from "@/components/ui/liquid-metal-hero";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { m, AnimatePresence } from "framer-motion";
 import { Github, Mail, ExternalLink } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { PROJECT_IMAGES, IMAGE_SIZES } from "@/lib/image-variants";
@@ -12,6 +11,7 @@ import { PixivIcon, XIcon, BilibiliIcon } from "@/components/brand-icons";
 import type { LightboxItem } from "@/components/lightbox";
 import OriginButton from "@/components/ui/origin-button";
 import RevealText from "@/components/ui/reveal-text";
+import EnterBlock from "@/components/enter-block";
 import ProjectCarousel from "@/components/ui/project-carousel";
 import SiteShell from "@/components/site-shell";
 import { LanguageProvider, useLanguage } from "@/components/language-context";
@@ -125,11 +125,8 @@ function HomeContent() {
       {/* About Section */}
       <section id="about" className={SECTION_SHELL}>
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+          <EnterBlock
+            duration={0.5}
             className={`max-w-4xl mx-auto text-center space-y-6 rounded-3xl px-6 py-10 md:px-12 ${GLASS_CARD}`}
           >
             <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
@@ -160,7 +157,7 @@ function HomeContent() {
                 {paragraph}
               </RevealText>
             ))}
-          </m.div>
+          </EnterBlock>
         </div>
       </section>
 
@@ -168,18 +165,13 @@ function HomeContent() {
       <section id="skills" className={SECTION_SHELL}>
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <div className="text-center mb-16">
-            <m.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="inline-block"
-            >
+            <EnterBlock className="inline-block">
               <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
                 <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
                   {t.skills.badge}
                 </RevealText>
               </Badge>
-            </m.div>
+            </EnterBlock>
             {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
             <RevealText
               as="h2"
@@ -204,12 +196,9 @@ function HomeContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {t.skills.groups.map((group, idx) => (
-              <m.div
+              <EnterBlock
                 key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
+                delay={idx * 0.1}
               >
                 <Card
                   className={`group relative h-full overflow-hidden transition-shadow hover:border-white/30 hover:shadow-lg ${GLASS_CARD}`}
@@ -240,7 +229,7 @@ function HomeContent() {
                     />
                   </CardContent>
                 </Card>
-              </m.div>
+              </EnterBlock>
             ))}
           </div>
         </div>
@@ -250,18 +239,13 @@ function HomeContent() {
       <section id="projects" className={SECTION_SHELL}>
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <div className="text-center mb-16">
-            <m.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="inline-block"
-            >
+            <EnterBlock className="inline-block">
               <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
                 <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
                   {t.skills.projects.badge}
                 </RevealText>
               </Badge>
-            </m.div>
+            </EnterBlock>
             <RevealText
               as="h2"
               delay={0.15}
@@ -298,16 +282,13 @@ function HomeContent() {
                 t.skills.projects.items.map((proj, idx) => ({ copy, proj, idx }))
               )
               .map(({ copy, proj, idx }) => (
-                <m.div
+                <EnterBlock
                   // key 必须跨语言稳定：用项目名会让 React 在切换语言时把卡片
                   // 连同里面的 RevealText 一起卸载重挂载，揭示动画重新从隐藏
                   // 态播一遍。repo 地址两种语言一致且互不重复；copy 前缀区分
-                  // 五份克隆——同一张卡的五份各自持有独立的揭示状态
+                  // 各份克隆——同一张卡的各份各自持有独立的揭示状态
                   key={`${copy}-${proj.repo}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
+                  delay={idx * 0.1}
                   className="w-[min(30rem,85vw)] shrink-0"
                 >
                   <Card
@@ -370,7 +351,7 @@ function HomeContent() {
                       </div>
                     </CardContent>
                   </Card>
-                </m.div>
+                </EnterBlock>
               ))}
           </ProjectCarousel>
         </div>
@@ -382,18 +363,13 @@ function HomeContent() {
             图片固定 16:9 后卡片高度由宽度决定，窄容器直接让整卡变小 */}
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <div className="text-center mb-16">
-            <m.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="inline-block"
-            >
+            <EnterBlock className="inline-block">
               <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
                 <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
                   {t.projects.badge}
                 </RevealText>
               </Badge>
-            </m.div>
+            </EnterBlock>
             {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
             <RevealText
               as="h2"
@@ -420,12 +396,10 @@ function HomeContent() {
             {t.projects.cards.map((card, idx) => {
               const img = PROJECT_IMAGES.find((i) => i.name === CARD_IMAGE_NAMES[idx]);
               return (
-                <m.div
+                <EnterBlock
                   key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.08 }}
+                  delay={idx * 0.08}
+                  className="h-full"
                   onMouseEnter={() => prefetchFull(idx)}
                 >
                   <Card className={`group h-full flex flex-col overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all ${GLASS_CARD}`}>
@@ -496,7 +470,7 @@ function HomeContent() {
                       </RevealText>
                     </CardContent>
                   </Card>
-                </m.div>
+                </EnterBlock>
               );
             })}
           </div>
@@ -507,18 +481,13 @@ function HomeContent() {
       <section id="videos" className={SECTION_SHELL}>
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <div className="text-center mb-16">
-            <m.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="inline-block"
-            >
+            <EnterBlock className="inline-block">
               <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
                 <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
                   {t.videos.badge}
                 </RevealText>
               </Badge>
-            </m.div>
+            </EnterBlock>
             {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
             <RevealText
               as="h2"
@@ -569,11 +538,8 @@ function HomeContent() {
       {/* Contact Section */}
       <section id="contact" className={SECTION_SHELL}>
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+          <EnterBlock
+            duration={0.5}
             className="max-w-3xl mx-auto text-center space-y-6"
           >
             <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
@@ -647,21 +613,20 @@ function HomeContent() {
                 </RevealText>
               </OriginButton>
             </div>
-          </m.div>
+          </EnterBlock>
         </div>
       </section>
 
-      {/* 全屏原图查看器 */}
-      <AnimatePresence>
-        {viewing !== null && (
-          <Lightbox
-            items={lightboxItems}
-            index={viewing}
-            onClose={() => setViewing(null)}
-            onNavigate={setViewing}
-          />
-        )}
-      </AnimatePresence>
+      {/* 全屏原图查看器：退出淡出动画由组件内部的 closing 状态自理
+          （globals.css 的 .lb-closing），父级只管挂载/卸载 */}
+      {viewing !== null && (
+        <Lightbox
+          items={lightboxItems}
+          index={viewing}
+          onClose={() => setViewing(null)}
+          onNavigate={setViewing}
+        />
+      )}
 
       {/* Footer */}
       {/* 页脚是唯一没有 bg-black 蒙层的区块，液态金属的镜面高光扫过时

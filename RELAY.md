@@ -16,7 +16,7 @@
 | 语言 | TypeScript 5 |
 | UI 库 | shadcn/ui (default style, slate color) + Tailwind CSS 3.4 |
 | 视觉特效 | `@paper-design/shaders-react` 0.0.81 (LiquidMetal shader) + Canvas 鼠标轨迹 |
-| 动画 | Framer Motion 11（仅按钮填充与卡片入场；逐字揭示已改纯 CSS transition） |
+| 动画 | 无动画库——全部纯 CSS transition/animation（globals.css）+ 自写 IO 钩子（lib/use-in-view.ts） |
 | 国际化 | 客户端中英双语切换，默认英文，localStorage 记住手动选择（`components/language-context.tsx`） |
 | 部署 | GitHub Actions → GitHub Pages (静态导出 `out/`)，用户主站根路径，无 basePath |
 | 包管理 | npm (有 package-lock.json，`--no-save` 装 sharp / playwright 不写进依赖) |
@@ -33,12 +33,13 @@ personal-website/
 │   └── globals.css               # Tailwind directives + shadcn CSS 变量 + 行距收口 + .shader-bg + reveal 动画
 ├── components/
 │   ├── brand-icons.tsx           # Bilibili / Pixiv / X 官方标志 (simple-icons, CC0)
+│   ├── enter-block.tsx           # 区块级入场包装（IO 触发一次 + CSS 过渡）
 │   ├── language-context.tsx      # 全站语言状态 (Provider + useLanguage)
 │   ├── lightbox.tsx              # 全屏原图查看器 (dynamic 按需加载)
 │   ├── liquid-metal-background.tsx # 全站固定液态金属背景 + 画质自适应
 │   ├── mouse-trail.tsx           # 鼠标流光轨迹
 │   ├── site-nav.tsx              # 全站导航 (锚点 + 平滑滚动 + 语言按钮)
-│   ├── site-shell.tsx            # 页面外框 (背景 + 轨迹 + 导航 + LazyMotion domAnimation)
+│   ├── site-shell.tsx            # 页面外框 (背景 + 轨迹 + 导航)
 │   └── ui/
 │       ├── badge.tsx / button.tsx / card.tsx   # shadcn/ui 组件 (已裁掉未用变体)
 │       ├── liquid-metal-hero.tsx               # Hero 区 (标题先出、徽章后出)
@@ -50,6 +51,7 @@ personal-website/
 │   ├── i18n.ts                   # 中英双语文案字典 + 实战项目数据 (260 行)
 │   ├── image-variants.ts         # 由脚本生成的图片变体清单
 │   ├── ui-kit.ts                 # 全站共用样式常量 + 卡片 spotlight 指针追踪
+│   ├── use-in-view.ts            # 自写 IntersectionObserver「进入视口一次」钩子
 │   └── utils.ts                  # cn() 工具函数
 ├── public/
 │   ├── favicon.jpg / favicon-rounded.png
@@ -69,7 +71,7 @@ personal-website/
 
 ### 3.1 单页滚动架构
 
-整站是单页（`app/page.tsx` 顶部 `"use client"`），`Home()` 包 `LanguageProvider` → `HomeContent` 渲染 `SiteShell`（LazyMotion + 固定背景 + 鼠标轨迹 + 导航）+ 六个锚点区块：
+整站是单页（`app/page.tsx` 顶部 `"use client"`），`Home()` 包 `LanguageProvider` → `HomeContent` 渲染 `SiteShell`（固定背景 + 鼠标轨迹 + 导航）+ 六个锚点区块：
 
 | 锚点 | 内容 |
 |------|------|
@@ -129,12 +131,11 @@ personal-website/
 | next | 14.2.35 | 框架 |
 | react / react-dom | ^18.2.0 | UI 运行时 |
 | @paper-design/shaders-react | ^0.0.81 | 液态金属 WebGL shader |
-| framer-motion | ^11.0.0 | 按钮填充与卡片入场（逐字动画不用） |
 | lucide-react | ^0.400.0 | 图标 |
 | clsx | ^2.1.1 | 类名合并 |
 | tailwind-merge | ^2.4.0 | Tailwind 类名去重 |
 
-已删除: `@radix-ui/react-slot`（asChild 无人用）、`tailwindcss-animate`（无 animate 类）、`class-variance-authority`（Button 只剩页脚图标一种用法、Badge 只剩胶囊外形，cva 变体系统整个拆掉了）。
+已删除: `@radix-ui/react-slot`（asChild 无人用）、`tailwindcss-animate`（无 animate 类）、`class-variance-authority`（Button 只剩页脚图标一种用法、Badge 只剩胶囊外形，cva 变体系统整个拆掉了）、`framer-motion`（入场/填充/灯箱动画全部 CSS 化后无残留用途，First Load JS 146kB→120kB）。
 
 ### 开发依赖
 | 包 | 版本 | 用途 |
@@ -208,7 +209,8 @@ ac9dc96 style: 去掉技能/实战项目两屏底部多余的互跳按钮
 10. **注水一致性** — 首帧语言由 `layout.tsx` 的 `<html lang>` 与 `language-context.tsx` 的 `useState` 初值共同决定，两边必须同为 `en`；同理 reveal 动画参数全部经 CSS 变量在 render 时算好下发，不在客户端读 `window` 尺寸之类首帧才有的数据
 11. **单页结构 / 无 basePath** — 部署在用户主站根路径，不要加 `basePath` 或 `trailingSlash`；不要重新拆 /skills、/projects 子路由
 12. **用户对 Emoji 的偏好** — README 与简介（meta description + 仓库 description）零 Emoji；网页正文的技能分组徽章保留 🎨/🧠/🛠️，别改成别的
-13. **自定义手势/拖拽组件前先看「指针捕获」三连坑**（2026-10-01 实测修过两次，详见 README 第 9、15 条）：① `setPointerCapture` 会把后续指针事件与最终 `click` 全部重定向到捕获元素 → 落在内部按钮上的点击必须 `closest("a, button")` 提前 return；② 「拖拽过就吞 click」的抑制标记，复位要写在该 return **之前**，否则一次甩动后所有内部链接永久失效；③ 手势面只能覆盖自己那块（轮播轨道、灯箱图片），别铺到「点这里要关」的遮罩上——那次 click 会被重定向进带 `stopPropagation` 的图片容器。改完用 Playwright WebKit + 移动视口实测（「先甩动再点链接」必测）
+13. **别把动画库请回来** — 全站动画（逐字揭示、区块入场、按钮填充、灯箱进出）都是纯 CSS + 一个自写 IO 钩子；曾经用 framer-motion，2026-10 移除。新增动画先考虑一行 CSS；「重新引入 framer」会把 First Load JS 拖回 146kB
+14. **自定义手势/拖拽组件前先看「指针捕获」三连坑**（2026-10-01 实测修过两次，详见 README 第 9、15 条）：① `setPointerCapture` 会把后续指针事件与最终 `click` 全部重定向到捕获元素 → 落在内部按钮上的点击必须 `closest("a, button")` 提前 return；② 「拖拽过就吞 click」的抑制标记，复位要写在该 return **之前**，否则一次甩动后所有内部链接永久失效；③ 手势面只能覆盖自己那块（轮播轨道、灯箱图片），别铺到「点这里要关」的遮罩上——那次 click 会被重定向进带 `stopPropagation` 的图片容器。改完用 Playwright WebKit + 移动视口实测（「先甩动再点链接」必测）
 
 ## 8. 建议的下一步工作
 

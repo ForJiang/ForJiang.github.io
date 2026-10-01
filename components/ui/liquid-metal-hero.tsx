@@ -1,9 +1,9 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import OriginButton from '@/components/ui/origin-button';
 import RevealText from '@/components/ui/reveal-text';
 import { Badge } from '@/components/ui/badge';
-import { LazyMotion, domAnimation, m } from 'framer-motion';
 
 interface LiquidMetalHeroProps {
   badge?: string;
@@ -72,11 +72,13 @@ export default function LiquidMetalHero({
             )}
           </div>
 
-          <m.div
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.25, ease: [0.215, 0.61, 0.355, 1] }}
+          {/* 按钮组入场（标题 → 徽章 → 副标题 → 按钮 的最后一环）：纯 CSS
+              animation + both 填充，样式表生效即开始排队，不等注水（globals.css
+              的 .rise-in）。上浮淡入由这一层负责，缩放反馈交给按钮自身的
+              :active，避免双重缩放 */}
+          <div
+            className="rise-in flex flex-col sm:flex-row gap-4 justify-center items-center"
+            style={{ "--enter-delay": "1.25s", "--enter-dur": "0.6s" } as CSSProperties}
           >
             {/* 悬停时圆形填充从指针处扩散、文字反色；上浮淡入由这一层负责，
                 缩放反馈交给按钮自身，避免双重缩放 */}
@@ -93,7 +95,7 @@ export default function LiquidMetalHero({
             </div>
 
             {secondaryCtaLabel && onSecondaryCtaClick && (
-              <m.div>
+              <div>
                 <OriginButton
                   tone="glass"
                   onClick={onSecondaryCtaClick}
@@ -103,9 +105,9 @@ export default function LiquidMetalHero({
                     {secondaryCtaLabel}
                   </RevealText>
                 </OriginButton>
-              </m.div>
+              </div>
             )}
-          </m.div>
+          </div>
         </div>
       </div>
     </section>

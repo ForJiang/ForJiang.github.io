@@ -1,6 +1,6 @@
 # ForJiang · 个人主页
 
-基于 **Next.js 14 + TypeScript + Tailwind CSS + shadcn/ui** 的个人主页：技能与插画之外，收录五个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画演示。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景，逐字揭示动画由纯 CSS transition 驱动，Framer Motion 只负责按钮填充与卡片入场（逐字动画不用它——原因见「Safari 性能专项」）。
+基于 **Next.js 14 + TypeScript + Tailwind CSS** 的个人主页：技能与插画之外，收录五个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画演示。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景；**全站没有任何动画库**——逐字揭示、区块入场、按钮填充、灯箱进出全部是纯 CSS transition/animation，进入视口的触发由一个 20 行的自写 IntersectionObserver 钩子完成（`lib/use-in-view.ts`），动画库清退的原因与过程见「Safari 性能专项」和坑 8。
 
 线上地址：**https://forjiang.github.io**
 
@@ -20,7 +20,8 @@
 
 - 液态金属着色器全站固定背景（`@paper-design/shaders-react`），滚动全程可见、不随地址栏伸缩而变形位移
 - 白色鼠标流光轨迹特效（遵循 `prefers-reduced-motion`）
-- 全站文字逐字揭示：每个单元从「透明 + 下移 +（短文本）模糊」过渡到清晰位置，按 stagger 错峰，滚动进入视口时触发。**纯 CSS transition 驱动**（合成器动画），framer 不参与逐帧（`components/ui/reveal-text.tsx`）。间距只在源文本真有空白的位置出现——汉字之间不加、英文词间与中英文交界保留（见下面第 13 条）
+- 全站文字逐字揭示：每个单元从「透明 + 下移 +（短文本）模糊」过渡到清晰位置，按 stagger 错峰，滚动进入视口时触发。**纯 CSS transition 驱动**（合成器动画），触发用自写 IO 钩子（`components/ui/reveal-text.tsx` + `lib/use-in-view.ts`）。间距只在源文本真有空白的位置出现——汉字之间不加、英文词间与中英文交界保留（见下面第 13 条）
+- 区块级入场（卡片 / 面板 / 徽章的淡入上浮）同样是纯 CSS：`components/enter-block.tsx` 包装进入视口播一次，时长与错峰经 CSS 变量下发；Hero 按钮组用 `animation + both` 填充，样式表生效即排队、不等注水（globals.css 的 `.rise-in`）
 - 中文 / English 双语言切换（**默认英文**，手动切换后记住选择，不再跟随浏览器语言）
 - 全站行距统一收口在 `globals.css`：正文 `p` 1.625、标题 `h1~h4` 1.375——用 `!important` 压过 Tailwind 字号工具类自带的 1.1 行高（两行中文原本挤成一团），全站一个出处
 - 插画封面使用 `<picture>` + `srcset` 响应式加载：AVIF → WebP → WebP（480 宽）逐级回退。封面容器固定 16:9（与插画母版同比例，`object-cover` 几乎不裁切），卡片收进 `max-w-5xl` 容器、文字缩到标题 18px / 简介 14px，图占卡片约 68%
@@ -47,12 +48,13 @@ personal-website/
 │   └── globals.css               # 主题变量（只留在用的）+ 全站行距收口 + 逐字揭示动画 + Safari/移动端兜底
 ├── components/
 │   ├── brand-icons.tsx           # Bilibili / Pixiv / X 官方标志（simple-icons, CC0）
+│   ├── enter-block.tsx           # 区块级入场包装（IO 触发一次 + CSS 过渡）
 │   ├── language-context.tsx      # 全站语言状态（Provider + useLanguage）
 │   ├── lightbox.tsx              # 全屏原图查看器
 │   ├── liquid-metal-background.tsx # 全站固定液态金属背景 + 画质自适应
 │   ├── mouse-trail.tsx           # 鼠标流光轨迹
 │   ├── site-nav.tsx              # 全站导航（首页锚点 + 平滑滚动）
-│   ├── site-shell.tsx            # 页面外框（背景 + 轨迹 + 导航 + LazyMotion）
+│   ├── site-shell.tsx            # 页面外框（背景 + 轨迹 + 导航）
 │   └── ui/
 │       ├── badge.tsx / button.tsx / card.tsx   # shadcn/ui 组件（按站点实际用法裁剪，无变体系统）
 │       ├── liquid-metal-hero.tsx               # Hero 区
@@ -64,6 +66,7 @@ personal-website/
 │   ├── i18n.ts                   # 中英双语文案字典（含实战项目数据）
 │   ├── image-variants.ts         # 由脚本生成的图片变体清单
 │   ├── ui-kit.ts                 # 全站共用样式常量 + 卡片 spotlight 指针追踪
+│   ├── use-in-view.ts            # 自写 IntersectionObserver「进入视口一次」钩子
 │   └── utils.ts                  # cn() 工具函数
 ├── public/
 │   ├── favicon.jpg               # apple-touch-icon 用（直角、整幅不透明，256×256）
@@ -159,6 +162,7 @@ sharp(M).resize(32, 32, { fit: "cover" }).composite([{ input: mask(32), blend: "
 | 联系方式（邮箱 / GitHub / 哔哩哔哩 / Pixiv / X） | `app/page.tsx` 顶部 `CONTACTS` |
 | 网页标题 / 描述 / favicon | `app/layout.tsx` 的 `metadata`；换图标见上一节 |
 | 文字动效的快慢与强度 | `RevealText` 的 `duration` / `stagger` / `blur` props（上浮位移由 CSS 的 `--reveal-y` 默认值控制） |
+| 区块入场动画（卡片/面板淡入上浮） | `components/enter-block.tsx` 的 `delay` / `duration`，过渡本体在 `app/globals.css` 的 `.enter-block` |
 | 长文本弃用模糊的阈值 | `components/ui/reveal-text.tsx` 的 `BLUR_UNIT_CAP`（单元数超过它自动只保留淡入+上浮） |
 | Safari 的卡片降级（去模糊） | `app/globals.css` 的 `html.webkit .glass-soft`，webkit 类由 `app/layout.tsx` 的内联脚本打上 |
 | 着色器画质档位 | `components/liquid-metal-background.tsx` 的 `QUALITY_TIERS`（最高档为库默认的 ≈8.3MP，覆盖 1440p 级 Retina 原生精度） |
@@ -172,7 +176,7 @@ sharp(M).resize(32, 32, { fit: "cover" }).composite([{ input: mask(32), blend: "
 
 **移动端**：底部工具栏是覆盖在视口上的不透明浮层，iOS Safari 在普通浏览下 `env(safe-area-inset-bottom)` 恒为 0，因此用固定值兜底（见 `globals.css` 中 `@media (hover: none) and (pointer: coarse)`）。站点为单一深色主题，不要重新引入 `bg-background` / 主题色切换，否则会遮住固定的液态金属背景。
 
-**framer-motion 的一般纪律**：带动画的组件（按钮、卡片入场、灯箱）用 `LazyMotion` + `domAnimation` 按需加载 framer-motion，剔除了未使用的 drag / layout 代码。新增带动画的组件请用 `m.*` 而非 `motion.*`，否则会把完整版拖回包里。另注意 framer-motion 会接管元素的 `transform` 属性，不要同时用 Tailwind 的 `-translate-x-1/2` 之类的工具类做定位（`origin-button.tsx` 里踩过，改用 `x/y` 由它统一管理）。**但 framer 不适合驱动大量元素的逐帧动画**——它会为每个元素跑一个 JS rAF 循环逐帧写内联样式，逐字揭示因此改成了纯 CSS transition（见下面第 8 条与「Safari 性能专项」），`reveal-text.tsx` 里只保留了 `useInView` 这一个 hook。
+**动画零依赖**：站点曾用 framer-motion 驱动按钮填充、卡片入场与灯箱，后来发现它不适合大量元素的逐帧动画（见下面第 8 条与「Safari 性能专项」），先把逐字揭示改成了纯 CSS；再盘点剩余用途——区块入场是「透明 + 下移 → 原位」的一次性淡入、按钮填充是 transform 过渡、按下反馈是 :active、灯箱是遮罩淡入淡出——全都是 CSS 原生表达，为一个按钮动画背整座库不值，于是 framer-motion 整个移除（First Load JS 146kB → 120kB，页面代码块 58.6kB → 32.4kB）。现在的分工：进入视口的触发用自写 IO 钩子 `lib/use-in-view.ts`，区块入场包装在 `components/enter-block.tsx`，过渡本体全在 `globals.css`。**新增动画先问一句能不能一行 CSS 写出来**；确实需要 JS 驱动的，也别为此重新引入动画库。注意 CSS 动画不要用 Tailwind 的 `-translate-x-1/2` 之类工具类与内联 transform 混写同一属性（`origin-button.tsx` 的填充圆是「平移居中 + 缩放」写进同一个 transform 的例子）。
 
 **逐字揭示动画（`reveal-text.tsx`）**，十五个坑都实测过，改这个文件前值得先看：
 
@@ -183,7 +187,7 @@ sharp(M).resize(32, 32, { fit: "cover" }).composite([{ input: mask(32), blend: "
 5. **`delay` 写在 variants 的 visible 分支里**，不要放 `transition` prop，否则它对 `hidden` 的初始应用同样生效。
 6. **默认语言的服务端与客户端必须一致**。改 `components/language-context.tsx` 里 `useState<Lang>` 的初值的同时必须改 `app/layout.tsx` 的 `<html lang>`：服务端按 layout 的 lang 渲染首帧，客户端按 `useState` 的初值 hydrate，两边不同就是一次 React 注水失败——整棵服务端树被丢弃，`useInView` 的观察器跟着失效，全站文字停在不可见状态。另外首帧语言不要由 `navigator.language` / `localStorage` 决定，那必然造成两边不一致；用户的选择只在挂载后的 `useEffect` 里恢复。
 7. **任何「静止状态」下的 filter 都会让 Safari 显出与文字等大的灰色方块**——不管是 framer 留下的内联 `blur(0px)`，还是隐藏态里带 blur 的 CSS。方块是 WebKit 为带 filter 的元素建的合成层的空层贴片，首屏加载等注水的那一两秒最明显。对策是让静止状态彻底不带 filter：隐藏态加 `visibility: hidden`（整个元素不画），blur=0 的文本不设 `--reveal-blur` 变量（CSS 落到 `filter: none`），播放态目标直接写 `filter: none`（规范规定 none 与 blur 列表插值时补恒等值，blur(10px)→none 观感等同 blur(10)→blur(0)）。**另一个坑：`var()` 是字面替换**，`--reveal-blur` 的值必须是完整的 `blur(8px)`——只写 `8px` 会把 `filter: var(--reveal-blur, none)` 替换成非法的 `filter: 8px`，静默回退成 `none`，模糊效果整个消失。
-8. **不要用 framer 给上百个单元做逐帧动画**。framer 会为每个单元跑一个 JS rAF 循环、每帧写一次内联 style，长段落揭示时主线程每帧要做上百次样式写入 + 重算，WebKit 实测掉到 55fps 以下、最差帧 300ms（blur 本身反而不是主因——`filter: none` 掉帧依旧）。现在整段动画是**纯 CSS transition**：组件只在容器上切换一次 `reveal-play` class，`opacity/transform` 的逐帧工作交给合成器；错峰用 `transition-delay: calc(var(--reveal-delay) + var(--ri) * var(--reveal-stagger))`，动画参数全部经 CSS 变量下发（render 里算好，服务端客户端一致，不破坏注水）。代价是 reveal-text 不再依赖 framer，只保留 `useInView` 这一个 hook。
+8. **不要用 framer 给上百个单元做逐帧动画**。framer 会为每个单元跑一个 JS rAF 循环、每帧写一次内联 style，长段落揭示时主线程每帧要做上百次样式写入 + 重算，WebKit 实测掉到 55fps 以下、最差帧 300ms（blur 本身反而不是主因——`filter: none` 掉帧依旧）。现在整段动画是**纯 CSS transition**：组件只在容器上切换一次 `reveal-play` class，`opacity/transform` 的逐帧工作交给合成器；错峰用 `transition-delay: calc(var(--reveal-delay) + var(--ri) * var(--reveal-stagger))`，动画参数全部经 CSS 变量下发（render 里算好，服务端客户端一致，不破坏注水）。这一步是清退 framer-motion 的起点——先摘掉了它最不适合的那块；后来其余用途（入场/填充/灯箱）也全部 CSS 化，依赖整个移除（见上面「动画零依赖」），触发用的 `useInView` 换成了自写的 `lib/use-in-view.ts`。
 9. **拖拽容器里 `setPointerCapture` 会吞掉内部按钮的 click**。全屏滑动手势面（灯箱遮罩、轮播轨道）为了顺畅拖拽会调用 `setPointerCapture`，而规范规定捕获期间后续的指针事件、兼容鼠标事件与最终 `click` 全部重定向到捕获元素——于是按在卡片「GitHub」链接上的点击，`click` 落到了轨道容器上，链接永远点不开；灯箱底部的「下一张」同理。现象是按钮看得见、点得住、就是没反应，且不报任何错。对策：`onPointerDown` 里先判断 `e.target.closest("a, button")`，落在交互元素上直接 return，不进入拖拽分支（`lightbox.tsx`、`project-carousel.tsx`）。
 10. **Tailwind 的 `content` 必须覆盖放共享类名的目录**。共用样式抽成常量（`lib/ui-kit.ts` 的 `SECTION_SHELL` 等）后，如果 `tailwind.config.ts` 的 content 只扫了 `app/` 和 `components/`，常量字符串里的类根本不会进产物——不报错、不警告，页面只是静默丢样式。实测 `py-24`、`bg-black/35` 因此消失，所有区块的上下 96px 留白和暗色底色一起没了，几大部分挤在一起（用户反馈「靠得太近」）。排查方法是直接在 `out/_next/static/css/*.css` 里 grep 类名，而不是看页面猜。`lib/` 已加进 content。
 11. **Tailwind 连注释里的类名也会扫**。删除死代码时留下的说明文字（「CardDescription 用的 `text-muted-foreground`」）会让这个被删掉用途的工具类重新出现在产物 CSS 里—— Tailwind 的候选提取器不区分代码与注释。写这类注释时避开完整的类名写法（如写成「muted 系文字色」），否则删了也白删。

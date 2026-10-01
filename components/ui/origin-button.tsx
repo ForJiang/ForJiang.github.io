@@ -1,11 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { m } from "framer-motion";
 import { cn } from "@/lib/utils";
-
-const FILL_DURATION = 0.5;
-const FILL_EASE = [0.16, 1, 0.3, 1] as const;
 
 type Tone = "solid" | "glass";
 
@@ -22,22 +18,7 @@ function getCoverDiameter(width: number, height: number, x: number, y: number) {
   );
 }
 
-/** 原生拖拽/动画事件名与 framer-motion 的 HTMLMotionProps 冲突，需剔除 */
-type ButtonHTMLAttributesForMotion = Omit<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  | "onAnimationEnd" | "onAnimationIteration" | "onAnimationStart"
-  | "onDrag" | "onDragEnd" | "onDragEnter" | "onDragExit"
-  | "onDragLeave" | "onDragOver" | "onDragStart" | "onDrop"
->;
-
-type AnchorHTMLAttributesForMotion = Omit<
-  React.AnchorHTMLAttributes<HTMLAnchorElement>,
-  | "onAnimationEnd" | "onAnimationIteration" | "onAnimationStart"
-  | "onDrag" | "onDragEnd" | "onDragEnter" | "onDragExit"
-  | "onDragLeave" | "onDragOver" | "onDragStart" | "onDrop"
->;
-
-interface OriginButtonProps extends ButtonHTMLAttributesForMotion {
+interface OriginButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * solid＝白底深字，悬停时深色圆从指针处扩散、文字转白；
    * glass＝深玻璃白字，悬停时白色圆扩散、文字转深。
@@ -50,9 +31,11 @@ interface OriginButtonProps extends ButtonHTMLAttributesForMotion {
 
 /**
  * 悬停/按下时，圆形背景从指针位置扩散铺满按钮，同时文字反色。
- * 用 m.* 而非 motion.*：LazyMotion + domAnimation 由 SiteShell 在根部统一
- * 提供（此前本组件自己又包了一层 LazyMotion，纯多余——每个按钮实例都挂一个
- * context，对动画没有任何额外收益）。
+ * 全部动画是纯 CSS：填充圆的展开是 transform transition（.origin-fill），
+ * 按下缩小是 :active（.origin-press）——此前用 framer-motion 驱动这两处，
+ * 为了它一个人把整座动画库拖在首屏，不值得；换成 CSS 后 framer 依赖整个移除。
+ * 已知边界：原 whileTap 在禁用态不生效，这里用 isDisabled 不挂
+ * .origin-press 类保持一致。
  */
 export default function OriginButton({
   tone = "glass",
@@ -119,8 +102,6 @@ export default function OriginButton({
     if (fonts?.ready) fonts.ready.then(measure).catch(() => undefined);
     return () => observer.disconnect();
   }, [showFill, origin.x, origin.y]);
-
-  const fillTransition = { duration: FILL_DURATION, ease: FILL_EASE };
 
   const toneClasses =
     tone === "solid"
@@ -208,26 +189,18 @@ export default function OriginButton({
   };
 
   const fill = (
-    <m.span
+    <span
       aria-hidden
-      animate={{ scale: showFill && coverSize > 0 ? 1 : 0 }}
-      className={cn("pointer-events-none absolute rounded-full", fillClasses)}
-      initial={false}
-      /*
-       * 居中必须走 framer-motion 的 x/y（百分比按元素自身尺寸解析），由它在同一个
-       * transform 里和 scale 一起管理。不能用 Tailwind 的 -translate-x-1/2 ——
-       * framer-motion 为播放 scale 会覆写 transform 属性，导致圆形丢失居中、
-       * 只从左上角展开。
-       */
+      className={cn("origin-fill pointer-events-none absolute rounded-full", fillClasses)}
       style={{
-        x: "-50%",
-        y: "-50%",
+        // 平移 -50% 居中与缩放写在同一个 transform 里：CSS transition 对整个
+        // transform 插值，展开时圆心始终钉在指针位置（globals.css 的 .origin-fill）
+        transform: `translate(-50%, -50%) scale(${showFill && coverSize > 0 ? 1 : 0})`,
         height: coverSize,
         left: origin.x,
         top: origin.y,
         width: coverSize,
       }}
-      transition={fillTransition}
     />
   );
 
@@ -240,29 +213,32 @@ export default function OriginButton({
   const extraProps = { ...props };
   delete (extraProps as { "aria-label"?: string })["aria-label"];
 
+  // 按下缩小反馈交给 CSS :active（globals.css 的 .origin-press），无 JS 参与
+  const pressClass = isDisabled ? undefined : "origin-press";
+
   return href ? (
-    <m.a
-      {...(extraProps as AnchorHTMLAttributesForMotion)}
+    <a
+      {...(extraProps as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
       {...shared}
+      className={cn(shared.className, pressClass)}
       href={href}
       target="_blank"
       rel="noopener noreferrer"
       ref={nodeRef as React.Ref<HTMLAnchorElement>}
-      whileTap={isDisabled ? undefined : { scale: 0.985 }}
     >
       {fill}
       {inner}
-    </m.a>
+    </a>
   ) : (
-    <m.button
+    <button
       {...extraProps}
       {...shared}
+      className={cn(shared.className, pressClass)}
       ref={nodeRef as React.Ref<HTMLButtonElement>}
       type={(props as React.ButtonHTMLAttributes<HTMLButtonElement>).type ?? "button"}
-      whileTap={isDisabled ? undefined : { scale: 0.985 }}
     >
       {fill}
       {inner}
-    </m.button>
+    </button>
   );
 }
