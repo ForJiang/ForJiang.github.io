@@ -44,7 +44,7 @@ personal-website/
 ├── app/                          # Next.js App Router
 │   ├── layout.tsx                # 根布局 + 元信息 + favicon + theme-color + 播放器域名 preconnect
 │   ├── page.tsx                  # 单页站点：八个区块（Hero/关于/技能/实战项目/插画/视频/联系/页脚）+ 灯箱
-│   └── globals.css               # shadcn 主题 CSS 变量 + .shader-bg 固定背景规则
+│   └── globals.css               # 主题变量（只留在用的）+ 全站行距收口 + 逐字揭示动画 + Safari/移动端兜底
 ├── components/
 │   ├── brand-icons.tsx           # Bilibili / Pixiv / X 官方标志（simple-icons, CC0）
 │   ├── language-context.tsx      # 全站语言状态（Provider + useLanguage）
@@ -54,7 +54,7 @@ personal-website/
 │   ├── site-nav.tsx              # 全站导航（首页锚点 + 平滑滚动）
 │   ├── site-shell.tsx            # 页面外框（背景 + 轨迹 + 导航 + LazyMotion）
 │   └── ui/
-│       ├── badge.tsx / button.tsx / card.tsx   # shadcn/ui 组件
+│       ├── badge.tsx / button.tsx / card.tsx   # shadcn/ui 组件（按站点实际用法裁剪，无变体系统）
 │       ├── liquid-metal-hero.tsx               # Hero 区
 │       ├── origin-button.tsx                   # 指针扩散填充按钮
 │       ├── project-carousel.tsx                # transform 驱动的无限轮播轨道
@@ -143,7 +143,7 @@ node scripts/generate-images.mjs
 | 插画封面图 | 把新原图命名成 `public/images/<name>.png` 后重跑上面的脚本 |
 | 联系方式（邮箱 / GitHub / 哔哩哔哩 / Pixiv / X） | `app/page.tsx` 顶部 `CONTACTS` |
 | 网页标题 / 描述 / favicon | `app/layout.tsx` 的 `metadata`；换图标见上一节 |
-| 文字动效的快慢与强度 | `RevealText` 的 `duration` / `stagger` / `blur` / `yOffset` props |
+| 文字动效的快慢与强度 | `RevealText` 的 `duration` / `stagger` / `blur` props（上浮位移由 CSS 的 `--reveal-y` 默认值控制） |
 | 长文本弃用模糊的阈值 | `components/ui/reveal-text.tsx` 的 `BLUR_UNIT_CAP`（单元数超过它自动只保留淡入+上浮） |
 | Safari 的卡片降级（去模糊） | `app/globals.css` 的 `html.webkit .glass-soft`，webkit 类由 `app/layout.tsx` 的内联脚本打上 |
 | 着色器画质档位 | `components/liquid-metal-background.tsx` 的 `QUALITY_TIERS`（最高档为库默认的 ≈8.3MP，覆盖 1440p 级 Retina 原生精度） |

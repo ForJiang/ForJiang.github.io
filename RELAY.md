@@ -29,12 +29,12 @@ personal-website/
 ├── .github/workflows/deploy.yml  # GitHub Actions 自动部署
 ├── app/                           # Next.js App Router (无 src/ 前缀)
 │   ├── layout.tsx                 # 根布局: Inter 字体, metadata, lang="en", favicon 内联 data URI, 播放器 preconnect, WebKit 打类脚本
-│   ├── page.tsx                   # 整站单页(692 行): Hero/关于/技能/实战项目/插画/视频/联系/页脚 + 灯箱
+│   ├── page.tsx                   # 整站单页(约 690 行): Hero/关于/技能/实战项目/插画/视频/联系/页脚 + 灯箱
 │   └── globals.css               # Tailwind directives + shadcn CSS 变量 + 行距收口 + .shader-bg + reveal 动画
 ├── components/
 │   ├── brand-icons.tsx           # Bilibili / Pixiv / X 官方标志 (simple-icons, CC0)
 │   ├── language-context.tsx      # 全站语言状态 (Provider + useLanguage)
-│   ├── lightbox.tsx              # 全屏原图查看器 (247 行, dynamic 按需加载)
+│   ├── lightbox.tsx              # 全屏原图查看器 (dynamic 按需加载)
 │   ├── liquid-metal-background.tsx # 全站固定液态金属背景 + 画质自适应
 │   ├── mouse-trail.tsx           # 鼠标流光轨迹
 │   ├── site-nav.tsx              # 全站导航 (锚点 + 平滑滚动 + 语言按钮)
@@ -149,6 +149,9 @@ personal-website/
 ## 5. Git 历史摘要 (最近 15 条)
 
 ```
+3984a56 perf: 全站瘦身——HTML -33%、CSS -17%，净删 90 行冗余代码（本地 sha cc871e9）
+28b7428 fix: 修卡片链接时灵时不灵——指针捕获三连坑（本地 sha 28b7428）
+8868e56 docs: 更新 README 与 RELAY 至现状，修正过时注释
 419ba3e chore: 死依赖与死脚本清理 + 修正过时注释
 21eac44 perf: 清理死代码 + 封面 sizes 校准，包体与流量双减
 a4c401e fix: 中文逐字之间的多余间距——reveal-gap 改为按源文本空格决定
@@ -161,10 +164,11 @@ c9a5e4a style: 全站统一文字行距——正文 1.625 / 标题 1.375，消�
 ac9dc96 style: 去掉技能/实战项目两屏底部多余的互跳按钮
 55d49b0 style: 去掉插画卡片底部的标签行（AI Art / Illustration / ComfyUI）
 93cd8d4 revert: 技能与实战项目合并回单页滚动，各占一屏
-bff2985 content: 技能页按项目实际技术栈重写
-96c79e1 style: 插画卡片封面图占比提高
-dea4ac2 style: Hero 徽章改为标题之后出场
 ```
+
+> 注意：本仓库 git push 直连经常超时，实际推送走 GitHub API（`/tmp/pushfull.cjs`，
+> 带远端树与本地 HEAD~1 树一致性校验）。API 重建的提交 sha 与本地不同但树相同，
+> 所以远端 sha 与本地对不上是正常现象，别据此判断分叉。
 
 ## 6. 当前完成度
 
