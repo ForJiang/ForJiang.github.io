@@ -1,83 +1,76 @@
 // 由 scripts/generate-images.mjs 生成，请勿手改；新增图片后重跑该脚本。
 // 每项提供 AVIF / WebP 两组 srcset、一张小的 <img> 回退图，以及一张无损原图 full
-// （灯箱查看高清原图用，宽度 2400px，WebP lossless，不做有损压缩）。
+// （灯箱查看高清原图用，宽度上限 3864px、不足则保持原生宽，WebP lossless）。
 export const PROJECT_IMAGES = [
   {
     name: "yuntu",
-    width: 2400,
-    height: 1352,
+    width: 3864,
+    height: 2176,
     avif: [
-      { w: 480, path: "/images/yuntu-480-875fac84.avif" },
-      { w: 800, path: "/images/yuntu-800-123c12e0.avif" },
-      { w: 1200, path: "/images/yuntu-1200-54261c9e.avif" },
+      { w: 480, path: "/images/yuntu-480-971961f9.avif" },
+      { w: 800, path: "/images/yuntu-800-563c1b58.avif" },
+      { w: 1200, path: "/images/yuntu-1200-d72c8040.avif" },
     ],
     webp: [
-      { w: 480, path: "/images/yuntu-480-62bf9f86.webp" },
-      { w: 800, path: "/images/yuntu-800-912590c0.webp" },
-      { w: 1200, path: "/images/yuntu-1200-763a61ad.webp" },
+      { w: 480, path: "/images/yuntu-480-0417e860.webp" },
+      { w: 800, path: "/images/yuntu-800-f4888f31.webp" },
+      { w: 1200, path: "/images/yuntu-1200-e2892ebe.webp" },
     ],
-    fallback: "/images/yuntu-480-62bf9f86.webp",
-    full: "/images/yuntu-full-221ce7e3.webp",
+    fallback: "/images/yuntu-480-0417e860.webp",
+    full: "/images/yuntu-full-033f4fff.webp",
   },
   {
     name: "tick",
-    width: 2400,
-    height: 1352,
+    width: 3864,
+    height: 2176,
     avif: [
-      { w: 480, path: "/images/tick-480-15259c19.avif" },
-      { w: 800, path: "/images/tick-800-4f0d66d4.avif" },
-      { w: 1200, path: "/images/tick-1200-aac09490.avif" },
+      { w: 480, path: "/images/tick-480-891319cc.avif" },
+      { w: 800, path: "/images/tick-800-7505403a.avif" },
+      { w: 1200, path: "/images/tick-1200-c8533f4c.avif" },
     ],
     webp: [
-      { w: 480, path: "/images/tick-480-dd178877.webp" },
-      { w: 800, path: "/images/tick-800-edebdc62.webp" },
-      { w: 1200, path: "/images/tick-1200-10afae32.webp" },
+      { w: 480, path: "/images/tick-480-9387c672.webp" },
+      { w: 800, path: "/images/tick-800-ffd4d363.webp" },
+      { w: 1200, path: "/images/tick-1200-6d168a6f.webp" },
     ],
-    fallback: "/images/tick-480-dd178877.webp",
-    full: "/images/tick-full-f4c1a30c.webp",
+    fallback: "/images/tick-480-9387c672.webp",
+    full: "/images/tick-full-f024470f.webp",
   },
   {
     name: "pixelboard",
-    width: 2400,
-    height: 1352,
+    width: 3864,
+    height: 2176,
     avif: [
-      { w: 480, path: "/images/pixelboard-480-af10e253.avif" },
-      { w: 800, path: "/images/pixelboard-800-0ef94ba8.avif" },
-      { w: 1200, path: "/images/pixelboard-1200-2342ebb6.avif" },
+      { w: 480, path: "/images/pixelboard-480-324d0ff8.avif" },
+      { w: 800, path: "/images/pixelboard-800-7afb74b0.avif" },
+      { w: 1200, path: "/images/pixelboard-1200-2cd1e7c2.avif" },
     ],
     webp: [
-      { w: 480, path: "/images/pixelboard-480-3ffcc225.webp" },
-      { w: 800, path: "/images/pixelboard-800-2188228c.webp" },
-      { w: 1200, path: "/images/pixelboard-1200-2b95697e.webp" },
+      { w: 480, path: "/images/pixelboard-480-a5508b04.webp" },
+      { w: 800, path: "/images/pixelboard-800-30bac289.webp" },
+      { w: 1200, path: "/images/pixelboard-1200-749bda99.webp" },
     ],
-    fallback: "/images/pixelboard-480-3ffcc225.webp",
-    full: "/images/pixelboard-full-717e0769.webp",
+    fallback: "/images/pixelboard-480-a5508b04.webp",
+    full: "/images/pixelboard-full-badbae8a.webp",
   },
   {
     name: "solar",
-    width: 2400,
-    height: 1352,
+    width: 3864,
+    height: 2176,
     avif: [
-      { w: 480, path: "/images/solar-480-3e1d22a9.avif" },
-      { w: 800, path: "/images/solar-800-c2567d21.avif" },
-      { w: 1200, path: "/images/solar-1200-becd84c4.avif" },
+      { w: 480, path: "/images/solar-480-86bc85b3.avif" },
+      { w: 800, path: "/images/solar-800-fd8f0428.avif" },
+      { w: 1200, path: "/images/solar-1200-bcb498dd.avif" },
     ],
     webp: [
-      { w: 480, path: "/images/solar-480-5ed09ba3.webp" },
-      { w: 800, path: "/images/solar-800-96254dc5.webp" },
-      { w: 1200, path: "/images/solar-1200-8a447993.webp" },
+      { w: 480, path: "/images/solar-480-2e44c5b2.webp" },
+      { w: 800, path: "/images/solar-800-fcb4622a.webp" },
+      { w: 1200, path: "/images/solar-1200-36b0169d.webp" },
     ],
-    fallback: "/images/solar-480-5ed09ba3.webp",
-    full: "/images/solar-full-0c21afac.webp",
+    fallback: "/images/solar-480-2e44c5b2.webp",
+    full: "/images/solar-full-1670f66f.webp",
   },
 ] as const;
 
-/**
- * 封面图在布局里的真实宽度，供 <img sizes> 挑选变体档位：
- * - ≤639px（sm 断点以下）单列：卡宽 = 视口 - 左右各 24px 容器内边距；
- * - ≥640px 双列，画廊容器 max-w-5xl（1024px）：卡宽 = 容器 - 32px 栏间距
- *   后除以 2，最大约 496px。此前按满屏宽度估算（(100vw-4rem)/2），容器
- *   收窄后桌面端会下载比所需大一级的封面，白费流量。
- */
 export const IMAGE_SIZES =
   "(max-width: 639px) calc(100vw - 3rem), min(496px, calc((100vw - 4rem) / 2))";

@@ -12,11 +12,9 @@
  *
  * 只做一次，不参与线上构建：CI 直接使用已生成的产物文件。
  *
- * 为什么母版要单独存一份：原图（ComfyUI 直出的 3864×2176 PNG）单张 10MB 左右，
- * 四张共 42MB，全尺寸 WebP lossless 也要 27MB——入库存不起。缩到 2400px 宽后
- * 降到每张 2.7~3.2MB（四张共约 11.7MB），而 2400 宽已经超过绝大多数显示场景
- * （灯箱 max-w-92vw，4K 屏才刚好铺满），缩采样看不出来。
- * 卡片变体从母版而不是原图缩放，避免「有损之上再有损」。
+ * 母版宽度：曾为省体积缩到 2400（四张 11.7MB）；2026-10 起按用户要求改为
+ * 1:1 存 ComfyUI 直出分辨率（3864×2176，四张无损约 27MB），灯箱看到的
+ * 就是原图本尊。卡片变体从母版缩放，避免「有损之上再有损」。
  */
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
@@ -27,7 +25,11 @@ const SRC = path.join(ROOT, "public/images");
 const WIDTHS = [480, 800, 1200];
 const AVIF_Q = 50;
 const WEBP_Q = 78;
-const FULL_W = 2400;
+// 原图 1:1 存档（2026-10 用户要求「加载原图的时候加载这四张照片」）：不再缩到
+// 2400，灯箱加载的就是 ComfyUI 直出分辨率。四张 3864×2176 无损约 27MB，只有
+// 灯箱与预热会碰到；封面变体不受影响（从母版单独缩）。min() 兜底：未来源图
+// 更大也不会无限放大文件。
+const FULL_W = 3864;
 // 探测顺序：换了新母版就把对应扩展名放前面，或用原文件名改这里
 const NAMES = ["yuntu", "tick", "pixelboard", "solar"];
 
@@ -65,8 +67,11 @@ const out = [];
 for (const name of NAMES) {
   const master = await findMaster(name);
 
-  // 母版：等比缩到 FULL_W，WebP lossless（灯箱原图，不做有损压缩）
-  const full = await sharp(master.buf).resize({ width: FULL_W }).webp({ lossless: true }).toBuffer();
+  // 母版：等比缩到 FULL_W（源图不足这个宽度时保持原生宽，放大只费体积不出细节），
+  // WebP lossless（灯箱原图，不做有损压缩）
+  const srcMeta = await sharp(master.buf).metadata();
+  const fullW = Math.min(FULL_W, srcMeta.width);
+  const full = await sharp(master.buf).resize({ width: fullW }).webp({ lossless: true }).toBuffer();
   const fullHash = createHash("sha256").update(full).digest("hex").slice(0, 8);
   const fullFile = `${name}-full-${fullHash}.webp`;
   await writeFile(path.join(SRC, fullFile), full);
@@ -94,7 +99,7 @@ for (const name of NAMES) {
 const lines = [];
 lines.push("// 由 scripts/generate-images.mjs 生成，请勿手改；新增图片后重跑该脚本。");
 lines.push("// 每项提供 AVIF / WebP 两组 srcset、一张小的 <img> 回退图，以及一张无损原图 full");
-lines.push(`// （灯箱查看高清原图用，宽度 ${FULL_W}px，WebP lossless，不做有损压缩）。`);
+lines.push(`// （灯箱查看高清原图用，宽度上限 ${FULL_W}px、不足则保持原生宽，WebP lossless）。`);
 lines.push("export const PROJECT_IMAGES = [");
 for (const e of out) {
   lines.push("  {");
@@ -114,7 +119,7 @@ for (const e of out) {
 lines.push("] as const;");
 lines.push("");
 lines.push("export const IMAGE_SIZES =");
-lines.push('  "(max-width: 639px) calc(100vw - 3rem), calc((100vw - 4rem) / 2)";');
+lines.push('  "(max-width: 639px) calc(100vw - 3rem), min(496px, calc((100vw - 4rem) / 2))";');
 
 await writeFile(path.join(ROOT, "lib/image-variants.ts"), lines.join("\n"));
 console.log("\n写出 lib/image-variants.ts");

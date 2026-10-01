@@ -55,7 +55,7 @@ personal-website/
 │   └── utils.ts                  # cn() 工具函数
 ├── public/
 │   ├── favicon.jpg / favicon-rounded.png
-│   └── images/                   # 4 张插画的 2400px 无损原图 + AVIF/WebP 变体
+│   └── images/                   # 4 张插画的 3864×2176 无损原图（1:1，约 27MB）+ AVIF/WebP 封面变体
 ├── assets/
 │   └── favicon-master.png       # 图标/分享卡源图（故意不进 public/：运行时无请求）
 ├── scripts/generate-images.mjs   # 母版 → 响应式变体生成脚本 (需 --no-save 装 sharp)
