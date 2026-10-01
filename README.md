@@ -77,6 +77,13 @@ personal-website/
 ├── scripts/
 │   └── generate-images.mjs       # 母版 → 响应式变体生成脚本
 ├── docs/deploy-workflow.yml     # 部署工作流模板副本
+├── components.json               # shadcn/ui 配置（组件均手动创建、按站点用法裁剪）
+├── next.config.js                # output:"export" 静态导出 + images.unoptimized
+├── tailwind.config.ts            # content 必须含 app/ components/ lib/ 三处（见坑 10）
+├── postcss.config.js             # tailwindcss + autoprefixer
+├── tsconfig.json                 # strict，@/* → ./*
+├── .eslintrc.json                # next/core-web-vitals
+└── package.json
 ```
 
 ## 本地运行
