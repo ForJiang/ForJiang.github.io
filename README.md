@@ -149,6 +149,33 @@ sharp(M).resize(32, 32, { fit: "cover" }).composite([{ input: mask(32), blend: "
 
 输出的 base64 整段替换 `lib/favicon-inline.ts` 里的 `INLINE_ICON_32`。半径取边长的 20%（iOS squircle 的比例）；圆角遮罩是 SVG `<rect rx>` 经 `composite: dest-in` 贴上去的（等价于 canvas 的 `destination-in` + `roundRect`）。换图只换 `favicon-master.png` 再重跑。
 
+## 分享链接预览卡（Open Graph）
+
+把站点链接发到 iMessage / X / Slack 时出现的预览卡（apple.com 那种大图 + 标题 + 域名），数据来自 `<head>` 里的 Open Graph / Twitter Card 标签——在 `app/layout.tsx` 的 `metadata.openGraph` / `metadata.twitter` 里配置，图片路径相对 `metadataBase`（站点根）解析成绝对地址。
+
+预览大图 `public/og-image.jpg`（1200×630，各平台卡片的通用比例）：暗底 + 圆角头像 + ForJiang 字标，构图呼应站点 Hero，源图就是 `public/images/favicon-master.png`。换头像后重出这张图：
+
+```bash
+npm i --no-save sharp
+node -e '
+const sharp = require("sharp");
+const AV = 380, AX = 110, AY = 125;
+const mask = (s, r) => Buffer.from(`<svg width="${s}" height="${s}"><rect width="${s}" height="${s}" rx="${r}"/></svg>`);
+const svg = Buffer.from(`<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0a0a0c"/>
+  <rect x="${AX}" y="${AY}" width="${AV}" height="${AV}" rx="${AV * 0.2}" fill="#111114"/>
+  <text x="${AX + AV + 90}" y="300" font-family="Helvetica, Arial, sans-serif" font-size="118" font-weight="700" fill="#fff">ForJiang</text>
+  <text x="${AX + AV + 94}" y="380" font-family="Helvetica, Arial, sans-serif" font-size="52" fill="#9ca3af">web coding…</text>
+  <rect x="${AX + AV + 94}" y="425" width="132" height="4" rx="2" fill="#3f4652"/>
+</svg>`);
+sharp("public/images/favicon-master.png")
+  .resize(AV, AV, { fit: "cover" }).composite([{ input: mask(AV, AV * 0.2), blend: "dest-in" }]).png().toBuffer()
+  .then((av) => sharp(svg).composite([{ input: av, left: AX, top: AY }]).jpeg({ quality: 88 }).toFile("public/og-image.jpg"));
+'
+```
+
+iMessage 对链接预览缓存很凶：部署后老会话里可能仍是旧样式，换台设备或重发一次即可。
+
 ## 如何改成你自己的信息
 
 | 想改什么 | 位置 |
@@ -161,6 +188,7 @@ sharp(M).resize(32, 32, { fit: "cover" }).composite([{ input: mask(32), blend: "
 | 插画封面图 | 把新原图命名成 `public/images/<name>.png` 后重跑上面的脚本 |
 | 联系方式（邮箱 / GitHub / 哔哩哔哩 / Pixiv / X） | `app/page.tsx` 顶部 `CONTACTS` |
 | 网页标题 / 描述 / favicon | `app/layout.tsx` 的 `metadata`；换图标见上一节 |
+| 分享卡片（iMessage / X 的链接预览） | `app/layout.tsx` 的 `openGraph` / `twitter`；预览大图 `public/og-image.jpg`，见下一节 |
 | 文字动效的快慢与强度 | `RevealText` 的 `duration` / `stagger` / `blur` props（上浮位移由 CSS 的 `--reveal-y` 默认值控制） |
 | 区块入场动画（卡片/面板淡入上浮） | `components/enter-block.tsx` 的 `delay` / `duration`，过渡本体在 `app/globals.css` 的 `.enter-block` |
 | 长文本弃用模糊的阈值 | `components/ui/reveal-text.tsx` 的 `BLUR_UNIT_CAP`（单元数超过它自动只保留淡入+上浮） |

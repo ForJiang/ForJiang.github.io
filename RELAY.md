@@ -190,7 +190,7 @@ ac9dc96 style: 去掉技能/实战项目两屏底部多余的互跳按钮
 | GitHub Pages 部署 | ✅ | .github/workflows/deploy.yml | Actions 自动构建部署 |
 | 逐字揭示动画 | ✅ | components/ui/reveal-text.tsx | 纯 CSS transition, 按源文本空格决定间距 |
 | 深色主题 | ✅ (设计决策) | — | 单一深色主题, 切换已移除 |
-| SEO/元数据 | ⚠️ 基础 | app/layout.tsx | 有 title + description + favicon + theme-color, 缺 OG / Twitter Card |
+| SEO/元数据 | ✅ | app/layout.tsx, public/og-image.jpg | title/description/favicon/theme-color + OpenGraph/Twitter Card（iMessage/X 链接预览卡，1200×630 大图） |
 | 无障碍 | ⚠️ 基础 | — | 图片/图标有 aria-label 与键盘支持, 缺 skip-nav |
 | 子页面/路由 | ❌ 不做 | — | 用户要求保持单页滚动, 不拆子路由 |
 | npm audit | ⚠️ 5 项 (4 high + 1 critical) | Next 14.2.35 传递依赖 | 需破坏性升级 next 大版本才能修, 已知未处理 |
@@ -218,9 +218,8 @@ ac9dc96 style: 去掉技能/实战项目两屏底部多余的互跳按钮
 （本轮已全部完成：description 与高中生身份一致 / 技能栈按真实项目重写 / 旧 index.html 早已删除）
 
 ### P1 — 内容与元数据增强
-1. 添加 Open Graph / Twitter Card 元数据（分享链接带封面图）
-2. 添加 `sitemap.xml` 与 robots
-3. 无障碍补 skip-nav 跳主内容
+1. 添加 `sitemap.xml` 与 robots
+2. 无障碍补 skip-nav 跳主内容
 
 ### P2 — 功能扩展
 4. 升级 next 大版本以消掉 npm audit 的 5 项告警（破坏性，需回归全站）

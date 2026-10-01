@@ -7,8 +7,42 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "ForJiang · 个人主页",
+  // metadataBase 把 openGraph/twitter 里的相对图片路径解析成绝对 URL——
+  // 链接卡片（iMessage / X / Slack…）抓取时要求绝对地址
+  metadataBase: new URL("https://forjiang.github.io"),
   description:
     "ForJiang 的个人主页：五个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画，另有 AI 插画作品与演示视频。高中生，热爱编程的学习者。",
+  /*
+   * Open Graph / Twitter Card：iMessage、X、Slack 等分享链接时的卡片数据源。
+   * 没有这组标签时 iMessage 只出「标题 + 小图标」的普通链接泡，出不了
+   * apple.com 那种带大图和摘要的预览卡。og:image 用 1200×630（各平台卡片
+   * 的通用比例），构图呼应站点 Hero（暗底 + 圆角头像 + 字标），源图由
+   * public/images/favicon-master.png 合成，脚本见 README「分享卡片」。
+   */
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "ForJiang",
+    title: "ForJiang · 个人主页",
+    description:
+      "五个纯静态、可离线使用的网页工具 + AI 插画作品与演示视频。高中生，热爱编程的学习者。",
+    locale: "zh_CN",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "ForJiang 个人主页——插画头像与字标",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ForJiang · 个人主页",
+    description:
+      "五个纯静态、可离线使用的网页工具 + AI 插画作品与演示视频。高中生，热爱编程的学习者。",
+    images: ["/og-image.jpg"],
+  },
   // 图标不走 metadata.icons：Next 会把 url 当路径 normalize，data URI 的
   // "data:image/png;base64," 前缀会被剥掉。改用原生 <link>，见下面 <head>。
   other: {
