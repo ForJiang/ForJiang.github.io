@@ -48,8 +48,12 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
   // 拖拽状态：区分「点按」与「真的拖了」只需 startX 与指针 id 即可判断
   const dragRef = useRef<{ id: number; startX: number } | null>(null);
   // 滑动翻页会让带 key 的舞台重挂载，浏览器随后派发的 click 会落到遮罩上
-  // （down/up 的目标节点已不是同一个）——用标记吞掉这一次 click，防止误关
-  const suppressClickRef = useRef(false);
+  // （down/up 的目标节点已不是同一个）——吞掉这一次 click 防止误关。但不能
+  // 用一个常驻的布尔标记：万一那一次 click 没来（指针取消、手指滑出屏幕），
+  // 残留的 true 会把用户接下来点「下一张」的那一下也吞掉——按钮看得见、
+  // 点得住、就是没反应。改成时间窗：浏览器补发的 click 就在翻页后几毫秒，
+  // 而人不可能在同一瞬间又去点按钮。
+  const suppressClickUntilRef = useRef(0);
 
   const step = (dir: number) => {
     onNavigate((index + dir + items.length) % items.length);
@@ -94,9 +98,9 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
 
   const onStagePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
-    // 手势面盖住整个遮罩，但落在按钮/链接上的按下不是拖拽：一旦这里捕获指针，
-    // 整颗指针序列（含兼容鼠标事件与最终 click）都会被重定向到 stage 元素，
-    // 按钮就永远收不到 click——实测点「下一张」毫无反应即此原因。
+    // 落在按钮/链接上的按下不是拖拽：一旦这里捕获指针，整颗指针序列（含兼容
+    // 鼠标事件与最终 click）都会被重定向到 stage 元素，按钮永远收不到 click
+    // （实测点「下一张」毫无反应即此原因）。stage 里只有图片，这条是兜底。
     if ((e.target as Element | null)?.closest?.("button, a")) return;
     try {
       stageRef.current?.setPointerCapture(e.pointerId);
@@ -123,7 +127,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
     const s = stageRef.current;
     if (Math.abs(dx) > 60) {
       // 翻页：index 变化会让带 key 的舞台重挂载，位移自然归零
-      suppressClickRef.current = true;
+      suppressClickUntilRef.current = e.timeStamp + 700;
       step(dx < 0 ? 1 : -1);
     } else if (s) {
       s.style.transition = "transform 0.2s ease";
@@ -141,16 +145,11 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
       onClick={(e) => {
-        if (suppressClickRef.current) {
-          suppressClickRef.current = false;
-          return;
-        }
+        // 翻页后浏览器补发的那一次 click 落在遮罩上，不吞就会误关灯箱；
+        // 窗口只有 700ms，正常点击不会受影响（见 suppressClickUntilRef）
+        if (e.timeStamp < suppressClickUntilRef.current) return;
         onClose();
       }}
-      onPointerDown={onStagePointerDown}
-      onPointerMove={onStagePointerMove}
-      onPointerUp={endStageDrag}
-      onPointerCancel={endStageDrag}
       role="dialog"
       aria-modal="true"
       aria-label={current.title}
@@ -175,11 +174,18 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
         transition={{ duration: 0.25 }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 只做定位：指针手势统一由外层遮罩处理（见 onStagePointerDown 的
-            按钮守卫），这里不再重复绑定同一套 handler */}
+        {/* 滑动手势面只覆盖图片本身，绝不铺满整个遮罩：捕获指针会把随后的
+            click 一起重定向到这个元素，而它外层的图片容器上有 stopPropagation
+            ——于是点遮罩暗处的按下会被当成「在拖图」，关闭逻辑永远收不到那次
+            click（实测点暗处毫无反应，必须按 Esc 或点右上角 X 才关）。
+            在这里起手拖拽，图片左右滑动切换；遮罩其余地方的点击照常关闭。 */}
         <div
           ref={stageRef}
           className="relative [touch-action:pan-y]"
+          onPointerDown={onStagePointerDown}
+          onPointerMove={onStagePointerMove}
+          onPointerUp={endStageDrag}
+          onPointerCancel={endStageDrag}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

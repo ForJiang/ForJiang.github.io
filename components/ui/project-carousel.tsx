@@ -121,13 +121,18 @@ export default function ProjectCarousel({ count, prevLabel, nextLabel, children 
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
+    // 新手势先清「本次是否拖过」的标记——它还决定 onClickCapture 要不要吞掉
+    // 随后的 click。必须放在链接守卫之前：守卫会提前 return，若把清理留在
+    // 后面，上一次甩动留下的 true 就一直挂着，之后每一下点链接都被当成
+    // 「拖后的点击」吞掉，而点链接自己走的也是同一条提前 return，永远清不掉
+    // 它——表现为滑过一次之后卡片链接全灭、过一会又莫名其妙好了。
+    movedRef.current = false;
     // 卡片里的 GitHub / Demo 链接与按钮：按下即激活，不进拖拽分支。否则
     // wrap 一旦捕获指针，整颗指针序列（含最终 click）都会被重定向到卡片
     // 元素，链接永远收不到 click——实测点卡片链接毫无反应即此原因。
     if ((e.target as Element | null)?.closest?.("a, button")) return;
     const track = trackRef.current;
     if (!track) return;
-    movedRef.current = false;
     // 若吸附过渡正在进行，冻结在当前真实画面位置（从 computed transform 反推）
     const tx = getComputedStyle(track).transform;
     if (tx && tx !== "none") {

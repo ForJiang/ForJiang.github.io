@@ -205,6 +205,7 @@ dea4ac2 style: Hero 徽章改为标题之后出场
 10. **注水一致性** — 首帧语言由 `layout.tsx` 的 `<html lang>` 与 `language-context.tsx` 的 `useState` 初值共同决定，两边必须同为 `en`；同理 reveal 动画参数全部经 CSS 变量在 render 时算好下发，不在客户端读 `window` 尺寸之类首帧才有的数据
 11. **单页结构 / 无 basePath** — 部署在用户主站根路径，不要加 `basePath` 或 `trailingSlash`；不要重新拆 /skills、/projects 子路由
 12. **用户对 Emoji 的偏好** — README 与简介（meta description + 仓库 description）零 Emoji；网页正文的技能分组徽章保留 🎨/🧠/🛠️，别改成别的
+13. **自定义手势/拖拽组件前先看「指针捕获」三连坑**（2026-10-01 实测修过两次，详见 README 第 9、15 条）：① `setPointerCapture` 会把后续指针事件与最终 `click` 全部重定向到捕获元素 → 落在内部按钮上的点击必须 `closest("a, button")` 提前 return；② 「拖拽过就吞 click」的抑制标记，复位要写在该 return **之前**，否则一次甩动后所有内部链接永久失效；③ 手势面只能覆盖自己那块（轮播轨道、灯箱图片），别铺到「点这里要关」的遮罩上——那次 click 会被重定向进带 `stopPropagation` 的图片容器。改完用 Playwright WebKit + 移动视口实测（「先甩动再点链接」必测）
 
 ## 8. 建议的下一步工作
 
