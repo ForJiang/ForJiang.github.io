@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   // 链接卡片（iMessage / X / Slack…）抓取时要求绝对地址
   metadataBase: new URL("https://forjiang.github.io"),
   description:
-    "ForJiang 的个人主页：五个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画，另有 AI 插画作品与演示视频。高中生，热爱编程的学习者。",
+    "ForJiang 的个人主页：六个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画、文件加密系统，另有 AI 插画作品与演示视频。高中生，热爱编程的学习者。",
   /*
    * Open Graph / Twitter Card：iMessage、X、Slack 等分享链接时的卡片数据源。
    * 没有这组标签时 iMessage 只出「标题 + 小图标」的普通链接泡，出不了
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     siteName: "ForJiang",
     title: "ForJiang",
     description:
-      "五个纯静态、可离线使用的网页工具 + AI 插画作品与演示视频。高中生，热爱编程的学习者。",
+      "六个纯静态、可离线使用的网页工具 + AI 插画作品与演示视频。高中生，热爱编程的学习者。",
     locale: "zh_CN",
     images: [
       {
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ForJiang",
     description:
-      "五个纯静态、可离线使用的网页工具 + AI 插画作品与演示视频。高中生，热爱编程的学习者。",
+      "六个纯静态、可离线使用的网页工具 + AI 插画作品与演示视频。高中生，热爱编程的学习者。",
     images: ["/og-image.jpg"],
   },
   // 图标不走 metadata.icons：Next 会把 url 当路径 normalize，data URI 的

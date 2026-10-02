@@ -59,7 +59,6 @@ personal-website/
 ├── assets/
 │   └── favicon-master.png       # 图标/分享卡源图（故意不进 public/：运行时无请求）
 ├── scripts/generate-images.mjs   # 母版 → 响应式变体生成脚本 (需 --no-save 装 sharp)
-├── docs/deploy-workflow.yml     # 部署工作流模板副本
 ├── README.md / RELAY.md          # 项目文档 (README 是主文档，坑与实测都在里面)
 ├── components.json                # shadcn/ui 配置
 ├── next.config.js                 # output:"export", images.unoptimized
@@ -79,7 +78,7 @@ personal-website/
 |------|------|
 | `about` | 玻璃拟态自我介绍面板，高中生/学习者身份 |
 | `skills` | 技术栈分组卡片（前端与可视化 / 浏览器端 AI 与媒体 / 工程与算法） |
-| `projects` | 实战项目横向无限轮播（5 个项目 × 3 份克隆 + 静默归位；甩动限幅 ±2 张 < 一份缓冲，3 份即够） |
+| `projects` | 实战项目横向无限轮播（6 个项目 × 3 份克隆 + 静默归位；甩动限幅 ±2 张 < 一份缓冲，3 份即够） |
 | `gallery` | AI 插画卡片（4 张，封面固定 16:9，点击开灯箱） |
 | `videos` | B 站外链播放器（协议相对地址 + lazy + preconnect，1440px 上限） |
 | `contact` | 邮件 / GitHub / Bilibili / Pixiv / X 五个按钮 + 页脚同款图标 |
@@ -153,6 +152,7 @@ personal-website/
 
 ```
 （本地 sha）最近 15 条：
+40c3e2e feat: 实战项目加入「文件加密系统」
 4447fe6 fix: 图标文件改内容哈希名，绕开 Safari 按 URL 的图标缓存
 f80964b fix: 移动端菜单与标题行色差 + 开合动画生硬
 bf03dc3 docs: RELAY 同步换图轮——预热体积、1:1 决策反转记录、历史摘要刷新
@@ -191,7 +191,7 @@ a4c401e fix: 中文逐字之间的多余间距——reveal-gap 按源文本空�
 | Hero 区 | ✅ | components/ui/liquid-metal-hero.tsx | 标题先出、徽章后出 |
 | 关于我 | ✅ | app/page.tsx, lib/i18n.ts | 高中生身份, 玻璃面板 |
 | 技能展示 | ✅ | app/page.tsx, lib/i18n.ts | 3 组卡片, 按真实项目技术栈 |
-| 实战项目轮播 | ✅ | components/ui/project-carousel.tsx | 5 个项目, 无限轮播 |
+| 实战项目轮播 | ✅ | components/ui/project-carousel.tsx | 6 个项目, 无限轮播 |
 | AI 插画 + 灯箱 | ✅ | app/page.tsx, components/lightbox.tsx | 4 张插画, 16:9 封面, 原图 1:1 无损（3864×2176） |
 | 视频板块 | ✅ | app/page.tsx, app/layout.tsx | B 站外链播放器, lazy + preconnect |
 | 联系方式 | ✅ | app/page.tsx | 邮件/GitHub/Bilibili/Pixiv/X |
