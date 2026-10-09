@@ -30,6 +30,16 @@ const Lightbox = dynamic(() => import("@/components/lightbox"));
 // 插画卡片与图片变体的对应关系（按卡片顺序，取 lib/image-variants.ts 里的 name）
 const CARD_IMAGE_NAMES = ["yuntu", "tick", "pixelboard", "solar"];
 
+/**
+ * 卡片下标 → 图片变体：统一按 CARD_IMAGE_NAMES 的名字解析，画廊渲染、灯箱
+ * items、悬停预热三条路径都走这一个函数。曾经后两条直接按位置取
+ * PROJECT_IMAGES[idx]——那样只在「变体数组顺序恰好等于 CARD_IMAGE_NAMES
+ * 顺序」时才不出错；脚本 NAMES 一增删、或卡片换一张图，灯箱就会为 A 卡弹出
+ * B 图、预热下错图，且类型不报错、极难发现。
+ */
+const cardImage = (idx: number) =>
+  PROJECT_IMAGES.find((i) => i.name === CARD_IMAGE_NAMES[idx]);
+
 const CONTACTS = {
   email: "jianghaoda.1@outlook.com",
   github: "https://github.com/ForJiang",
@@ -57,15 +67,21 @@ function HomeContent() {
   const [viewing, setViewing] = useState<number | null>(null);
 
   const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    // 减少动态效果偏好下不做平滑滚动：与 globals.css 里成片的
+    // prefers-reduced-motion 降级同一立场，滚动也是动效
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById(id)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
   };
 
   // 灯箱看高清原图：full 是全尺寸 WebP 无损图（不做有损压缩），
   // fallback 只是给不支持 AVIF/WebP 的浏览器兜底的小图，不能拿它当原图。
-  // thumb 用最大一档封面变体（1200w）：与卡片封面同源，打开灯箱时已在
-  // 浏览器缓存里，立即上屏，原图下载完毕后在其上淡入
+  // thumb 用最大一档封面变体（1200w）：与卡片封面同源，高分屏（DPR≥2）下
+  // 浏览器选的正是这一档、已在缓存里，立即上屏；其余情况也只是一次几十 KB
+  // 的小请求，仍先于 6MB 原图上屏，原图下载完毕后在其上淡入
   const lightboxItems: LightboxItem[] = t.projects.cards.map((card, idx) => {
-    const img = PROJECT_IMAGES[idx];
+    const img = cardImage(idx);
     return {
       src: img?.full ?? "",
       thumb: (img && img.webp[img.webp.length - 1]?.path) || img?.fallback || "",
@@ -81,7 +97,7 @@ function HomeContent() {
   //    立即预热那一张。省流量模式（Save-Data）不预热。
   const prefetchDoneRef = useRef<Set<string>>(new Set());
   const prefetchFull = useCallback((idx: number) => {
-    const img = PROJECT_IMAGES[idx];
+    const img = cardImage(idx);
     if (!img || prefetchDoneRef.current.has(img.full)) return;
     prefetchDoneRef.current.add(img.full);
     const im = new Image();

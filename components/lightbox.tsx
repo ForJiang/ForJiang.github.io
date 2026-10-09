@@ -59,10 +59,14 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
   // 管——挂 .lb-closing 播 0.2s 淡出，计时到点再调真正的 onClose。closing
   // 期间忽略后续关闭请求，避免计时器叠着发。
   const [closing, setClosing] = useState(false);
+  // closing 的 ref 镜像：键盘监听注册在 [index] 的 effect 里，closing 变化
+  // 不会重注册，闭包里读到的是旧值；ref 让 onKey 永远看到当前状态
+  const closingRef = useRef(false);
   const closeTimerRef = useRef(0);
 
   const requestClose = () => {
-    if (closing) return;
+    if (closingRef.current) return;
+    closingRef.current = true;
     setClosing(true);
     closeTimerRef.current = window.setTimeout(onClose, 220);
   };
@@ -87,6 +91,10 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
     document.body.style.overflow = "hidden";
 
     const onKey = (e: KeyboardEvent) => {
+      // 已进入关闭淡出（220ms）就不再响应翻页：此时换 index 会让带 key 的
+      // 舞台重挂载、新图在淡出的遮罩上闪一下，观感错乱（读 ref 而非 state，
+      // 见 closingRef 注释）
+      if (closingRef.current) return;
       if (e.key === "Escape") { requestClose(); }
       else if (e.key === "ArrowRight") step(1);
       else if (e.key === "ArrowLeft") step(-1);
