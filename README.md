@@ -1,6 +1,6 @@
 # ForJiang · 个人主页
 
-基于 **Next.js 14 + TypeScript + Tailwind CSS** 的个人主页：技能与插画之外，收录六个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画演示、文件加密系统。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景；**全站没有任何动画库**——逐字揭示、区块入场、按钮填充、灯箱进出全部是纯 CSS transition/animation，进入视口的触发由一个 20 行的自写 IntersectionObserver 钩子完成（`lib/use-in-view.ts`），动画库清退的原因与过程见「Safari 性能专项」和坑 8。
+基于 **Next.js 14 + TypeScript + Tailwind CSS** 的个人主页：技能与插画之外，收录八个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画演示、文件加密系统、晨昏线世界时钟、AR 取景器。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景；**全站没有任何动画库**——逐字揭示、区块入场、按钮填充、灯箱进出全部是纯 CSS transition/animation，进入视口的触发由一个 20 行的自写 IntersectionObserver 钩子完成（`lib/use-in-view.ts`），动画库清退的原因与过程见「Safari 性能专项」和坑 8。
 
 线上地址：**https://forjiang.github.io**
 
@@ -16,6 +16,8 @@
 | [函数图像生成器](https://github.com/ForJiang/function-grapher) | 多曲线同图 + 零依赖符号求导（1–8 阶带步骤）与切线方程，260 项单元测试 | [试用](https://forjiang.github.io/function-grapher/) |
 | [hello 手写动画](https://github.com/ForJiang/forjiang-hello) | 零依赖复刻 Apple Hello：体素地形上逐笔手写，字标是实时光源 | [观看](https://forjiang.github.io/forjiang-hello/) |
 | [文件加密系统](https://github.com/ForJiang/forjiang-crypto) | AES-256-GCM 文件加密：浏览器版与桌面版格式互通，桌面版另有 RSA 公钥封装与目录批量 | [试用](https://forjiang.github.io/forjiang-crypto/) |
+| [晨昏线世界时钟](https://github.com/ForJiang/time) | 自动定位 + 秒级本地时间，手绘世界地图上实时画出昼夜分界线（Meeus 太阳算法本地算） | [试用](https://forjiang.github.io/time/) |
+| [AR 取景器](https://github.com/ForJiang/arcam) | 照片 + 立绘按针孔透视投影贴地合成，相机高度/俯角/焦距/景别可调，可抠图、导出配方 | [试用](https://forjiang.github.io/arcam/) |
 
 ## 功能
 
@@ -29,7 +31,7 @@
 - 点击封面图打开全屏灯箱：**立即显示已缓存的封面变体（轻模糊过渡）**，3864×2176 **ComfyUI 直出分辨率**的 WebP 无损原图在后台下载、就绪后淡入盖住它（2026-10 起原图 1:1 存档，用户要求「加载原图的时候加载这四张照片」）。图片**左右滑动切换**（也可以用键盘方向键），底部是「上一张 / 页码 / 下一张」合成的一行居中控件，**不自动播放**——切换只由用户操作触发；**点遮罩暗处 / Esc / 右上角 X 都能关**。原图还有两级预热：画廊进入视口后按顺序预载全部原图，桌面端悬停卡片立即预载该张，翻页时相邻原图也已预载——省流量模式（Save-Data）不预热。灯箱代码本身按需加载（`dynamic`），画廊进入视口时顺手把 chunk 拉下来，点开时无需再等网络
 - 联系方式带 Bilibili / Pixiv / X 官方标志（simple-icons, CC0），入口为真实 `<a>`，可中键新标签打开；页脚另有一组同款图标按钮
 - 视频板块是「点击播放」：先显示视频封面（1280×720 WebP，25KB）+ 播放键，点一下才注入带 `autoplay=1` 的 B 站播放器 iframe。点击目标在同文档里，不存在跨域 iframe「第一下只激活、第二下才播」的问题（iOS Safari 上尤其明显）；不看视频的访客完全不下载播放器（几 MB 的 JS），`preconnect` 仍提前建好连接，点开时省掉 DNS + TLS（`components/video-player.tsx`）。容器 1440px 上限，宽屏接近满幅
-- 实战项目横向无限轮播：卡片渲染三份（中间份常驻 + 两侧各一份缓冲，甩动投影限幅 ±2 张，一份缓冲足够覆盖越界——份数直接决定 SSR 出多少张卡的 DOM，6 个项目 × 3 份时占整页 HTML 的 68%）+ 滚出中间份立即按整份宽度无声归位，触屏惯性甩动也撞不到实体边界，滑到最后一张自动接上第一张，两个方向都滑不到头
+- 实战项目横向无限轮播：卡片渲染三份（中间份常驻 + 两侧各一份缓冲，甩动投影限幅 ±2 张，一份缓冲足够覆盖越界——份数直接决定 SSR 出多少张卡的 DOM，8 个项目 × 3 份时占整页 HTML 的 74%）+ 滚出中间份立即按整份宽度无声归位，触屏惯性甩动也撞不到实体边界，滑到最后一张自动接上第一张，两个方向都滑不到头
 - 全站深色玻璃拟态面板，白色文字系统，任意液滴位置下保持可读（Safari 上大面积卡片自动降级为不透明深色底，见「Safari 性能专项」）
 - Safari / iOS 性能专项：逐字动画纯 CSS transition（合成器动画）、卡片对 WebKit 去大面积 backdrop 模糊、逐字 blur 超过 48 单元自动关闭，均经 Playwright WebKit 实测归因
 - 按钮采用指针扩散填充动画：圆形背景从鼠标进入的位置展开铺满、文字反色（`components/ui/origin-button.tsx`）；Hero 按用户要求的顺序出场——标题先出、徽章后出

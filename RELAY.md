@@ -79,7 +79,7 @@ personal-website/
 |------|------|
 | `about` | 玻璃拟态自我介绍面板，高中生/学习者身份 |
 | `skills` | 技术栈分组卡片（前端与可视化 / 浏览器端 AI 与媒体 / 工程与算法） |
-| `projects` | 实战项目横向无限轮播（6 个项目 × 3 份克隆 + 静默归位；甩动限幅 ±2 张 < 一份缓冲，3 份即够） |
+| `projects` | 实战项目横向无限轮播（8 个项目 × 3 份克隆 + 静默归位；甩动限幅 ±2 张 < 一份缓冲，3 份即够） |
 | `gallery` | AI 插画卡片（4 张，封面固定 16:9，点击开灯箱） |
 | `videos` | 视频点击播放：封面 WebP + 播放键，点击注入 autoplay 播放器（iframe，1440px 上限） |
 | `contact` | 邮件 / GitHub / Bilibili / Pixiv / X 五个按钮 + 页脚同款图标 |
@@ -153,6 +153,7 @@ personal-website/
 
 ```
 （本地 sha）最近 15 条：
+9d31174 feat: 实战项目补齐 GitHub 全部在页项目——加入晨昏线世界时钟与 AR 取景器
 ef9fcc3 fix: 视频播放补全带声开播的条件——allow=autoplay 权限属性 + muted=0
 a45493f feat: 视频改为「点击播放」——封面 + 播放键，点击注入 autoplay 播放器
 7dec02b chore: 第五轮巡检——简介同步第六个项目、删除重复的 docs 部署副本
@@ -195,7 +196,7 @@ a4c401e fix: 中文逐字之间的多余间距——reveal-gap 按源文本空�
 | Hero 区 | ✅ | components/ui/liquid-metal-hero.tsx | 标题先出、徽章后出 |
 | 关于我 | ✅ | app/page.tsx, lib/i18n.ts | 高中生身份, 玻璃面板 |
 | 技能展示 | ✅ | app/page.tsx, lib/i18n.ts | 3 组卡片, 按真实项目技术栈 |
-| 实战项目轮播 | ✅ | components/ui/project-carousel.tsx | 6 个项目, 无限轮播 |
+| 实战项目轮播 | ✅ | components/ui/project-carousel.tsx | 8 个项目, 无限轮播 |
 | AI 插画 + 灯箱 | ✅ | app/page.tsx, components/lightbox.tsx | 4 张插画, 16:9 封面, 原图 1:1 无损（3864×2176） |
 | 视频板块 | ✅ | app/page.tsx, app/layout.tsx | B 站外链播放器, lazy + preconnect |
 | 联系方式 | ✅ | app/page.tsx | 邮件/GitHub/Bilibili/Pixiv/X |
