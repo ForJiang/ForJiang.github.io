@@ -153,6 +153,7 @@ personal-website/
 
 ```
 （本地 sha）最近 15 条：
+ef9fcc3 fix: 视频播放补全带声开播的条件——allow=autoplay 权限属性 + muted=0
 a45493f feat: 视频改为「点击播放」——封面 + 播放键，点击注入 autoplay 播放器
 7dec02b chore: 第五轮巡检——简介同步第六个项目、删除重复的 docs 部署副本
 40c3e2e feat: 实战项目加入「文件加密系统」
