@@ -29,7 +29,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
  * 为什么是 3 份而不是更多：renderPos 全程被 normalize 压在 [-W, W)，拖拽
  * 结束的甩动投影又被 endDrag 限幅到 ±2 张——单侧最大越界 2 张 < 一份缓冲
  * （count 张），所以两侧各一份缓冲就够。份数直接决定 SSR 出多少张卡的
- * DOM（每张卡上百个逐字 span，曾占整页 HTML 的 76%），少两份就省一半轮播
+ * DOM（每张卡上百个逐字 span，8 个项目 ×3 份时占整页 HTML 的 74%），少两份就省一半轮播
  * 体积。三份在超宽屏下也成立：可见窗口宽 vw ≤ 3W 才不会露边，W = 卡宽
  * 30rem 时 3W = 7.5K px，远超任何在售显示器。
  *
