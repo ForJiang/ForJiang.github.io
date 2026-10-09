@@ -16,6 +16,13 @@ import { Play } from "lucide-react";
  * 不看视频的访客完全不付这份流量；② 播放器加载期间不再占据版面，封面先上屏。
  * preconnect 仍保留在 layout——用户点击时 DNS/TLS 已就绪，连接建立那几百毫秒
  * 省得掉。
+ *
+ * 声音的边界（实测 2026-10-09）：桌面 Chromium 系（allow="autoplay" + 本次点击
+ * 手势）带声开播；WebKit（Safari 与 iOS 全部浏览器）有站点隔离，父文档的手势
+ * 传不进跨域 iframe 文档，自动播放一律降为静音起步，播放器自带「点击恢复音量」
+ * 一键恢复。这是平台策略，嵌入方无法覆盖（YouTube 嵌入同样如此）；试过并排除
+ * 的绕法：muted=0 参数、播放器 postMessage 音量命令（协议里根本没有该命令，
+ * 只有 play/pause 一类）、同步插入 iframe、iframe.allow 变体。
  */
 
 /** 视频参数：换视频只改这里（aid/bvid/cid 与封面文件名一一对应） */
@@ -42,10 +49,17 @@ export default function VideoPlayer({ title, playLabel }: VideoPlayerProps) {
         <iframe
           // autoplay=1：点击注入即播放。浏览器对「用户手势中创建的 iframe」
           // 允许有声自动播放；若被策略拦住，播放器仍显示播放键可手动点。
-          src={`//player.bilibili.com/player.html?isOutside=true&aid=${VIDEO.aid}&bvid=${VIDEO.bvid}&cid=${VIDEO.cid}&p=1&autoplay=1`}
+          // allow="autoplay" 是 Permissions Policy：跨域 iframe 默认无权自动
+          // 播放，Chromium 系桌面浏览器要显式授权才带声开播（配上层用户手势）。
+          // muted=0 显式声明不强制静音。但 WebKit（Safari / iOS 上全部浏览器）
+          // 有站点隔离：父文档的点击手势传不进跨域 iframe 文档，自动播放一律
+          // 降为静音开播——这是平台策略，嵌入方无法覆盖（YouTube 等嵌入同样
+          // 如此），播放器会自带「点击恢复音量」的一键恢复。
+          src={`//player.bilibili.com/player.html?isOutside=true&aid=${VIDEO.aid}&bvid=${VIDEO.bvid}&cid=${VIDEO.cid}&p=1&autoplay=1&muted=0`}
           scrolling="no"
           frameBorder={0}
           allowFullScreen
+          allow="autoplay; fullscreen"
           title={title}
           className="absolute inset-0 h-full w-full"
         />
