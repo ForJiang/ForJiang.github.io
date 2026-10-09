@@ -40,6 +40,7 @@ personal-website/
 │   ├── mouse-trail.tsx           # 鼠标流光轨迹
 │   ├── site-nav.tsx              # 全站导航 (锚点 + 平滑滚动 + 语言按钮 + 移动端菜单开合过渡)
 │   ├── site-shell.tsx            # 页面外框 (背景 + 轨迹 + 导航)
+│   ├── video-player.tsx           # 视频点击播放（封面 + 播放键 → autoplay 注入播放器）
 │   └── ui/
 │       ├── badge.tsx / button.tsx / card.tsx   # shadcn/ui 组件 (已裁掉未用变体)
 │       ├── liquid-metal-hero.tsx               # Hero 区 (标题先出、徽章后出)
@@ -80,7 +81,7 @@ personal-website/
 | `skills` | 技术栈分组卡片（前端与可视化 / 浏览器端 AI 与媒体 / 工程与算法） |
 | `projects` | 实战项目横向无限轮播（6 个项目 × 3 份克隆 + 静默归位；甩动限幅 ±2 张 < 一份缓冲，3 份即够） |
 | `gallery` | AI 插画卡片（4 张，封面固定 16:9，点击开灯箱） |
-| `videos` | B 站外链播放器（协议相对地址 + lazy + preconnect，1440px 上限） |
+| `videos` | 视频点击播放：封面 WebP + 播放键，点击注入 autoplay 播放器（iframe，1440px 上限） |
 | `contact` | 邮件 / GitHub / Bilibili / Pixiv / X 五个按钮 + 页脚同款图标 |
 
 导航常驻但**不参与逐字动画**（反复进入视口，错峰显碎）。Hero 两个按钮平滑滚动到 `projects` / `contact`。**用户明确要求过：技能与实战项目不拆子路由**（曾拆成 /skills、/projects 又合并回来，不要重做）。
@@ -152,6 +153,7 @@ personal-website/
 
 ```
 （本地 sha）最近 15 条：
+7dec02b chore: 第五轮巡检——简介同步第六个项目、删除重复的 docs 部署副本
 40c3e2e feat: 实战项目加入「文件加密系统」
 4447fe6 fix: 图标文件改内容哈希名，绕开 Safari 按 URL 的图标缓存
 f80964b fix: 移动端菜单与标题行色差 + 开合动画生硬

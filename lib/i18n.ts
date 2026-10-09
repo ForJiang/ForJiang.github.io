@@ -19,6 +19,7 @@ export const translations = {
       badge: "视频",
       heading: "视频演示",
       subtitle: "发布在 Bilibili 的演示视频，在这里就能直接看",
+      playCta: "点击播放",
     },
     hero: {
       badge: "👋 你好，我是",
@@ -152,6 +153,7 @@ export const translations = {
       badge: "Videos",
       heading: "Video demos",
       subtitle: "Demos published on Bilibili — watch them right here",
+      playCta: "Click to play",
     },
     hero: {
       badge: "👋 Hi, I'm",

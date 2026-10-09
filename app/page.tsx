@@ -14,6 +14,7 @@ import RevealText from "@/components/ui/reveal-text";
 import EnterBlock from "@/components/enter-block";
 import ProjectCarousel from "@/components/ui/project-carousel";
 import SiteShell from "@/components/site-shell";
+import VideoPlayer from "@/components/video-player";
 import { LanguageProvider, useLanguage } from "@/components/language-context";
 import { SECTION_BADGE, TEXT_SHADOW, BODY_SHADOW, GLASS_CARD, GLASS_TAG, SECTION_SHELL, trackSpotlight } from "@/lib/ui-kit";
 import dynamic from "next/dynamic";
@@ -514,24 +515,11 @@ function HomeContent() {
         {/* 播放器单独用更宽的容器：视频画面越大越好，而标题/副标题保持适宽
             才可读（长行文字拉太宽会难以阅读），两者分开约束。
             这里不用 container 类：它自带 xl 断点 1280px 的上限，会把播放器
-            提前截小；改用 w-full + 内层 1440px 上限，宽屏上才是真的满幅。 */}
+            提前截小；改用 w-full + 内层 1440px 上限，宽屏上才是真的满幅。
+            播放交互是「点击播放」：封面 + 播放键，点击才注入带 autoplay 的
+            播放器（原因见 components/video-player.tsx 顶部注释）。 */}
         <div className="mx-auto w-full px-6 lg:px-8">
-          {/* B 站外链播放器：协议相对地址继承当前协议，http/https 站点都不触发
-              混合内容拦截；loading="lazy" 让播放器滚入视野后才联网加载，
-              不占用首屏带宽。外层 aspect-video 兜住 16:9 比例，内层绝对定位铺满。
-              1440px 上限：常见 1440/1512 宽笔记本上接近满幅，同时 16:9 的
-              高度（≈810px）不超出屏幕太多，翻开就能看。 */}
-          <div className="relative mx-auto w-full max-w-[1440px] aspect-video rounded-lg overflow-hidden border border-white/15 shadow-2xl bg-black">
-            <iframe
-              src="//player.bilibili.com/player.html?isOutside=true&aid=117346962312416&bvid=BV1F9ai6REo8&cid=42340451929&p=1"
-              scrolling="no"
-              frameBorder={0}
-              allowFullScreen
-              loading="lazy"
-              title={t.videos.heading}
-              className="absolute inset-0 h-full w-full"
-            />
-          </div>
+          <VideoPlayer title={t.videos.heading} playLabel={t.videos.playCta} />
         </div>
       </section>
 
