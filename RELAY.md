@@ -153,6 +153,7 @@ personal-website/
 
 ```
 （本地 sha）最近 15 条：
+b2369cc fix: 轮播归位区间 [-W, W) 改 [0, W)——修掉长拖左缘露空洞 + 注释勘误
 9d31174 feat: 实战项目补齐 GitHub 全部在页项目——加入晨昏线世界时钟与 AR 取景器
 ef9fcc3 fix: 视频播放补全带声开播的条件——allow=autoplay 权限属性 + muted=0
 a45493f feat: 视频改为「点击播放」——封面 + 播放键，点击注入 autoplay 播放器
