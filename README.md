@@ -36,7 +36,7 @@
 - Safari / iOS 性能专项：逐字动画纯 CSS transition（合成器动画）、卡片对 WebKit 去大面积 backdrop 模糊、逐字 blur 超过 48 单元自动关闭，均经 Playwright WebKit 实测归因
 - 按钮采用指针扩散填充动画：圆形背景从鼠标进入的位置展开铺满、文字反色（`components/ui/origin-button.tsx`）；Hero 按用户要求的顺序出场——标题先出、徽章后出
 - SEO 与抓取：`app/sitemap.ts` / `app/robots.ts` 在构建期生成 `sitemap.xml` 与 `robots.txt`（静态导出原生支持，无需额外服务；sitemap 的 url 必须写绝对地址——传相对路径产物里就是 `<loc>/</loc>`，metadataBase 不会替它补全）
-- 键盘无障碍：页面第一个可聚焦元素是「跳到主内容」链接（`.skip-link` 平时用 transform 移出视口，Tab 聚焦时浮现；文案跟随当前语言），回车直达 `#main`，键盘用户不必每次先过整条导航
+- 键盘无障碍：页面第一个可聚焦元素是「跳到主内容」链接（`.skip-link` 平时用 transform 移出视口，Tab 聚焦时浮现；文案跟随当前语言），回车直达 `#main`；全站统一一档 `:focus-visible` 白色描边（导航链接、轮播箭头这些裸 `a`/`button` 原先焦点完全不可见）；灯箱是带焦点锁的模态——Tab 在对话框内首尾循环，不会跑到底下页面继续操作背后的链接，Esc 关闭后焦点还原到打开时的那张封面
 - 完整响应式布局；移动端针对 iOS Safari 的视口与工具栏做了专门处理（页脚预留 100px 避开底部工具栏；固定背景层踩过 `lvh` 在工具栏收起时少算一截露出黑带的怪癖，用「body 底色 = shader 的 colorBack」接缝，见 `globals.css` 与下面第 14 条）
 - 单页滚动结构：Hero / 关于我 / 技术能力 / 实战项目 / 插画作品 / 视频演示 / 联系方式 / 页脚，每个板块各占一屏（`min-h-screen` + 垂直居中，相邻区块内容净间距 192px），导航平滑滚动到对应锚点
 

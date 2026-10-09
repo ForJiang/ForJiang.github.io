@@ -217,6 +217,19 @@ h4 {
 }
 
 /*
+ * 键盘焦点可见性：全站统一一档。按钮类组件（OriginButton / 页脚 Button）
+ * 各自带 focus-visible:ring，但导航链接、轮播箭头、汉堡按钮这些裸 a/button
+ * 原先没有任何焦点样式——键盘用户 Tab 一圈完全看不见焦点在哪。这里给全局
+ * 补一档白色细Outline（:focus-visible 只在键盘导航时出现，鼠标点击不显），
+ * 与站点深色玻璃语言一致；带 ring 的组件用自己的样式，不受影响。
+ */
+:focus-visible {
+  outline: 2px solid rgb(255 255 255 / 0.75);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/*
  * 「跳到主内容」链接（components/site-shell.tsx 渲染，是页面第一个可聚焦
  * 元素）。平时用 transform 移出视口——不能用 display:none / visibility:hidden，
  * 那样链接无法获得焦点，键盘用户第一次按 Tab 就什么都发生不了。聚焦时移回

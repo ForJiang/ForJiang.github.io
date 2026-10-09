@@ -71,10 +71,14 @@ export default function VideoPlayer({ title, playLabel }: VideoPlayerProps) {
           className="group absolute inset-0 h-full w-full cursor-pointer"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
+          {/* 封面在第六屏下方，懒加载：不与首屏的 HTML/CSS/JS 抢带宽，
+              滚近视野再取（25KB，几乎无感） */}
           <img
             src={VIDEO.cover}
             alt=""
             aria-hidden="true"
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover"
           />
           {/* 封面压暗一档：播放键与悬停反馈在亮封面上也分明 */}

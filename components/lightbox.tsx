@@ -41,6 +41,7 @@ interface LightboxProps {
 export default function Lightbox({ items, index, onClose, onNavigate }: LightboxProps) {
   const current = items[index];
   const closeRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const restoreRef = useRef<Element | null>(null);
   const fullRef = useRef<HTMLImageElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -89,6 +90,26 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
       if (e.key === "Escape") { requestClose(); }
       else if (e.key === "ArrowRight") step(1);
       else if (e.key === "ArrowLeft") step(-1);
+      else if (e.key === "Tab") {
+        // 焦点锁：对话框是 aria-modal，键盘用户 Tab 一圈必须留在里面，
+        // 不能跑到底下的页面继续操作背后的链接。首尾相接循环。
+        const root = dialogRef.current;
+        if (!root) return;
+        const items = Array.from(
+          root.querySelectorAll<HTMLElement>("button, [href], [tabindex]:not([tabindex='-1'])")
+        ).filter((el) => el.offsetParent !== null);
+        if (items.length === 0) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        const active = document.activeElement;
+        if (e.shiftKey && (active === first || !root.contains(active))) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && (active === last || !root.contains(active))) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener("keydown", onKey);
 
@@ -152,6 +173,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
 
   return (
     <div
+      ref={dialogRef}
       className={`fixed inset-0 z-[10000] flex flex-col items-center justify-center gap-4 bg-black/90 p-4 pb-8 backdrop-blur-md [touch-action:pan-y] ${
         closing ? "lb-closing" : "lb-overlay"
       }`}

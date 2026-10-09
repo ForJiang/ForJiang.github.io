@@ -207,7 +207,7 @@ a4c401e fix: 中文逐字之间的多余间距——reveal-gap 按源文本空�
 | 逐字揭示动画 | ✅ | components/ui/reveal-text.tsx | 纯 CSS transition, 按源文本空格决定间距 |
 | 深色主题 | ✅ (设计决策) | — | 单一深色主题, 切换已移除 |
 | SEO/元数据 | ✅ | app/layout.tsx, app/sitemap.ts, app/robots.ts, public/og-image.jpg | title/description/favicon/theme-color + OpenGraph/Twitter Card（iMessage/X 链接预览卡，1200×630 大图）+ sitemap.xml/robots.txt |
-| 无障碍 | ✅ | components/site-shell.tsx, app/globals.css | skip-nav 跳主内容 + 图片/图标 aria-label 与键盘支持 |
+| 无障碍 | ✅ | components/site-shell.tsx, app/globals.css, components/lightbox.tsx | skip-nav + 全站 :focus-visible 描边 + 灯箱焦点锁（Tab 循环不逃出）+ 图片/图标 aria-label 与键盘支持 |
 | 子页面/路由 | ❌ 不做 | — | 用户要求保持单页滚动, 不拆子路由 |
 | npm audit | ⚠️ 6 项 (5 high + 1 critical) | tailwindcss 3.4.19（braces 链）+ next 14.2.35 | 已处置：13→6（见下）；剩余两条均需破坏性大版本升级，适用性分析后决定不做 |
 
