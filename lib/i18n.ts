@@ -50,16 +50,16 @@ export const translations = {
         },
         {
           title: "🧠 浏览器端 AI 与媒体",
-          tags: ["ONNX Runtime Web", "WebGPU / WASM", "Web Audio API", "IndexedDB", "EXIF / GPS / XMP", "ZIP 打包", "Python 推理服务"],
+          tags: ["ONNX Runtime Web", "WebGPU / WASM", "Web Audio API", "WebCrypto / AES-256-GCM", "IndexedDB", "EXIF / GPS / XMP", "ZIP 打包", "Python 推理服务"],
         },
         {
           title: "🛠️ 工程与算法",
-          tags: ["单元测试", "符号求导引擎", "性能优化", "Git / GitHub Actions", "零依赖构建"],
+          tags: ["单元测试", "符号求导引擎", "Meeus 天文算法", "透视投影与 3D 数学", "性能优化", "Git / GitHub Actions", "零依赖构建"],
         },
       ],
       projects: {
         badge: "实战项目",
-        heading: "把这些用在了这些项目里",
+        heading: "这些技术落在了这些项目里",
         subtitle: "八个纯静态、可离线使用的网页小工具",
         demoCta: "在线试用",
         prevProject: "上一个项目",
@@ -95,14 +95,14 @@ export const translations = {
           },
           {
             name: "函数图像生成器",
-            desc: "纯前端函数图像工具：输入表达式即时绘制，最多 6 条曲线同图对比，20+ 函数库一键添加；滚轮缩放、拖拽平移、悬停读值。零依赖自研符号求导引擎，1–8 阶导数带步骤、虚线叠加导函数、切线方程，终端风格日志实时记录；260 项单元测试用数值差分逐项校验，防止「看起来对、数值错」。",
+            desc: "纯前端函数图像工具：输入表达式即时绘制，最多 6 条曲线同图对比，20+ 函数库一键添加；滚轮缩放、拖拽平移、悬停读值。零依赖自研符号求导引擎，1–8 阶导数带步骤、虚线叠加导函数、切线方程，终端风格日志实时记录；285 项单元测试用数值差分逐项校验，防止「看起来对、数值错」。",
             tags: ["JavaScript", "Canvas", "符号求导", "零依赖"],
             repo: "https://github.com/ForJiang/function-grapher",
             demo: "https://forjiang.github.io/function-grapher/",
           },
           {
             name: "文件加密系统",
-            desc: "本地文件加密，浏览器版与桌面版格式互通：每个文件单独派生一把 AES-256 密钥（PBKDF2 60 万次迭代），内容用 AES-256-GCM 分块加密，产物后缀 .forjiang，文件不上传。桌面版额外支持 RSA 公钥封装会话密钥（加密只需公钥）、整目录批量、原生目录选择框与双击启动器；98 项单元测试，深浅色自适应。",
+            desc: "本地文件加密，浏览器版与桌面版格式互通：每个文件单独派生一把 AES-256 密钥（PBKDF2 60 万次迭代），内容用 AES-256-GCM 分块加密，产物后缀 .forjiang，文件不上传。桌面版额外支持 RSA 公钥封装会话密钥（加密只需公钥）、整目录批量、原生目录选择框与双击启动器；118 项单元测试，深浅色自适应。",
             tags: ["JavaScript", "WebCrypto", "Python", "AES-256-GCM"],
             repo: "https://github.com/ForJiang/forjiang-crypto",
             demo: "https://forjiang.github.io/forjiang-crypto/",
@@ -199,11 +199,11 @@ export const translations = {
         },
         {
           title: "🧠 In-browser AI & Media",
-          tags: ["ONNX Runtime Web", "WebGPU / WASM", "Web Audio API", "IndexedDB", "EXIF / GPS / XMP", "ZIP Packaging", "Python Inference Service"],
+          tags: ["ONNX Runtime Web", "WebGPU / WASM", "Web Audio API", "WebCrypto / AES-256-GCM", "IndexedDB", "EXIF / GPS / XMP", "ZIP Packaging", "Python Inference Service"],
         },
         {
           title: "🛠️ Engineering & Algorithms",
-          tags: ["Unit Testing", "Symbolic Differentiation", "Performance", "Git / GitHub Actions", "Zero-dependency Builds"],
+          tags: ["Unit Testing", "Symbolic Differentiation", "Meeus Solar Algorithms", "Projection & 3D Math", "Performance", "Git / GitHub Actions", "Zero-dependency Builds"],
         },
       ],
       projects: {
@@ -244,14 +244,14 @@ export const translations = {
           },
           {
             name: "Function Grapher",
-            desc: "A fully client-side function plotter: type an expression and it draws instantly, up to 6 curves overlaid, 20+ one-click functions; wheel zoom, drag pan, hover readout. A zero-dependency symbolic differentiation engine gives 1st–8th derivatives with steps, dashed derivative overlay and tangent lines, logged live in a terminal-style panel — verified by 260 unit tests against numerical differences.",
+            desc: "A fully client-side function plotter: type an expression and it draws instantly, up to 6 curves overlaid, 20+ one-click functions; wheel zoom, drag pan, hover readout. A zero-dependency symbolic differentiation engine gives 1st–8th derivatives with steps, dashed derivative overlay and tangent lines, logged live in a terminal-style panel — verified by 285 unit tests against numerical differences.",
             tags: ["JavaScript", "Canvas", "Symbolic diff", "Zero-dep"],
             repo: "https://github.com/ForJiang/function-grapher",
             demo: "https://forjiang.github.io/function-grapher/",
           },
           {
             name: "File Encryption Suite",
-            desc: "Local file encryption with interchangeable browser and desktop builds: every file gets its own AES-256 key (PBKDF2, 600k iterations) and its content is sealed with AES-256-GCM in chunks, output as .forjiang — nothing is uploaded. The desktop build adds RSA session-key wrapping (encryption only ever needs the public key), whole-folder batches, native folder pickers and double-click launchers; 98 unit tests, light/dark aware.",
+            desc: "Local file encryption with interchangeable browser and desktop builds: every file gets its own AES-256 key (PBKDF2, 600k iterations) and its content is sealed with AES-256-GCM in chunks, output as .forjiang — nothing is uploaded. The desktop build adds RSA session-key wrapping (encryption only ever needs the public key), whole-folder batches, native folder pickers and double-click launchers; 118 unit tests, light/dark aware.",
             tags: ["JavaScript", "WebCrypto", "Python", "AES-256-GCM"],
             repo: "https://github.com/ForJiang/forjiang-crypto",
             demo: "https://forjiang.github.io/forjiang-crypto/",
