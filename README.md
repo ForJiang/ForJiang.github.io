@@ -103,6 +103,12 @@ npm run dev
 # 打开 http://localhost:3000
 ```
 
+## 依赖与安全告警
+
+`package.json` 里的 `overrides` 只做一件事：把**开发期**依赖链里几个有安全告警的传递依赖顶到修复版（`postcss` / `postcss-selector-parser` / `glob`——分别来自 tailwindcss 与 eslint-config-next）。next 14.2.35 把 postcss 精确钉在 8.4.31，不改 override 它的嵌套副本升不上去。改动经过验证：**CSS 产物逐字节一致**（23720 字节、类名集合一致）、lint 与 45 项可点性回归全过，可以放心留着。
+
+`npm audit` 还剩 6 项，根在两个包：tailwindcss 3.4.19（其 `braces` 链的上游至今没有修复版，只能整体换 Tailwind 4）与 next 14.2.35（告警全是服务端运行时 CVE）。本站是 `output: "export"` 纯静态导出、跑在 GitHub Pages 上，运行期没有 Next 服务器，这些 CVE 一条都不适用；要彻底清零需升级 next 15/16 + Tailwind 4 的破坏性迁移，对静态部署没有运行时收益，详见 RELAY 的评估记录。
+
 ## 部署
 
 仓库已包含 `.github/workflows/deploy.yml`：每次 push 到 `main`，GitHub 云端自动执行 `npm install && npm run build`（静态导出到 `out/`）并发布到 Pages。**本地不需要 Node.js 也能部署。**

@@ -209,7 +209,7 @@ a4c401e fix: 中文逐字之间的多余间距——reveal-gap 按源文本空�
 | SEO/元数据 | ✅ | app/layout.tsx, app/sitemap.ts, app/robots.ts, public/og-image.jpg | title/description/favicon/theme-color + OpenGraph/Twitter Card（iMessage/X 链接预览卡，1200×630 大图）+ sitemap.xml/robots.txt |
 | 无障碍 | ✅ | components/site-shell.tsx, app/globals.css | skip-nav 跳主内容 + 图片/图标 aria-label 与键盘支持 |
 | 子页面/路由 | ❌ 不做 | — | 用户要求保持单页滚动, 不拆子路由 |
-| npm audit | ⚠️ 5 项 (4 high + 1 critical) | Next 14.2.35 传递依赖 | 需破坏性升级 next 大版本才能修, 已知未处理 |
+| npm audit | ⚠️ 6 项 (5 high + 1 critical) | tailwindcss 3.4.19（braces 链）+ next 14.2.35 | 已处置：13→6（见下）；剩余两条均需破坏性大版本升级，适用性分析后决定不做 |
 
 ## 7. 关键约束 (红线)
 
@@ -244,6 +244,10 @@ a4c401e fix: 中文逐字之间的多余间距——reveal-gap 按源文本空�
 - 产物 CSS：死类扫描为 0；HTML 剩余体积即逐字揭示设计的固有开销
 
 ### P2 — 功能扩展
-4. 升级 next 大版本以消掉 npm audit 的 5 项告警（破坏性，需回归全站）
+4. ~~升级 next 大版本以消掉 npm audit 告警~~ → 2026-10-10 评估后**决定不做**，理由与已做处置：
+   - **已做（非破坏性，13→6 项）**：`npm audit fix` 修 source-map-js；直接升 devDep `postcss ^8.5.22` + `overrides` 强制 `postcss ^8.5.22`（next 14.2.35 把 postcss 精确钉在 8.4.31，只有 override 能带动它的嵌套副本）、`postcss-selector-parser ^7.1.6`、`glob ^10.5.0`。**验证：CSS 产物 23720 字节逐字节一致、类名集合一致、lint 与 45 项回归全过**。
+   - **剩余 6 项的两个根**：① tailwindcss 3.4.19 → chokidar/micromatch/fast-glob → **braces 栈耗尽 DoS——上游至今没有出修复版**（advisory 的 first_patched_version 为空），整个 3.x 线无解，只能整体换 tailwind 4（CSS-first 配置，破坏性重写）；② next 14.2.35 的 20+ 条告警**全部是服务端运行时 CVE**（Image Optimizer、RSC 反序列化、Server Actions、rewrites、Middleware、响应缓存……），修复版全在 15.5.10+/16.x。
+   - **为什么不适用**：本站是 `output: "export"` 纯静态导出，部署在 GitHub Pages——**运行期没有任何 Next 服务器**，上述功能一个都不存在（images 已设 `unoptimized`、无 middleware/rewrites/server actions、无 RSC 运行时；唯一内联脚本是无动态输入的固定串）。构建发生在 CI、源码可信。唯一碰到产物的「beforeInteractive 脚本 XSS」也要求「不可信输入」，本站不成立。
+   - **结论**：升 next 15/16（连带 React 19、Tailwind 4）是纯破坏性迁移，对本部署**零运行时收益**，留待用户拍板；真要做时的路径：先锁当前 commit，迁移后用 45 项回归 + 产物比对兜底。
 5. 更多插画作品页 / 项目详情（若用户不再坚持单页）
 6. 视频板块增加多个视频切换（目前单个 B 站外链播放器）
