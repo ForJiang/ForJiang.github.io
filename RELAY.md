@@ -29,7 +29,8 @@ personal-website/
 ├── .github/workflows/deploy.yml  # GitHub Actions 自动部署
 ├── app/                           # Next.js App Router (无 src/ 前缀)
 │   ├── layout.tsx                 # 根布局: Inter 字体, metadata, lang="en", favicon 内联 data URI, 播放器 preconnect, WebKit 打类脚本
-│   ├── page.tsx                   # 整站单页(约 690 行): Hero/关于/技能/实战项目/插画/视频/联系/页脚 + 灯箱
+│   ├── page.tsx                   # 整站单页: Hero/关于/技能/实战项目/插画/视频/联系/页脚 + 灯箱
+│   ├── sitemap.ts / robots.ts     # 构建期生成 sitemap.xml / robots.txt（静态导出原生支持）
 │   └── globals.css               # Tailwind directives + shadcn CSS 变量 + 行距收口 + .shader-bg + reveal 动画 + .menu-collapse（移动端菜单开合）
 ├── components/
 │   ├── brand-icons.tsx           # Bilibili / Pixiv / X 官方标志 (simple-icons, CC0)
@@ -205,8 +206,8 @@ a4c401e fix: 中文逐字之间的多余间距——reveal-gap 按源文本空�
 | GitHub Pages 部署 | ✅ | .github/workflows/deploy.yml | Actions 自动构建部署 |
 | 逐字揭示动画 | ✅ | components/ui/reveal-text.tsx | 纯 CSS transition, 按源文本空格决定间距 |
 | 深色主题 | ✅ (设计决策) | — | 单一深色主题, 切换已移除 |
-| SEO/元数据 | ✅ | app/layout.tsx, public/og-image.jpg | title/description/favicon/theme-color + OpenGraph/Twitter Card（iMessage/X 链接预览卡，1200×630 大图） |
-| 无障碍 | ⚠️ 基础 | — | 图片/图标有 aria-label 与键盘支持, 缺 skip-nav |
+| SEO/元数据 | ✅ | app/layout.tsx, app/sitemap.ts, app/robots.ts, public/og-image.jpg | title/description/favicon/theme-color + OpenGraph/Twitter Card（iMessage/X 链接预览卡，1200×630 大图）+ sitemap.xml/robots.txt |
+| 无障碍 | ✅ | components/site-shell.tsx, app/globals.css | skip-nav 跳主内容 + 图片/图标 aria-label 与键盘支持 |
 | 子页面/路由 | ❌ 不做 | — | 用户要求保持单页滚动, 不拆子路由 |
 | npm audit | ⚠️ 5 项 (4 high + 1 critical) | Next 14.2.35 传递依赖 | 需破坏性升级 next 大版本才能修, 已知未处理 |
 
@@ -233,8 +234,8 @@ a4c401e fix: 中文逐字之间的多余间距——reveal-gap 按源文本空�
 （本轮已全部完成：description 与高中生身份一致 / 技能栈按真实项目重写 / 旧 index.html 早已删除）
 
 ### P1 — 内容与元数据增强
-1. 添加 `sitemap.xml` 与 robots
-2. 无障碍补 skip-nav 跳主内容
+1. ~~添加 `sitemap.xml` 与 robots~~ → 2026-10-10 完成：`app/sitemap.ts` + `app/robots.ts`，构建期生成产物（sitemap 的 url 必须绝对地址）
+2. ~~无障碍补 skip-nav 跳主内容~~ → 2026-10-10 完成：`.skip-link`（body 第一个可聚焦元素，聚焦浮现，文案随语言），回车直达 `#main`
 
 ### 已评估、明确不做（避免重复评估）
 - i18n 中文字典按需加载：translations 整体仅占页面 chunk ~8%（≈1.6KB gzip），不值异步切换的复杂度（2026-10 实测）

@@ -217,6 +217,43 @@ h4 {
 }
 
 /*
+ * 「跳到主内容」链接（components/site-shell.tsx 渲染，是页面第一个可聚焦
+ * 元素）。平时用 transform 移出视口——不能用 display:none / visibility:hidden，
+ * 那样链接无法获得焦点，键盘用户第一次按 Tab 就什么都发生不了。聚焦时移回
+ * 视口左上角，样式与导航的玻璃语言一致。z 轴压过灯箱（10000），避免打开
+ * 灯箱时聚焦它被盖住。
+ */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10001;
+  transform: translateY(-300%);
+  border-radius: 0.5rem;
+  border: 1px solid rgb(255 255 255 / 0.35);
+  background-color: rgb(0 0 0 / 0.8);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid rgb(255 255 255 / 0.8);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+  }
+}
+
+/*
  * 移动端菜单开合（components/site-nav.tsx）。面板常驻 DOM，用
  * grid-template-rows 0fr → 1fr 做高度过渡：内容高度未知也能平滑展开，
  * 比 max-height 估高精确。0fr 态 visibility:hidden——收起后链接不进 Tab

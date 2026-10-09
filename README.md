@@ -35,6 +35,8 @@
 - 全站深色玻璃拟态面板，白色文字系统，任意液滴位置下保持可读（Safari 上大面积卡片自动降级为不透明深色底，见「Safari 性能专项」）
 - Safari / iOS 性能专项：逐字动画纯 CSS transition（合成器动画）、卡片对 WebKit 去大面积 backdrop 模糊、逐字 blur 超过 48 单元自动关闭，均经 Playwright WebKit 实测归因
 - 按钮采用指针扩散填充动画：圆形背景从鼠标进入的位置展开铺满、文字反色（`components/ui/origin-button.tsx`）；Hero 按用户要求的顺序出场——标题先出、徽章后出
+- SEO 与抓取：`app/sitemap.ts` / `app/robots.ts` 在构建期生成 `sitemap.xml` 与 `robots.txt`（静态导出原生支持，无需额外服务；sitemap 的 url 必须写绝对地址——传相对路径产物里就是 `<loc>/</loc>`，metadataBase 不会替它补全）
+- 键盘无障碍：页面第一个可聚焦元素是「跳到主内容」链接（`.skip-link` 平时用 transform 移出视口，Tab 聚焦时浮现；文案跟随当前语言），回车直达 `#main`，键盘用户不必每次先过整条导航
 - 完整响应式布局；移动端针对 iOS Safari 的视口与工具栏做了专门处理（页脚预留 100px 避开底部工具栏；固定背景层踩过 `lvh` 在工具栏收起时少算一截露出黑带的怪癖，用「body 底色 = shader 的 colorBack」接缝，见 `globals.css` 与下面第 14 条）
 - 单页滚动结构：Hero / 关于我 / 技术能力 / 实战项目 / 插画作品 / 视频演示 / 联系方式 / 页脚，每个板块各占一屏（`min-h-screen` + 垂直居中，相邻区块内容净间距 192px），导航平滑滚动到对应锚点
 
@@ -48,6 +50,8 @@ personal-website/
 ├── app/                          # Next.js App Router
 │   ├── layout.tsx                # 根布局 + 元信息 + favicon + theme-color + 播放器域名 preconnect
 │   ├── page.tsx                  # 单页站点：八个区块（Hero/关于/技能/实战项目/插画/视频/联系/页脚）+ 灯箱
+│   ├── sitemap.ts                # 构建期生成 sitemap.xml（单页站点，规范地址一条）
+│   ├── robots.ts                 # 构建期生成 robots.txt（全站允许收录 + 指向 sitemap）
 │   └── globals.css               # 主题变量（只留在用的）+ 全站行距收口 + 逐字揭示动画 + Safari/移动端兜底
 ├── components/
 │   ├── brand-icons.tsx           # Bilibili / Pixiv / X 官方标志（simple-icons, CC0）
@@ -226,6 +230,7 @@ iMessage 对链接预览缓存很凶：部署后老会话里可能仍是旧样�
 | 液态金属背景参数 | `components/liquid-metal-background.tsx` |
 | 网站文案（中文 / English） | `lib/i18n.ts` 的 `translations`，两个语言都要补齐 |
 | 默认语言 | `components/language-context.tsx` 的 `useState<Lang>` **和** `app/layout.tsx` 的 `<html lang>`，两处必须一起改（见下面第 6 条） |
+| sitemap / robots | `app/sitemap.ts` / `app/robots.ts`（构建期生成，改站点地址记得同步里头的绝对 URL） |
 
 ## 实现上值得注意的几点
 

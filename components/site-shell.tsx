@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import SiteNav from "./site-nav";
+import { useLanguage } from "./language-context";
 
 /*
  * 液态金属背景异步加载：@paper-design/shaders-react 体积大且纯装饰，
@@ -25,14 +26,24 @@ const MouseTrail = dynamic(() => import("@/components/mouse-trail"));
  * 后来入场/填充/灯箱动画全部改成纯 CSS（globals.css 的 .enter-block /
  * .rise-in / .origin-fill / .lb-*），framer-motion 依赖整个移除，这层包装
  * 随之退场。
+ *
+ * 首个可聚焦元素是「跳到主内容」链接：键盘用户第一次按 Tab 就能越过
+ * 导航直达正文（.skip-link 平时不可见，聚焦时浮现，见 globals.css）。
+ * 文案跟随当前语言——放在 client 组件里就是为了读 language context。
  */
 export default function SiteShell({ children }: { children: ReactNode }) {
+  const { t } = useLanguage();
   return (
-    <main className="relative min-h-screen text-white">
-      <LiquidMetalBackground />
-      <MouseTrail />
-      <SiteNav />
-      {children}
-    </main>
+    <>
+      <a href="#main" className="skip-link">
+        {t.a11y.skip}
+      </a>
+      <main id="main" className="relative min-h-screen text-white">
+        <LiquidMetalBackground />
+        <MouseTrail />
+        <SiteNav />
+        {children}
+      </main>
+    </>
   );
 }

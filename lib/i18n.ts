@@ -7,6 +7,8 @@ export type Lang = "zh" | "en";
 export const translations = {
   zh: {
     langToggle: "EN",
+    // 键盘无障碍：跳到主内容的链接文案（视觉隐藏，Tab 聚焦时显现）
+    a11y: { skip: "跳到主内容" },
     nav: {
       about: "关于",
       skills: "技能",
@@ -155,6 +157,7 @@ export const translations = {
   },
   en: {
     langToggle: "中文",
+    a11y: { skip: "Skip to content" },
     nav: {
       about: "About",
       skills: "Skills",
