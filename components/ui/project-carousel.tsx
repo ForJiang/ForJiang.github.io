@@ -23,10 +23,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
  *   move 直接改 renderPos（无过渡、途中越界即回绕），up 按速度投影甩动
  *   距离后过渡吸附到最近的卡片；
  * - 箭头 / 键盘左右：从当前吸附位前进 / 后退一张；
- * - 每次 transform 过渡结束都把 renderPos 回绕到 [-W, W)：两侧永远有整份
- *   缓冲，单次手势（手指行程 + 吸附动画）物理上不可能触底。
+ * - 每次 transform 过渡结束都把 renderPos 回绕到 [0, W)：窗口在任何位置都
+ *   完整落在三份轨道内，两侧永远有整份缓冲，单次手势（手指行程 + 吸附动画）
+ *   物理上不可能触底。
  *
- * 为什么是 3 份而不是更多：renderPos 全程被 normalize 压在 [-W, W)，拖拽
+ * 为什么是 3 份而不是更多：renderPos 全程被 normalize 压在 [0, W)，拖拽
  * 结束的甩动投影又被 endDrag 限幅到 ±2 张——单侧最大越界 2 张 < 一份缓冲
  * （count 张），所以两侧各一份缓冲就够。份数直接决定 SSR 出多少张卡的
  * DOM（每张卡上百个逐字 span，8 个项目 ×3 份时占整页 HTML 的 74%），少两份就省一半轮播
@@ -76,13 +77,25 @@ export default function ProjectCarousel({ count, prevLabel, nextLabel, children 
     track.style.transform = `translateX(${metrics.current.base - posRef.current}px)`;
   }, []);
 
-  /** 把 renderPos 回绕到 [-W, W) 并静默重贴轨道：各份内容相同，零视觉差 */
+  /**
+   * 把 renderPos 回绕到 [0, W) 并静默重贴轨道：各份内容相同，零视觉差。
+   *
+   * 区间必须是 [0, W) 而不是 [-W, W)——窗口在轨道坐标下的范围是
+   * [pos - base, pos - base + wrapW]，而 base = wrapW/2 - trackLeft - W -
+   * cardW/2，代入得左缘 = pos - wrapW/2 + W + cardW/2。桌面视口下
+   * wrapW/2 > cardW/2，所以 pos 一旦小于 wrapW/2 - W - cardW/2（≈ -W +
+   * 400px，[-W, W) 区间内完全可以到达），左缘就跌破轨道起点 trackLeft，
+   * 左侧露出空白——实测向右慢拖超过约 7 张卡，左缘从满覆盖掉到 0。
+   * 改成 [0, W) 后 pos 恒非负，左缘恒 ≥ W + cardW/2 - wrapW/2 ≥ 0（W 是
+   * 一份的宽度，远大于视口），内容按 W 周期重复，换归位区间不改变任何
+   * 可见内容，只是让窗口始终完整落在轨道内。
+   */
   const normalize = useCallback(() => {
     const { step, W } = metrics.current;
     if (!W) return;
     let p = posRef.current;
     while (p >= W) p -= W;
-    while (p < -W) p += W;
+    while (p < 0) p += W;
     posRef.current = p;
     setX(false);
   }, [setX]);
