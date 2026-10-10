@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { useLanguage } from "./language-context";
 
 export interface LightboxItem {
   /** 高清原图地址（public/images 下的母版） */
@@ -39,6 +40,7 @@ interface LightboxProps {
  * 不再为旧版自动轮播预留大段空白。
  */
 export default function Lightbox({ items, index, onClose, onNavigate }: LightboxProps) {
+  const { t } = useLanguage();
   const current = items[index];
   const closeRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -74,6 +76,11 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
   useEffect(() => () => window.clearTimeout(closeTimerRef.current), []);
 
   const step = (dir: number) => {
+    // 淡出期（220ms）不翻页：此时换 index 会让带 key 的舞台重挂载、新图在
+    // 已淡弱的遮罩上闪一下。守卫放 step 里，底部按钮、图片滑动、键盘方向键
+    // 三条路径就都覆盖到了（原先只有键盘路径有，漏了另两条——实测点 X 后
+    // 60ms 内点「下一张」页码会变）。
+    if (closingRef.current) return;
     onNavigate((index + dir + items.length) % items.length);
   };
 
@@ -91,10 +98,6 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
     document.body.style.overflow = "hidden";
 
     const onKey = (e: KeyboardEvent) => {
-      // 已进入关闭淡出（220ms）就不再响应翻页：此时换 index 会让带 key 的
-      // 舞台重挂载、新图在淡出的遮罩上闪一下，观感错乱（读 ref 而非 state，
-      // 见 closingRef 注释）
-      if (closingRef.current) return;
       if (e.key === "Escape") { requestClose(); }
       else if (e.key === "ArrowRight") step(1);
       else if (e.key === "ArrowLeft") step(-1);
@@ -198,7 +201,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
       <button
         ref={closeRef}
         onClick={requestClose}
-        aria-label="关闭"
+        aria-label={t.lightbox.close}
         className="absolute right-4 top-4 rounded-lg border border-white/25 p-2 text-white transition-colors hover:bg-white/10"
       >
         <X className="h-5 w-5" />
@@ -269,7 +272,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
         >
           <button
             onClick={() => step(-1)}
-            aria-label="上一张"
+            aria-label={t.lightbox.prev}
             className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-black/50 text-white backdrop-blur-sm transition-colors hover:bg-white/10"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -279,7 +282,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
           </p>
           <button
             onClick={() => step(1)}
-            aria-label="下一张"
+            aria-label={t.lightbox.next}
             className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-black/50 text-white backdrop-blur-sm transition-colors hover:bg-white/10"
           >
             <ChevronRight className="h-5 w-5" />

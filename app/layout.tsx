@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { INLINE_ICON_32 } from "@/lib/favicon-inline";
@@ -50,6 +50,14 @@ export const metadata: Metadata = {
   },
 };
 
+// viewport 走官方 export 而不是手写 <meta name="viewport">：手写时 Next 仍会
+// 注入自己的默认值，产物里出现两份 viewport（实测双份）
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -59,7 +67,22 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* 默认英文，与 language-context.tsx 的 useState<Lang>("en") 保持一致，避免注水失败 */}
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        {/*
+          渐进增强：不执行 JS 的访客（及少数预览环境）原本看到的是几乎全白的
+          站——逐字单元的 visibility:hidden、区块入场的 opacity:0 都只靠 JS
+          翻转，文字虽在 HTML 里（SEO 不受影响）但看不见。这段 noscript 样式
+          把终态直接铺上，无 JS 时内容完整可读（动画相关的一律关掉）。
+        */}
+        <noscript>
+          <style
+            dangerouslySetInnerHTML={{
+              __html:
+                ".reveal-unit{visibility:visible;opacity:1;transform:none;filter:none}" +
+                ".enter-block{opacity:1;transform:none}" +
+                ".rise-in{animation:none;opacity:1;transform:none}",
+            }}
+          />
+        </noscript>
         {/*
           图标链接的顺序有意义：浏览器按页面 URL 把 favicon 缓存在自己的图标
           数据库里，只把引用换成新文件路径往往不足以让已经打开着的标签页重取。

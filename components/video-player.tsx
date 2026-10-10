@@ -70,9 +70,9 @@ export default function VideoPlayer({ title, playLabel }: VideoPlayerProps) {
           aria-label={playLabel}
           className="group absolute inset-0 h-full w-full cursor-pointer"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           {/* 封面在第六屏下方，懒加载：不与首屏的 HTML/CSS/JS 抢带宽，
               滚近视野再取（25KB，几乎无感） */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={VIDEO.cover}
             alt=""

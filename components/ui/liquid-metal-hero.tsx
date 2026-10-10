@@ -53,7 +53,7 @@ export default function LiquidMetalHero({
               stagger={0.045}
               duration={0.75}
               blur={12}
-              className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight tracking-tight [text-shadow:0_2px_24px_rgba(0,0,0,0.9),0_0_10px_rgba(0,0,0,0.7)]"
+              className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white tracking-tight [text-shadow:0_2px_24px_rgba(0,0,0,0.9),0_0_10px_rgba(0,0,0,0.7)]"
             >
               {title}
             </RevealText>
@@ -65,7 +65,7 @@ export default function LiquidMetalHero({
                 stagger={0.03}
                 duration={0.65}
                 blur={8}
-                className="max-w-3xl mx-auto text-xl sm:text-2xl text-white/85 leading-relaxed [text-shadow:0_2px_14px_rgba(0,0,0,0.9),0_0_8px_rgba(0,0,0,0.6)]"
+                className="max-w-3xl mx-auto text-xl sm:text-2xl text-white/85 [text-shadow:0_2px_14px_rgba(0,0,0,0.9),0_0_8px_rgba(0,0,0,0.6)]"
               >
                 {subtitle}
               </RevealText>

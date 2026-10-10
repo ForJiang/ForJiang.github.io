@@ -116,7 +116,9 @@ export default function OriginButton({
     className: cn(
       "relative inline-flex h-11 cursor-pointer touch-manipulation select-none items-center justify-center overflow-hidden rounded-md px-8 text-sm font-medium",
       "border transition-[color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+      // 不设 focus-visible:outline-none：全站统一的白色描边在 globals.css 的
+      // :focus-visible 上，按钮类组件不该自成一套——曾用默认 ring（半透明蓝，
+      // 叠黑底对比度约 2.1:1，低于 WCAG 对焦点指示器的 3:1）
       "disabled:pointer-events-none disabled:opacity-50",
       toneClasses,
       showFill && filledTextClasses,

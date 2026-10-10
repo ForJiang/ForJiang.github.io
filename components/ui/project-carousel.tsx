@@ -96,6 +96,9 @@ export default function ProjectCarousel({ count, prevLabel, nextLabel, children 
     let p = posRef.current;
     while (p >= W) p -= W;
     while (p < 0) p += W;
+    // 已在区间内就什么都不做：setX(false) 会写 transition:none，无条件调用
+    // 会把在途的滑动过渡打断、瞬移到目标位（连点时观感发滞）
+    if (p === posRef.current) return;
     posRef.current = p;
     setX(false);
   }, [setX]);
@@ -133,10 +136,28 @@ export default function ProjectCarousel({ count, prevLabel, nextLabel, children 
     (dir: 1 | -1) => {
       const { step } = metrics.current;
       if (!step) return;
+      // 先把位置压回 [0, W) 再前进一张。两个触发面同一根因：posRef 只被
+      // transitionend 收尾的 normalize 和拖拽时每个 move 的 normalize 压回
+      // 区间——连点箭头时每次点击都重启 0.45s 过渡，transitionend 在连击
+      // 期间不派发，normalize 完全不运行，posRef 无界累积会把轨道推出三份
+      // 克隆的缓冲（实测连点约 24 次整个轮播变空白，按住方向键 1 秒即复现）；
+      // reduced-motion 下过渡为 none、transitionend 永不派发，慢按同样中招。
+      // 内容按 W 周期重复，回绕的渲染画面不变。
+      const before = posRef.current;
+      normalize();
+      const rebased = posRef.current !== before;
       posRef.current = (Math.round(posRef.current / step) + dir) * step;
-      setX(true);
+      if (rebased) {
+        // 回绕把 transform 平移了整整一个 W：若同一任务里紧接着启动过渡，
+        // 浏览器不会渲染中间态，过渡会从回绕前的位置出发、跨 7 张反向长滑。
+        // 双 rAF 越过一帧，让回绕后的画面先上屏（视觉零变化），动画位移量
+        // 从而恰好是一张。
+        requestAnimationFrame(() => requestAnimationFrame(() => setX(true)));
+      } else {
+        setX(true);
+      }
     },
-    [setX],
+    [setX, normalize],
   );
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu, Languages } from "lucide-react";
 import { useLanguage } from "./language-context";
 import { cn } from "@/lib/utils";
+import { scrollToSection } from "@/lib/ui-kit";
 
 /**
  * 全站导航。站点是单页滚动结构（用户要求技能与实战项目不单独成页，各占
@@ -29,7 +30,7 @@ export default function SiteNav() {
 
   const anchorClick = (id: string) => (e: MouseEvent) => {
     e.preventDefault();
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    scrollToSection(id);
     setMenuOpen(false);
   };
 

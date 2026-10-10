@@ -16,7 +16,7 @@
  * 1:1 存 ComfyUI 直出分辨率（3864×2176，四张无损约 27MB），灯箱看到的
  * 就是原图本尊。卡片变体从母版缩放，避免「有损之上再有损」。
  */
-import { readdir, readFile, writeFile } from "node:fs/promises";
+import { readdir, readFile, writeFile, unlink } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import path from "node:path";
 
@@ -42,12 +42,15 @@ try {
 }
 
 async function findMaster(name) {
-  // 优先用已生成的 full 无损图当母版：重跑脚本时不再需要保留原始 PNG
-  for (const f of await readdir(SRC)) {
-    if (f.startsWith(`${name}-full-`) && f.endsWith(".webp")) {
-      const buf = await readFile(path.join(SRC, f));
-      if (buf.length) return { path: path.join(SRC, f), buf };
-    }
+  // 优先用已生成的 full 无损图当母版：重跑脚本时不再需要保留原始 PNG。
+  // readdir 的顺序跟文件系统相关，多个 full 候选（换图后旧文件没清）时
+  // 选择会不确定——排序后取第一个，保证任何机器上重跑结果一致。
+  const fulls = (await readdir(SRC))
+    .filter((f) => f.startsWith(`${name}-full-`) && f.endsWith(".webp"))
+    .sort();
+  for (const f of fulls) {
+    const buf = await readFile(path.join(SRC, f));
+    if (buf.length) return { path: path.join(SRC, f), buf };
   }
   // 换了新原图时：把原图放进 public/images/ 就行
   for (const ext of [".png", ".webp", ".jpg"]) {
@@ -123,3 +126,27 @@ lines.push('  "(max-width: 639px) calc(100vw - 3rem), min(496px, calc((100vw - 4
 
 await writeFile(path.join(ROOT, "lib/image-variants.ts"), lines.join("\n"));
 console.log("\n写出 lib/image-variants.ts");
+
+// 清理孤儿变体：内容哈希命名下，换图或调质量后旧哈希文件会留在目录里
+// （README 曾要求手工按清单删）。只删本脚本生成的模式——<name>-full-*.webp
+// 与 <name>-<宽度>-*.<avif|webp>，name 取自 NAMES；目录里其他文件（视频封面、
+// og-image、favicon…）一律不碰，避免误伤。
+const referenced = new Set(
+  out.flatMap((e) => [
+    e.fullFile,
+    ...e.avif.map((v) => v.path.replace("/images/", "")),
+    ...e.webp.map((v) => v.path.replace("/images/", "")),
+  ])
+);
+const mine = new RegExp(
+  `^(${NAMES.join("|")})-(full|[0-9]+)-[0-9a-f]{8}\.(webp|avif)$`
+);
+let removed = 0;
+for (const f of await readdir(SRC)) {
+  if (mine.test(f) && !referenced.has(f)) {
+    await unlink(path.join(SRC, f));
+    removed++;
+    console.log(`  清理孤儿 ${f}`);
+  }
+}
+if (removed) console.log(`共清理 ${removed} 个孤儿变体`);

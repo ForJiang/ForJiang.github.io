@@ -16,7 +16,7 @@ import ProjectCarousel from "@/components/ui/project-carousel";
 import SiteShell from "@/components/site-shell";
 import VideoPlayer from "@/components/video-player";
 import { LanguageProvider, useLanguage } from "@/components/language-context";
-import { SECTION_BADGE, TEXT_SHADOW, BODY_SHADOW, GLASS_CARD, GLASS_TAG, SECTION_SHELL, trackSpotlight } from "@/lib/ui-kit";
+import { SECTION_BADGE, TEXT_SHADOW, BODY_SHADOW, GLASS_CARD, GLASS_TAG, SECTION_SHELL, trackSpotlight, scrollToSection } from "@/lib/ui-kit";
 import dynamic from "next/dynamic";
 
 /*
@@ -117,14 +117,7 @@ function HomeContent() {
   const { t } = useLanguage();
   const [viewing, setViewing] = useState<number | null>(null);
 
-  const scrollTo = (id: string) => {
-    // 减少动态效果偏好下不做平滑滚动：与 globals.css 里成片的
-    // prefers-reduced-motion 降级同一立场，滚动也是动效
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    document.getElementById(id)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
-  };
+  const scrollTo = scrollToSection;
 
   // 灯箱看高清原图：full 是全尺寸 WebP 无损图（不做有损压缩），
   // fallback 只是给不支持 AVIF/WebP 的浏览器兜底的小图，不能拿它当原图。
@@ -221,7 +214,7 @@ function HomeContent() {
                 stagger={0.01}
                 duration={0.5}
                 blur={6}
-                className={`text-lg text-white/80 leading-relaxed ${BODY_SHADOW}`}
+                className={`text-lg text-white/80 ${BODY_SHADOW}`}
               >
                 {paragraph}
               </RevealText>
@@ -594,9 +587,14 @@ function HomeContent() {
       {/* 页脚是唯一没有 bg-black 蒙层的区块，液态金属的镜面高光扫过时
           版权文字（text-white/75）会被完全淹没——实测背景峰值 193 高于文字
           本身亮度。加一层暗底 + 轻模糊把它压住。 */}
-      <footer className="bg-black/45 py-8 border-t border-white/10 backdrop-blur-sm">
+      {/* role="contentinfo"：footer 在 <main> 内，默认不构成 contentinfo
+          地标，读屏用户少一个「直达页脚」的入口 */}
+      <footer role="contentinfo" className="bg-black/45 py-8 border-t border-white/10 backdrop-blur-sm">
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-white/75 [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">© {new Date().getFullYear()} ForJiang</p>
+          {/* suppressHydrationWarning：静态导出下年份在构建时烤进 HTML，
+              跨自然年未重新构建时客户端会渲染当前年、与服务端不一致（React
+              #425）。这里刻意允许客户端年号覆盖——展示「今年」才是对的 */}
+          <p suppressHydrationWarning className="text-sm text-white/75 [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">© {new Date().getFullYear()} ForJiang</p>
           <div className="flex items-center gap-4">
             <Button aria-label="GitHub" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.github, "_blank")}>
               <Github className="h-4 w-4" />

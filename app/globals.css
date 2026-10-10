@@ -125,9 +125,13 @@ h4 {
  * 不再需要旧的 .reveal-done 摘除机制。
  */
 
-/* 减少动态效果时直接显示，不做逐字过渡 */
+/* 减少动态效果时直接显示，不做逐字过渡。
+   选择器带上 .reveal-play 前缀：.reveal-play .reveal-unit 是 (0,2,0) 特异性，
+   单写 .reveal-unit 的 transition:none 会被它压掉（当前无感——起止值相同，
+   但规则本身不该是死的） */
 @media (prefers-reduced-motion: reduce) {
-  .reveal-unit {
+  .reveal-unit,
+  .reveal-play .reveal-unit {
     visibility: visible;
     opacity: 1;
     transform: none;

@@ -23,6 +23,8 @@ export const translations = {
       subtitle: "发布在 Bilibili 的演示视频，在这里就能直接看",
       playCta: "点击播放",
     },
+    // 灯箱控件：跟随语言，读屏软件不该在英文模式下报中文
+    lightbox: { close: "关闭", prev: "上一张", next: "下一张" },
     hero: {
       badge: "👋 你好，我是",
       title: "ForJiang",
@@ -81,7 +83,7 @@ export const translations = {
           },
           {
             name: "hello 手写动画演示页",
-            desc: "零依赖纯静态页：黑灰体素地形背景之上，hello 三个字母逐笔手写描出（3.5 秒），字标还是实时光源——按椭圆衰减照亮附近体素顶面与右面，再叠一层逐像素加法渐变光池。字标下方挂着同风格实时时钟，点击任意处或按 R 重播；SVG 描边复刻 Apple Hello 动画，无 React、无构建。",
+            desc: "零依赖纯静态页：黑灰体素地形背景之上，hello 三个字母逐笔手写描出（3.5 秒），字标还是实时光源——按椭圆衰减照亮附近体素顶面与右面，再叠一层逐像素加法渐变光池。字标下方挂着同风格实时时钟，按 R 重播；SVG 描边复刻 Apple Hello 动画，无 React、无构建。",
             tags: ["JavaScript", "SVG", "Canvas", "零依赖"],
             repo: "https://github.com/ForJiang/forjiang-hello",
             demo: "https://forjiang.github.io/forjiang-hello/",
@@ -109,7 +111,7 @@ export const translations = {
           },
           {
             name: "晨昏线世界时钟",
-            desc: "自动定位（浏览器 Geolocation → IP 定位 → 默认城市，四级回退）+ 秒级本地时间，并在手绘的世界地图上画出实时晨昏线——Meeus 太阳算法整个跑在浏览器本地，零外部 CDN 依赖，断网可用；闹钟与城市选择存 localStorage。",
+            desc: "自动定位（浏览器 Geolocation → IP 定位 → 默认城市，四级回退）+ 秒级本地时间，并在手绘的世界地图上画出实时晨昏线——Meeus 太阳算法整个跑在浏览器本地，零外部 CDN 依赖，断网可用。",
             tags: ["JavaScript", "Canvas", "Meeus 太阳算法", "零依赖"],
             repo: "https://github.com/ForJiang/time",
             demo: "https://forjiang.github.io/time/",
@@ -172,6 +174,7 @@ export const translations = {
       subtitle: "Demos published on Bilibili — watch them right here",
       playCta: "Click to play",
     },
+    lightbox: { close: "Close", prev: "Previous", next: "Next" },
     hero: {
       badge: "👋 Hi, I'm",
       title: "ForJiang",
@@ -230,7 +233,7 @@ export const translations = {
           },
           {
             name: "hello Handwriting Demo",
-            desc: "A zero-dependency static page: over a black-and-gray voxel terrain, hello is drawn stroke by stroke in 3.5s, and the wordmark itself is a live light source — per-voxel elliptical falloff plus a per-pixel additive gradient pool. A live clock sits below the wordmark in the same glow; click anywhere or press R to replay. Pure SVG stroke port of the Apple Hello animation, no React, no build.",
+            desc: "A zero-dependency static page: over a black-and-gray voxel terrain, hello is drawn stroke by stroke in 3.5s, and the wordmark itself is a live light source — per-voxel elliptical falloff plus a per-pixel additive gradient pool. A live clock sits below the wordmark in the same glow; press R to replay. Pure SVG stroke port of the Apple Hello animation, no React, no build.",
             tags: ["JavaScript", "SVG", "Canvas", "Zero-dep"],
             repo: "https://github.com/ForJiang/forjiang-hello",
             demo: "https://forjiang.github.io/forjiang-hello/",
@@ -258,7 +261,7 @@ export const translations = {
           },
           {
             name: "Terminator World Clock",
-            desc: "Auto-locates you (browser Geolocation → IP lookup → default city, a four-level fallback chain) and shows local time to the second, while a hand-drawn world map traces the live day/night terminator — Meeus solar algorithms run entirely in the browser, zero CDN dependencies, works offline; alarms and city choices persist in localStorage.",
+            desc: "Auto-locates you (browser Geolocation → IP lookup → default city, a four-level fallback chain) and shows local time to the second, while a hand-drawn world map traces the live day/night terminator — Meeus solar algorithms run entirely in the browser, zero CDN dependencies, works offline.",
             tags: ["JavaScript", "Canvas", "Meeus solar", "Zero-dep"],
             repo: "https://github.com/ForJiang/time",
             demo: "https://forjiang.github.io/time/",
