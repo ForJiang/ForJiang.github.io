@@ -154,6 +154,7 @@ personal-website/
 
 ```
 （本地 sha）最近 15 条：
+5518553 fix: 多 Agent 只读审计波次收口——修轮播连点空白等 12 处问题
 0e88d35 refactor: 删除冗余——四区块标题抽成 SectionHeading、清掉 EnterBlock 死 prop
 1864141 fix: 多 Agent 并行巡检收口——焦点圆角覆盖、灯箱淡出期翻页、取图路径统一
 d5c53dd content: 全站文案核对更新——两处测试数勘误、技能标签补全、标题措辞理顺
