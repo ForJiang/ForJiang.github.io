@@ -62,6 +62,57 @@ export default function Home() {
   );
 }
 
+/**
+ * 区块标题组：徽章 + 逐字标题 + 副标题。技能 / 插画 / 视频三个区块结构完全
+ * 相同，实战项目区只差副标题的出场延迟（0.35s vs 0.4s）——原先四份各写一
+ * 遍，改间距或时序要同步改四处，漏一处就漂移。抽成组件后渲染输出与抽取前
+ * 逐字节一致（已用构建产物比对验证，含那 50ms 的差异，故留 subtitleDelay）。
+ */
+function SectionHeading({
+  badge,
+  heading,
+  subtitle,
+  subtitleDelay = 0.4,
+}: {
+  badge: string;
+  heading: string;
+  subtitle: string;
+  /** 副标题出场延迟（秒）：实战项目区历史上用 0.35，其余 0.4 */
+  subtitleDelay?: number;
+}) {
+  return (
+    <div className="text-center mb-16">
+      <EnterBlock className="inline-block">
+        <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
+          <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
+            {badge}
+          </RevealText>
+        </Badge>
+      </EnterBlock>
+      {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
+      <RevealText
+        as="h2"
+        delay={0.15}
+        stagger={0.03}
+        duration={0.65}
+        className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
+      >
+        {heading}
+      </RevealText>
+      <RevealText
+        as="p"
+        delay={subtitleDelay}
+        stagger={0.01}
+        duration={0.5}
+        blur={6}
+        className={`mt-3 text-white/75 ${BODY_SHADOW}`}
+      >
+        {subtitle}
+      </RevealText>
+    </div>
+  );
+}
+
 function HomeContent() {
   const { t } = useLanguage();
   const [viewing, setViewing] = useState<number | null>(null);
@@ -182,35 +233,11 @@ function HomeContent() {
       {/* Skills Section */}
       <section id="skills" className={SECTION_SHELL}>
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-          <div className="text-center mb-16">
-            <EnterBlock className="inline-block">
-              <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-                <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
-                  {t.skills.badge}
-                </RevealText>
-              </Badge>
-            </EnterBlock>
-            {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
-            <RevealText
-              as="h2"
-              delay={0.15}
-              stagger={0.03}
-              duration={0.65}
-              className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
-            >
-              {t.skills.heading}
-            </RevealText>
-            <RevealText
-              as="p"
-              delay={0.4}
-              stagger={0.01}
-              duration={0.5}
-              blur={6}
-              className={`mt-3 text-white/75 ${BODY_SHADOW}`}
-            >
-              {t.skills.subtitle}
-            </RevealText>
-          </div>
+          <SectionHeading
+            badge={t.skills.badge}
+            heading={t.skills.heading}
+            subtitle={t.skills.subtitle}
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {t.skills.groups.map((group, idx) => (
@@ -256,34 +283,12 @@ function HomeContent() {
       {/* Projects Section */}
       <section id="projects" className={SECTION_SHELL}>
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-          <div className="text-center mb-16">
-            <EnterBlock className="inline-block">
-              <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-                <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
-                  {t.skills.projects.badge}
-                </RevealText>
-              </Badge>
-            </EnterBlock>
-            <RevealText
-              as="h2"
-              delay={0.15}
-              stagger={0.03}
-              duration={0.65}
-              className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
-            >
-              {t.skills.projects.heading}
-            </RevealText>
-            <RevealText
-              as="p"
-              delay={0.35}
-              stagger={0.01}
-              duration={0.5}
-              blur={6}
-              className={`mt-3 text-white/75 ${BODY_SHADOW}`}
-            >
-              {t.skills.projects.subtitle}
-            </RevealText>
-          </div>
+          <SectionHeading
+            badge={t.skills.projects.badge}
+            heading={t.skills.projects.heading}
+            subtitle={t.skills.projects.subtitle}
+            subtitleDelay={0.35}
+          />
 
           {/* 真无限轮播：transform 驱动的轨道组件，触屏甩动没有物理边界
               （原理与交互模型见 components/ui/project-carousel.tsx 顶部
@@ -380,35 +385,11 @@ function HomeContent() {
         {/* 容器比其它区块窄一档（5xl）：插画卡片适当缩小，桌面两列也更克制；
             图片固定 16:9 后卡片高度由宽度决定，窄容器直接让整卡变小 */}
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
-          <div className="text-center mb-16">
-            <EnterBlock className="inline-block">
-              <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-                <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
-                  {t.projects.badge}
-                </RevealText>
-              </Badge>
-            </EnterBlock>
-            {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
-            <RevealText
-              as="h2"
-              delay={0.15}
-              stagger={0.03}
-              duration={0.65}
-              className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
-            >
-              {t.projects.heading}
-            </RevealText>
-            <RevealText
-              as="p"
-              delay={0.4}
-              stagger={0.01}
-              duration={0.5}
-              blur={6}
-              className={`mt-3 text-white/75 ${BODY_SHADOW}`}
-            >
-              {t.projects.subtitle}
-            </RevealText>
-          </div>
+          <SectionHeading
+            badge={t.projects.badge}
+            heading={t.projects.heading}
+            subtitle={t.projects.subtitle}
+          />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {t.projects.cards.map((card, idx) => {
@@ -498,35 +479,11 @@ function HomeContent() {
       {/* Videos Section */}
       <section id="videos" className={SECTION_SHELL}>
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
-          <div className="text-center mb-16">
-            <EnterBlock className="inline-block">
-              <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-                <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
-                  {t.videos.badge}
-                </RevealText>
-              </Badge>
-            </EnterBlock>
-            {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
-            <RevealText
-              as="h2"
-              delay={0.15}
-              stagger={0.03}
-              duration={0.65}
-              className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
-            >
-              {t.videos.heading}
-            </RevealText>
-            <RevealText
-              as="p"
-              delay={0.4}
-              stagger={0.01}
-              duration={0.5}
-              blur={6}
-              className={`mt-3 text-white/75 ${BODY_SHADOW}`}
-            >
-              {t.videos.subtitle}
-            </RevealText>
-          </div>
+          <SectionHeading
+            badge={t.videos.badge}
+            heading={t.videos.heading}
+            subtitle={t.videos.subtitle}
+          />
         </div>
 
         {/* 播放器单独用更宽的容器：视频画面越大越好，而标题/副标题保持适宽

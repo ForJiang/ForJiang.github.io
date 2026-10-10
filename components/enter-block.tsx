@@ -11,7 +11,6 @@ interface EnterBlockProps {
   delay?: number;
   /** 过渡时长（秒）。 */
   duration?: number;
-  style?: CSSProperties;
   onMouseEnter?: MouseEventHandler<HTMLDivElement>;
 }
 
@@ -26,7 +25,6 @@ export default function EnterBlock({
   className,
   delay = 0,
   duration = 0.3,
-  style,
   onMouseEnter,
 }: EnterBlockProps) {
   const { ref, inView } = useInViewOnce<HTMLDivElement>();
@@ -36,7 +34,6 @@ export default function EnterBlock({
       className={cn("enter-block", inView && "enter-block-play", className)}
       style={
         {
-          ...style,
           "--enter-delay": `${delay}s`,
           "--enter-dur": `${duration}s`,
         } as CSSProperties
