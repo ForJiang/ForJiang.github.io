@@ -154,6 +154,12 @@ personal-website/
 
 ```
 （本地 sha）最近 15 条：
+0e88d35 refactor: 删除冗余——四区块标题抽成 SectionHeading、清掉 EnterBlock 死 prop
+1864141 fix: 多 Agent 并行巡检收口——焦点圆角覆盖、灯箱淡出期翻页、取图路径统一
+d5c53dd content: 全站文案核对更新——两处测试数勘误、技能标签补全、标题措辞理顺
+5a056f5 feat: 无障碍与加载细枝修补——封面懒加载、全站焦点描边、灯箱焦点锁
+6c11e49 feat: 补上 P1 遗留两项——sitemap/robots 与 skip-nav 无障碍跳转
+43dc789 chore: npm audit 告警 13→6——开发期依赖顶到修复版，剩余两项定性后记录决策
 b2369cc fix: 轮播归位区间 [-W, W) 改 [0, W)——修掉长拖左缘露空洞 + 注释勘误
 9d31174 feat: 实战项目补齐 GitHub 全部在页项目——加入晨昏线世界时钟与 AR 取景器
 ef9fcc3 fix: 视频播放补全带声开播的条件——allow=autoplay 权限属性 + muted=0
