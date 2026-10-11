@@ -14,6 +14,30 @@ interface LanguageValue {
 const LanguageContext = createContext<LanguageValue | null>(null);
 
 /**
+ * localStorage 安全读写：Safari 禁 Cookie / 无痕模式等场景下访问
+ * localStorage 会直接抛异常，挂载 effect 里不接住就是整页白屏（A1 报的
+ * 中危项）。读失败按「没有存过」处理，写失败静默——语言选择本就不是
+ * 必须持久化的关键状态。
+ */
+const storage = {
+  get(): Lang | null {
+    try {
+      const v = localStorage.getItem("language");
+      return v === "en" || v === "zh" ? v : null;
+    } catch {
+      return null;
+    }
+  },
+  set(lang: Lang) {
+    try {
+      localStorage.setItem("language", lang);
+    } catch {
+      /* 存不下不影响本次会话 */
+    }
+  },
+};
+
+/**
  * 全站语言状态。导航与页面各区块都要同一份语言，所以提到 context；单页站点
  * 包一层 Provider 即可（曾经拆成多页时每个页面根部分别挂），localStorage
  * 保证手动切换过的选择不丢。
@@ -26,8 +50,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // 只恢复用户手动切换过的选择，不再跟随浏览器语言
-    const saved = localStorage.getItem("language");
-    if (saved === "en" || saved === "zh") {
+    const saved = storage.get();
+    if (saved) {
       setLang(saved);
       document.documentElement.lang = saved === "zh" ? "zh-CN" : "en";
     }
@@ -36,7 +60,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const toggleLang = () => {
     const next: Lang = lang === "zh" ? "en" : "zh";
     setLang(next);
-    localStorage.setItem("language", next);
+    storage.set(next);
     document.documentElement.lang = next === "zh" ? "zh-CN" : "en";
   };
 

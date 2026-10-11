@@ -48,6 +48,9 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
   const fullRef = useRef<HTMLImageElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const [fullLoaded, setFullLoaded] = useState(false);
+  // 原图加载失败（6.4~7.7MB，弱网/中断都可能）：不能永远转圈 + 封面永糊，
+  // 降级为「清晰封面常驻」——至少看得见图， Esc/点遮罩退出不受影响
+  const [fullFailed, setFullFailed] = useState(false);
   // 拖拽状态：区分「点按」与「真的拖了」只需 startX 与指针 id 即可判断
   const dragRef = useRef<{ id: number; startX: number } | null>(null);
   // 滑动翻页会让带 key 的舞台重挂载，浏览器随后派发的 click 会落到遮罩上
@@ -88,8 +91,16 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
     // 切换后重置淡入状态；若原图已在上一次预载中就绪（缓存命中），
     // load 事件不会再触发，这里直接按 complete 标记已加载
     setFullLoaded(false);
-    if (fullRef.current?.complete && fullRef.current?.naturalWidth > 0) {
+    setFullFailed(false);
+    // 与「已缓存成功」对称地检查「已失败」：原图请求失败得比 effect 还快时
+    // （弱网中断、或同一 URL 已有负面缓存），error 事件在 effect 之前就派发完，
+    // onError 设上的 fullFailed 会被紧接着的 setFullFailed(false) 清掉——竞态。
+    // complete 为真且 naturalWidth 为 0 即加载失败，直接按失败降级。
+    const full = fullRef.current;
+    if (full?.complete && full.naturalWidth > 0) {
       setFullLoaded(true);
+    } else if (full?.complete && full.naturalWidth === 0) {
+      setFullFailed(true);
     }
     restoreRef.current = document.activeElement;
     closeRef.current?.focus();
@@ -236,7 +247,14 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
             alt=""
             aria-hidden="true"
             className="max-h-[80vh] max-w-[92vw] rounded-lg object-contain"
-            style={fullLoaded ? { visibility: "hidden" } : { filter: "blur(10px)" }}
+            style={
+              fullLoaded
+                ? { visibility: "hidden" }
+                : // 失败就不再拿模糊当占位——清晰封面直接当正片看
+                  fullFailed
+                  ? { filter: "none" }
+                  : { filter: "blur(10px)" }
+            }
           />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -244,12 +262,13 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
             src={current.src}
             alt={current.title}
             onLoad={() => setFullLoaded(true)}
+            onError={() => setFullFailed(true)}
             draggable={false}
             className={`absolute inset-0 h-full w-full rounded-lg object-contain transition-opacity duration-500 ${
               fullLoaded ? "opacity-100" : "opacity-0"
             }`}
           />
-          {!fullLoaded && (
+          {!fullLoaded && !fullFailed && (
             <span className="absolute inset-0 flex items-center justify-center">
               <Loader2 className="h-8 w-8 animate-spin text-white/70" aria-hidden="true" />
             </span>

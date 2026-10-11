@@ -432,7 +432,7 @@ function HomeContent() {
                           onClick={() => setViewing(idx)}
                           role="button"
                           tabIndex={0}
-                          aria-label={`${card.title} — 查看高清原图`}
+                          aria-label={`${card.title} — ${t.projects.viewFull}`}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
                               e.preventDefault();

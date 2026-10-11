@@ -99,18 +99,19 @@ personal-website/
 
 **样式常量** (定义在 `lib/ui-kit.ts`，注意: 这个目录必须进 `tailwind.config.ts` 的 content):
 - `SECTION_BADGE = "bg-white/10 text-white border-white/25"`
-- `TEXT_SHADOW = "[text-shadow:0_2px_12px_rgba(0,0,0,0.5)]"`
+- `TEXT_SHADOW = "[text-shadow:0_2px_18px_rgba(0,0,0,0.78),0_0_8px_rgba(0,0,0,0.55)]"`
 - `GLASS_CARD = "border-white/15 bg-black/40 backdrop-blur-sm"`
 - `GLASS_TAG = "bg-white/10 text-white/85 border-transparent"`
 - `SECTION_SHELL = "min-h-screen flex flex-col justify-center bg-black/35 py-24 scroll-mt-16"`
 
 ### 3.3 自适应画质系统
 
-`liquid-metal-background.tsx` 实现了三档画质控制:
-- 起步: 2560×1440 (超采样抗锯齿)
-- 降档: 1920×1080 → 1280×720
-- 判据: rAF 采样 ~90 帧, p95 惩罚帧时间 > 17.5ms 才降档
-- 通过 `paperShaderMount.setMaxPixelCount()` API 调节
+`liquid-metal-background.tsx` 实现了四档画质控制（按像素总数，非分辨率）:
+- 档位: 1920×1080×4 ≈8.3MP（1440p 级 Retina 原生精度）→ 2560×1440 → 1920×1080 → 1280×720
+- 判据: 从最高档起步，**先等连续 8 帧回到正常帧时**（剔掉 setMaxPixelCount 触发的
+  resize/重编长帧对 p95 的污染，实测不剔会一路误降到底）再正式采 60 帧，取
+  `max(median, p90×0.8) ≤ 17.5ms`（≈57fps 预算）即停；稳定等待超 240 帧按最差处理
+- 通过 `paperShaderMount.setMaxPixelCount()` API 调节；cancelled 标志防卸载后继续跑
 
 ### 3.4 国际化
 
@@ -138,7 +139,7 @@ personal-website/
 | clsx | ^2.1.1 | 类名合并 |
 | tailwind-merge | ^2.4.0 | Tailwind 类名去重 |
 
-已删除: `@radix-ui/react-slot`（asChild 无人用）、`tailwindcss-animate`（无 animate 类）、`class-variance-authority`（Button 只剩页脚图标一种用法、Badge 只剩胶囊外形，cva 变体系统整个拆掉了）、`framer-motion`（入场/填充/灯箱动画全部 CSS 化后无残留用途，First Load JS 146kB→120kB）。
+已删除: `@radix-ui/react-slot`（asChild 无人用）、`tailwindcss-animate`（无 animate 类）、`class-variance-authority`（Button 只剩页脚图标一种用法、Badge 只剩胶囊外形，cva 变体系统整个拆掉了）、`framer-motion`（入场/填充/灯箱动画全部 CSS 化后无残留用途，First Load JS 146kB→120kB）。**现状 122kB**（增量来自视频点击播放组件与两张项目卡）。
 
 ### 开发依赖
 | 包 | 版本 | 用途 |
@@ -149,6 +150,11 @@ personal-website/
 | eslint + eslint-config-next | ^8 / 14.2.35 | 代码检查 |
 
 已删除: `gh-pages` 与 `package.json` 里的 `deploy` 脚本（部署走 Actions，脚本引的是已卸载的包）。本地按需 `npm i --no-save` 的: `sharp`（生成图片变体）、`playwright`（WebKit 帧率测量）。
+
+> **方法论 caveat（2026-10-10 审计补记）**：本地与 CI 产物高度一致（CSS/webpack 字节
+> 相同，index.html 仅差模块 ID 与随机 buildId），但**全新沙盒冷重建会产出另一套 chunk
+> 布局**（根因未确认）。因此「构建产物逐字节比对」只在**环境等价**的两个构建间有意义，
+> chunk 哈希不同不代表源码漂移，别据此误判。
 
 ## 5. Git 历史摘要 (最近 15 条)
 

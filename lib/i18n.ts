@@ -130,6 +130,7 @@ export const translations = {
       badge: "AI 绘画",
       heading: "一些插画作品",
       subtitle: "用 ComfyUI 生成的插画习作，持续更新中",
+      viewFull: "查看高清原图",
       cards: [
         {
           title: "晨光 · 慵懒的清晨",
@@ -280,6 +281,7 @@ export const translations = {
       badge: "AI Art",
       heading: "Some of my illustrations",
       subtitle: "Illustrations generated with ComfyUI, more coming soon",
+      viewFull: "view full-resolution image",
       cards: [
         {
           title: "Morning Light · A Lazy Morning",
