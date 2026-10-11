@@ -1,6 +1,6 @@
 # ForJiang · 个人主页
 
-基于 **Next.js 14 + TypeScript + Tailwind CSS** 的个人主页：技能与插画之外，收录八个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画演示、文件加密系统、晨昏线世界时钟、AR 取景器。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景；**全站没有任何动画库**——逐字揭示、区块入场、按钮填充、灯箱进出全部是纯 CSS transition/animation，进入视口的触发由一个 20 行的自写 IntersectionObserver 钩子完成（`lib/use-in-view.ts`），动画库清退的原因与过程见「Safari 性能专项」和坑 8。
+基于 **Next.js 14 + TypeScript + Tailwind CSS** 的个人主页：技能与插画之外，收录八个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画演示、文件加密系统、无世界时钟、AR 取景器。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景；**全站没有任何动画库**——逐字揭示、区块入场、按钮填充、灯箱进出全部是纯 CSS transition/animation，进入视口的触发由一个 20 行的自写 IntersectionObserver 钩子完成（`lib/use-in-view.ts`），动画库清退的原因与过程见「Safari 性能专项」和坑 8。
 
 线上地址：**https://forjiang.github.io**
 
@@ -16,8 +16,8 @@
 | [函数图像生成器](https://github.com/ForJiang/function-grapher) | 多曲线同图 + 零依赖符号求导（1–8 阶带步骤）与切线方程，260 项单元测试 | [试用](https://forjiang.github.io/function-grapher/) |
 | [hello 手写动画](https://github.com/ForJiang/forjiang-hello) | 零依赖复刻 Apple Hello：体素地形上逐笔手写，字标是实时光源 | [观看](https://forjiang.github.io/forjiang-hello/) |
 | [文件加密系统](https://github.com/ForJiang/forjiang-crypto) | AES-256-GCM 文件加密：浏览器版与桌面版格式互通，桌面版另有 RSA 公钥封装与目录批量 | [试用](https://forjiang.github.io/forjiang-crypto/) |
-| [晨昏线世界时钟](https://github.com/ForJiang/time) | 自动定位 + 秒级本地时间，手绘世界地图上实时画出昼夜分界线（Meeus 太阳算法本地算） | [试用](https://forjiang.github.io/time/) |
-| [AR 取景器](https://github.com/ForJiang/arcam) | 照片 + 立绘按针孔透视投影贴地合成，相机高度/俯角/焦距/景别可调，可抠图、导出配方 | [试用](https://forjiang.github.io/arcam/) |
+| [无世界时钟](https://github.com/ForJiang/time) | 全屏世界时钟：四级定位 + 居中秒级时间，手绘世界地图按经度画实时晨昏线（Meeus 算法 Python/JS 双实现） | [试用](https://forjiang.github.io/time/) |
+| [AR 取景器](https://github.com/ForJiang/arcam) | 照片或实时相机里把立绘/MMD 3D 模型按针孔透视贴地摆放，接触阴影、批量出图、一键抠图、导出配方 | [试用](https://forjiang.github.io/arcam/) |
 
 ## 功能
 
