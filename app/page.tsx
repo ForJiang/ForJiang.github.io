@@ -153,6 +153,7 @@ function HomeContent() {
     if (conn?.saveData) return;
     const section = document.getElementById("gallery");
     if (!section) return;
+    const timers: number[] = [];
     const io = new IntersectionObserver(
       (entries) => {
         if (!entries.some((e) => e.isIntersecting)) return;
@@ -162,13 +163,18 @@ function HomeContent() {
         // webpack 会复用已下载的实例，不会重复请求。
         void import("@/components/lightbox");
         PROJECT_IMAGES.forEach((_, i) => {
-          window.setTimeout(() => prefetchFull(i), i * 2500);
+          // 计时器 id 收进来，cleanup 时一并清——单页应用没有卸载路径，
+          // 但 effect 重入（依赖变化）时旧计时器不该继续跑
+          timers.push(window.setTimeout(() => prefetchFull(i), i * 2500));
         });
       },
       { threshold: 0.15 },
     );
     io.observe(section);
-    return () => io.disconnect();
+    return () => {
+      io.disconnect();
+      timers.forEach((t) => window.clearTimeout(t));
+    };
   }, [prefetchFull]);
 
   return (
@@ -386,7 +392,7 @@ function HomeContent() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {t.projects.cards.map((card, idx) => {
-              const img = PROJECT_IMAGES.find((i) => i.name === CARD_IMAGE_NAMES[idx]);
+              const img = cardImage(idx);
               return (
                 <EnterBlock
                   key={idx}
@@ -599,7 +605,7 @@ function HomeContent() {
             <Button aria-label="GitHub" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.github, "_blank")}>
               <Github className="h-4 w-4" />
             </Button>
-            <Button aria-label="哔哩哔哩" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.bilibili, "_blank")}>
+            <Button aria-label="Bilibili / 哔哩哔哩" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.bilibili, "_blank")}>
               <BilibiliIcon className="h-4 w-4" />
             </Button>
             <Button aria-label="Pixiv" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.pixiv, "_blank")}>

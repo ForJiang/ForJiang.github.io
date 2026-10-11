@@ -175,7 +175,9 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Lightbox
       suppressClickUntilRef.current = e.timeStamp + 700;
       step(dx < 0 ? 1 : -1);
     } else if (s) {
-      s.style.transition = "transform 0.2s ease";
+      // 回弹过渡也讲 reduced-motion：降级偏好下直接归位、不演
+      const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      s.style.transition = reduce ? "none" : "transform 0.2s ease";
       s.style.transform = "translateX(0)";
     }
   };
