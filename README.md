@@ -53,6 +53,7 @@ personal-website/
 │   ├── page.tsx                  # 单页站点：八个区块（Hero/关于/技能/实战项目/插画/视频/联系/页脚）+ 灯箱
 │   ├── sitemap.ts                # 构建期生成 sitemap.xml（单页站点，规范地址一条）
 │   ├── robots.ts                 # 构建期生成 robots.txt（全站允许收录 + 指向 sitemap）
+│   ├── not-found.tsx             # 自定义 404 页（深色主题 + 回首页，替代 Next 默认白底错误页）
 │   └── globals.css               # 主题变量（只留在用的）+ 全站行距收口 + 逐字/入场/菜单/灯箱动画 + skip-link 与焦点描边 + Safari/移动端兜底
 ├── components/
 │   ├── brand-icons.tsx           # Bilibili / Pixiv / X 官方标志（simple-icons, CC0）
