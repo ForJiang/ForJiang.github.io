@@ -15,7 +15,7 @@
 | [图生 3D 高斯泼溅](https://github.com/ForJiang/image-to-splat) | 图片 / 视频 → 本地深度估计 → 可交互高斯点云，导出 .ply / .splat 给 Blender | [试用](https://forjiang.github.io/image-to-splat/) |
 | [函数图像生成器](https://github.com/ForJiang/function-grapher) | 多曲线同图 + 零依赖符号求导（1–8 阶带步骤）与切线方程，260 项单元测试 | [试用](https://forjiang.github.io/function-grapher/) |
 | [hello 手写动画](https://github.com/ForJiang/forjiang-hello) | 零依赖复刻 Apple Hello：体素地形上逐笔手写，字标是实时光源 | [观看](https://forjiang.github.io/forjiang-hello/) |
-| [文件加密系统](https://github.com/ForJiang/forjiang-crypto) | AES-256-GCM 文件加密：浏览器版与桌面版格式互通，桌面版另有 RSA 公钥封装与目录批量 | [试用](https://forjiang.github.io/forjiang-crypto/) |
+| [文件加密系统](https://github.com/ForJiang/forjiang-crypto) | AES-256-GCM 文件加密：零依赖网页版 + Python 桌面版（RSA 公钥封装、目录批量、双击启动器），同一格式、119 项单元测试 | [试用](https://forjiang.github.io/forjiang-crypto/) |
 | [无世界时钟](https://github.com/ForJiang/time) | 全屏世界时钟：四级定位 + 居中秒级时间，手绘世界地图按经度画实时晨昏线（Meeus 算法 Python/JS 双实现） | [试用](https://forjiang.github.io/time/) |
 | [AR 取景器](https://github.com/ForJiang/arcam) | 照片或实时相机里把立绘/MMD 3D 模型按针孔透视贴地摆放，接触阴影、批量出图、一键抠图、导出配方 | [试用](https://forjiang.github.io/arcam/) |
 

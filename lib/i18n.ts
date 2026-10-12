@@ -104,7 +104,7 @@ export const translations = {
           },
           {
             name: "文件加密系统",
-            desc: "本地文件加密，浏览器版与桌面版格式互通：每个文件单独派生一把 AES-256 密钥（PBKDF2 60 万次迭代），内容用 AES-256-GCM 分块加密，产物后缀 .forjiang，文件不上传。桌面版额外支持 RSA 公钥封装会话密钥（加密只需公钥）、整目录批量、原生目录选择框与双击启动器；118 项单元测试，深浅色自适应。",
+            desc: "零依赖网页版 + Python 桌面版，同一 .forjiang 格式、密码模式双向互通：每个文件单独派生一把 AES-256 密钥（PBKDF2 60 万次迭代），内容用 AES-256-GCM 分块流式加密，文件不出本机。桌面版额外支持 RSA 公钥封装会话密钥（加密只需公钥）、整目录批量、CLI 与双击启动器；119 项单元测试，深浅色自适应。",
             tags: ["JavaScript", "WebCrypto", "Python", "AES-256-GCM"],
             repo: "https://github.com/ForJiang/forjiang-crypto",
             demo: "https://forjiang.github.io/forjiang-crypto/",
@@ -255,7 +255,7 @@ export const translations = {
           },
           {
             name: "File Encryption Suite",
-            desc: "Local file encryption with interchangeable browser and desktop builds: every file gets its own AES-256 key (PBKDF2, 600k iterations) and its content is sealed with AES-256-GCM in chunks, output as .forjiang — nothing is uploaded. The desktop build adds RSA session-key wrapping (encryption only ever needs the public key), whole-folder batches, native folder pickers and double-click launchers; 118 unit tests, light/dark aware.",
+            desc: "A zero-dependency browser build plus a Python desktop build, one .forjiang format with password mode interoperable both ways: every file gets its own AES-256 key (PBKDF2, 600k rounds) and its content is sealed with AES-256-GCM in a streaming, chunked pass — nothing leaves the machine. The desktop build adds RSA session-key wrapping (encryption only ever needs the public key), whole-folder batches, a CLI and double-click launchers; 119 unit tests, light/dark aware.",
             tags: ["JavaScript", "WebCrypto", "Python", "AES-256-GCM"],
             repo: "https://github.com/ForJiang/forjiang-crypto",
             demo: "https://forjiang.github.io/forjiang-crypto/",
