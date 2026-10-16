@@ -19,6 +19,10 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
  * 宽度就静默回绕（内容几份完全相同，肉眼不可见），物理上不存在边界。
  *
  * 交互模型：
+ * - 自动循环：无人操作时每 4.5s 前进一张，永续播放。内容按一份宽度 W 周期
+ *   重复、renderPos 恒被 normalize 回绕，末张→首张的推进与任何一次普通前进
+ *   在画面上完全一致——真正的循环，没有回到开头的一跳。悬停 / 键盘焦点 /
+ *   拖拽中 / 滚出视口 / 标签页隐藏时暂停；reduced-motion 下不自动播放。
  * - 拖拽：pointerdown 冻结当前过渡并从 computed transform 反推真实位置，
  *   move 直接改 renderPos（无过渡、途中越界即回绕），up 按速度投影甩动
  *   距离后过渡吸附到最近的卡片；
@@ -41,6 +45,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const COPIES = 3; // 内容克隆份数：中间份常驻视区，两侧各一份缓冲
 const MID = 1; // 常驻份的下标
+const AUTO_ADVANCE_MS = 4500; // 自动循环的前进间隔
 
 interface ProjectCarouselProps {
   /** 单份的项目数（一份宽度 = count × 卡片步长） */
@@ -159,6 +164,77 @@ export default function ProjectCarousel({ count, prevLabel, nextLabel, children 
     },
     [setX, normalize],
   );
+
+  /**
+   * 自动循环。自排程 setTimeout（而非 setInterval）：每个 tick 先判条件再
+   * 前进，暂停期间只空转计时，恢复后从当前卡继续，不会攒出一串补进。
+   *
+   * 暂停面取「用户正在看 / 正在操作」的并集，各来源独立记账：
+   * - 指针悬停在轨道上（读卡时别把画面抽走）；
+   * - 键盘焦点在轨道内——仅当 :focus-visible（键盘 Tab 导航）时暂停，鼠标
+   *   点击获得的焦点不停播，否则点过一次轮播就永远停了（WCAG 2.2.2 对
+   *   移动内容的可暂停要求由键盘焦点暂停满足）；
+   * - 拖拽中（pointerdown → up/cancel，触屏没有 hover，靠这条暂停）；
+   * - 区块滚出视口（IO threshold 0.2）或标签页隐藏（tick 时读 document.hidden）。
+   *
+   * focusout 只清键盘焦点、不碰悬停：点击卡片链接会把焦点从轨道移入 <a>，
+   * 若在 focusout 里一并清悬停，指针还停在轨道上时暂停就被静默解除——
+   * 用户正读着的卡会自己滑走（回归测试第 2 轮起必现竞态即此因）。
+   */
+  useEffect(() => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let timer = 0;
+    let hovering = false;
+    let kbFocus = false;
+    let dragging = false;
+    let visible = false;
+
+    const tick = () => {
+      timer = window.setTimeout(() => {
+        if (visible && !document.hidden && !hovering && !kbFocus && !dragging) go(1);
+        tick();
+      }, AUTO_ADVANCE_MS);
+    };
+
+    const enter = () => { hovering = true; };
+    const leave = () => { hovering = false; };
+    const focusIn = (e: Event) => {
+      if ((e.target as HTMLElement | null)?.matches?.(":focus-visible")) kbFocus = true;
+    };
+    const focusOut = () => { kbFocus = false; };
+    const down = () => { dragging = true; };
+    const up = () => { dragging = false; };
+
+    const io = new IntersectionObserver(
+      (entries) => { visible = entries.some((e) => e.isIntersecting); },
+      { threshold: 0.2 },
+    );
+    io.observe(wrap);
+
+    wrap.addEventListener("pointerenter", enter);
+    wrap.addEventListener("pointerleave", leave);
+    wrap.addEventListener("focusin", focusIn);
+    wrap.addEventListener("focusout", focusOut);
+    wrap.addEventListener("pointerdown", down);
+    wrap.addEventListener("pointerup", up);
+    wrap.addEventListener("pointercancel", up);
+    tick();
+
+    return () => {
+      window.clearTimeout(timer);
+      io.disconnect();
+      wrap.removeEventListener("pointerenter", enter);
+      wrap.removeEventListener("pointerleave", leave);
+      wrap.removeEventListener("focusin", focusIn);
+      wrap.removeEventListener("focusout", focusOut);
+      wrap.removeEventListener("pointerdown", down);
+      wrap.removeEventListener("pointerup", up);
+      wrap.removeEventListener("pointercancel", up);
+    };
+  }, [go]);
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;

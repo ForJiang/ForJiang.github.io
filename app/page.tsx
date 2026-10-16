@@ -229,12 +229,7 @@ function HomeContent() {
         </div>
       </section>
 
-      {/* Skills Section — 双行无限跑马灯
-          技能标签分两行、反向滚动，hover 暂停。每行两份 .marquee-set
-          内容相同，CSS translateX(-50%) 循环无接缝。两侧渐变遮罩
-          让边缘自然消隐而非硬切。标签按 i18n 的三个 group 拆成两行：
-          第一行 = 前端与可视化 + 工程与算法，第二行 = 浏览器端 AI 与媒体
-          + 前两组的补充。调速让两行不同步，视觉更自然。 */}
+      {/* Skills Section */}
       <section id="skills" className={SECTION_SHELL}>
         <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
           <SectionHeading
@@ -242,38 +237,44 @@ function HomeContent() {
             heading={t.skills.heading}
             subtitle={t.skills.subtitle}
           />
-        </div>
 
-        {/* 跑马灯需要溢出视口宽度，container 会裁剪，单独放 */}
-        <div className="relative mt-2">
-          {/* 两侧渐变遮罩：与区块背景同色(bg-black/35)渐变到透明 */}
-          <div className="pointer-events-none absolute left-0 top-0 bottom-0 z-10 w-24 sm:w-40 bg-gradient-to-r from-[rgba(0,0,0,0.35)] to-transparent" />
-          <div className="pointer-events-none absolute right-0 top-0 bottom-0 z-10 w-24 sm:w-40 bg-gradient-to-l from-[rgba(0,0,0,0.35)] to-transparent" />
-
-          {/* Row 1 — 向左滚动 */}
-          <div className="overflow-hidden mb-3">
-            <div className="marquee-track marquee-left">
-              {[0, 1].map(copy => (
-                <div key={copy} className="marquee-set" aria-hidden={copy === 1 || undefined}>
-                  {[...t.skills.groups[0].tags, ...t.skills.groups[2].tags].map((tag) => (
-                    <span key={tag} className="skill-tag">{tag}</span>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Row 2 — 向右滚动（reverse） */}
-          <div className="overflow-hidden">
-            <div className="marquee-track marquee-right">
-              {[0, 1].map(copy => (
-                <div key={copy} className="marquee-set" aria-hidden={copy === 1 || undefined}>
-                  {[...t.skills.groups[1].tags, ...t.skills.groups[0].tags.slice(0, 3)].map((tag) => (
-                    <span key={tag} className="skill-tag">{tag}</span>
-                  ))}
-                </div>
-              ))}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {t.skills.groups.map((group, idx) => (
+              <EnterBlock
+                key={idx}
+                delay={idx * 0.1}
+              >
+                <Card
+                  className={`group relative h-full overflow-hidden ${GLASS_CARD}`}
+                  onPointerMove={trackSpotlight}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="spotlight pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  />
+                  <CardHeader className="relative z-10">
+                    <CardTitle className="text-white">
+                      <RevealText as="div" stagger={0.03} duration={0.5} blur={6}>
+                        {group.title}
+                      </RevealText>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="relative z-10">
+                    {/* 标签是组件不是纯文本，用 items 模式逐个做揭示，胶囊外观不变 */}
+                    <RevealText
+                      as="div"
+                      items={group.tags.map((tag) => (
+                        <Badge key={tag} className={GLASS_TAG}>{tag}</Badge>
+                      ))}
+                      className="flex flex-wrap gap-2"
+                      stagger={0.04}
+                      duration={0.45}
+                      blur={6}
+                    />
+                  </CardContent>
+                </Card>
+              </EnterBlock>
+            ))}
           </div>
         </div>
       </section>
@@ -288,9 +289,10 @@ function HomeContent() {
             subtitleDelay={0.35}
           />
 
-          {/* 真无限轮播：transform 驱动的轨道组件，触屏甩动没有物理边界
-              （原理与交互模型见 components/ui/project-carousel.tsx 顶部
-              注释）。卡片宽 min(30rem, 85vw) + shrink-0，居中吸附。 */}
+          {/* 真无限轮播：transform 驱动的轨道组件，无人操作时自动循环前进
+              （末张→首张无缝，悬停/拖拽/键盘/离屏时暂停），触屏甩动没有
+              物理边界（原理与交互模型见 components/ui/project-carousel.tsx
+              顶部注释）。卡片宽 min(30rem, 85vw) + shrink-0，居中吸附。 */}
           <ProjectCarousel
             count={t.skills.projects.items.length}
             prevLabel={t.skills.projects.prevProject}
