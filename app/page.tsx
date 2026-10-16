@@ -84,16 +84,15 @@ function SectionHeading({
     <div className="text-center mb-16">
       <EnterBlock className="inline-block">
         <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-          <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
+          <RevealText as="span" duration={0.55} blur={8}>
             {badge}
           </RevealText>
         </Badge>
       </EnterBlock>
-      {/* 逐字揭示，与徽章/副标题串成出场顺序 */}
+      {/* 整行同时揭示（不再逐字），与徽章/副标题串成出场顺序 */}
       <RevealText
         as="h2"
         delay={0.15}
-        stagger={0.03}
         duration={0.65}
         className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
       >
@@ -102,7 +101,6 @@ function SectionHeading({
       <RevealText
         as="p"
         delay={subtitleDelay}
-        stagger={0.01}
         duration={0.5}
         blur={6}
         className={`mt-3 text-white/75 ${BODY_SHADOW}`}
@@ -198,7 +196,7 @@ function HomeContent() {
             className={`max-w-4xl mx-auto text-center space-y-6 rounded-3xl px-6 py-10 md:px-12 ${GLASS_CARD}`}
           >
             <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-              <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
+              <RevealText as="span" duration={0.55} blur={8}>
                 {t.about.badge}
               </RevealText>
             </Badge>
@@ -206,7 +204,7 @@ function HomeContent() {
             <RevealText
               as="h2"
               delay={0.45}
-              stagger={0.03}
+              
               duration={0.65}
               className={`mx-auto max-w-2xl text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
             >
@@ -217,7 +215,7 @@ function HomeContent() {
                 key={idx}
                 as="p"
                 delay={0.7 + idx * 0.12}
-                stagger={0.01}
+                
                 duration={0.5}
                 blur={6}
                 className={`text-lg text-white/80 ${BODY_SHADOW}`}
@@ -254,7 +252,7 @@ function HomeContent() {
                   />
                   <CardHeader className="relative z-10">
                     <CardTitle className="text-white">
-                      <RevealText as="div" stagger={0.03} duration={0.5} blur={6}>
+                      <RevealText as="div" duration={0.5} blur={6}>
                         {group.title}
                       </RevealText>
                     </CardTitle>
@@ -267,7 +265,7 @@ function HomeContent() {
                         <Badge key={tag} className={GLASS_TAG}>{tag}</Badge>
                       ))}
                       className="flex flex-wrap gap-2"
-                      stagger={0.04}
+                      
                       duration={0.45}
                       blur={6}
                     />
@@ -324,7 +322,7 @@ function HomeContent() {
                     />
                     <CardHeader className="relative z-10">
                       <CardTitle className="text-white">
-                        <RevealText as="div" stagger={0.03} duration={0.5} blur={6}>
+                        <RevealText as="div" duration={0.5} blur={6}>
                           {proj.name}
                         </RevealText>
                       </CardTitle>
@@ -332,7 +330,7 @@ function HomeContent() {
                     <CardContent className="relative z-10 flex-1 flex flex-col gap-4">
                       <RevealText
                         as="p"
-                        stagger={0.01}
+                        
                         duration={0.5}
                         blur={6}
                         className={`text-white/75 flex-1 ${BODY_SHADOW}`}
@@ -345,7 +343,7 @@ function HomeContent() {
                           <Badge key={tag} className={GLASS_TAG}>{tag}</Badge>
                         ))}
                         className="flex flex-wrap gap-2"
-                        stagger={0.04}
+                        
                         duration={0.45}
                         blur={6}
                       />
@@ -357,7 +355,7 @@ function HomeContent() {
                           className="h-9 px-3 text-xs"
                         >
                           <Github className="h-4 w-4" />
-                          <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                          <RevealText as="span" duration={0.45} blur={5}>
                             GitHub
                           </RevealText>
                         </OriginButton>
@@ -367,7 +365,7 @@ function HomeContent() {
                           className="h-9 px-3 text-xs"
                         >
                           <ExternalLink className="h-4 w-4" />
-                          <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                          <RevealText as="span" duration={0.45} blur={5}>
                             {t.skills.projects.demoCta}
                           </RevealText>
                         </OriginButton>
@@ -450,7 +448,7 @@ function HomeContent() {
                         文字越克制、图占卡片的比例越高 */}
                     <CardHeader className="p-5 pb-2">
                       <CardTitle className="text-lg text-white">
-                        <RevealText as="div" stagger={0.03} duration={0.5} blur={6}>
+                        <RevealText as="div" duration={0.5} blur={6}>
                           {card.title}
                         </RevealText>
                       </CardTitle>
@@ -460,7 +458,7 @@ function HomeContent() {
                     <CardContent className="flex flex-col gap-2 p-5 pt-0">
                       <RevealText
                         as="p"
-                        stagger={0.01}
+                        
                         duration={0.5}
                         blur={6}
                         className={`text-sm text-white/70 ${BODY_SHADOW}`}
@@ -505,14 +503,14 @@ function HomeContent() {
             className="max-w-3xl mx-auto text-center space-y-6"
           >
             <Badge className={`inline-flex py-2 mb-4 ${SECTION_BADGE}`}>
-              <RevealText as="span" stagger={0.03} duration={0.55} blur={8}>
+              <RevealText as="span" duration={0.55} blur={8}>
                 {t.contact.badge}
               </RevealText>
             </Badge>
             <RevealText
               as="h2"
               delay={0.45}
-              stagger={0.03}
+              
               duration={0.65}
               className={`text-3xl md:text-4xl font-bold tracking-tight ${TEXT_SHADOW}`}
             >
@@ -521,7 +519,7 @@ function HomeContent() {
             <RevealText
               as="p"
               delay={0.65}
-              stagger={0.01}
+              
               duration={0.5}
               blur={6}
               className={`text-lg text-white/80 ${BODY_SHADOW}`}
@@ -534,7 +532,7 @@ function HomeContent() {
                 onClick={() => window.location.href = `mailto:${CONTACTS.email}`}
               >
                 <Mail className="h-4 w-4" />
-                <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                <RevealText as="span" duration={0.45} blur={5}>
                   {t.contact.emailCta}
                 </RevealText>
               </OriginButton>
@@ -543,7 +541,7 @@ function HomeContent() {
                 onClick={() => window.open(CONTACTS.github, "_blank")}
               >
                 <Github className="h-4 w-4" />
-                <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                <RevealText as="span" duration={0.45} blur={5}>
                   GitHub
                 </RevealText>
               </OriginButton>
@@ -552,7 +550,7 @@ function HomeContent() {
                 onClick={() => window.open(CONTACTS.bilibili, "_blank")}
               >
                 <BilibiliIcon className="h-4 w-4" />
-                <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                <RevealText as="span" duration={0.45} blur={5}>
                   {t.contact.bilibiliCta}
                 </RevealText>
               </OriginButton>
@@ -561,7 +559,7 @@ function HomeContent() {
                 onClick={() => window.open(CONTACTS.pixiv, "_blank")}
               >
                 <PixivIcon className="h-4 w-4" />
-                <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                <RevealText as="span" duration={0.45} blur={5}>
                   Pixiv
                 </RevealText>
               </OriginButton>
@@ -570,7 +568,7 @@ function HomeContent() {
                 onClick={() => window.open(CONTACTS.x, "_blank")}
               >
                 <XIcon className="h-4 w-4" />
-                <RevealText as="span" stagger={0.03} duration={0.45} blur={5}>
+                <RevealText as="span" duration={0.45} blur={5}>
                   X
                 </RevealText>
               </OriginButton>
