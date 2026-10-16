@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Github, Mail, ExternalLink } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { PROJECT_IMAGES, IMAGE_SIZES } from "@/lib/image-variants";
-import { PixivIcon, XIcon, BilibiliIcon } from "@/components/brand-icons";
+import { PixivIcon, XIcon, BilibiliIcon, TelegramIcon } from "@/components/brand-icons";
 import type { LightboxItem } from "@/components/lightbox";
 import OriginButton from "@/components/ui/origin-button";
 import RevealText from "@/components/ui/reveal-text";
@@ -47,6 +47,7 @@ const CONTACTS = {
   pixiv: "https://www.pixiv.net/users/101240081",
   // x.com/jianghaoda3?s=11 的 ?s=11 是分享链接参数，指向同一账号，这里用干净地址
   x: "https://x.com/jianghaoda3",
+  telegram: "https://t.me/+NO_Y9qUKm3VmN2U1",
 };
 
 /**
@@ -572,6 +573,15 @@ function HomeContent() {
                   X
                 </RevealText>
               </OriginButton>
+              <OriginButton
+                tone="glass"
+                onClick={() => window.open(CONTACTS.telegram, "_blank")}
+              >
+                <TelegramIcon className="h-4 w-4" />
+                <RevealText as="span" duration={0.45} blur={5}>
+                  Telegram
+                </RevealText>
+              </OriginButton>
             </div>
           </EnterBlock>
         </div>
@@ -612,6 +622,9 @@ function HomeContent() {
             </Button>
             <Button aria-label="X" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.x, "_blank")}>
               <XIcon className="h-4 w-4" />
+            </Button>
+            <Button aria-label="Telegram" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.open(CONTACTS.telegram, "_blank")}>
+              <TelegramIcon className="h-4 w-4" />
             </Button>
             <Button aria-label="Email" className="text-white hover:bg-white/10 hover:text-white" onClick={() => window.location.href = `mailto:${CONTACTS.email}`}>
               <Mail className="h-4 w-4" />
