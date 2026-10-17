@@ -288,10 +288,10 @@ function HomeContent() {
             subtitleDelay={0.35}
           />
 
-          {/* 真无限轮播：transform 驱动的轨道组件，无人操作时自动循环前进
-              （末张→首张无缝，悬停/拖拽/键盘/离屏时暂停），触屏甩动没有
-              物理边界（原理与交互模型见 components/ui/project-carousel.tsx
-              顶部注释）。卡片宽 min(30rem, 85vw) + shrink-0，居中吸附。 */}
+          {/* 真无限轮播：transform 驱动的轨道组件，支持触屏甩动、箭头和键盘
+              导航。末张→首张无缝循环，触屏甩动没有物理边界（原理与交互模型
+              见 components/ui/project-carousel.tsx 顶部注释）。卡片宽
+              min(30rem, 85vw) + shrink-0，居中吸附。 */}
           <ProjectCarousel
             count={t.skills.projects.items.length}
             prevLabel={t.skills.projects.prevProject}
