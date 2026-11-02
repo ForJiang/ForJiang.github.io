@@ -29,6 +29,21 @@ export default function LiquidMetalHero({
       {/* 液态金属背景已上移为全站固定层 components/liquid-metal-background.tsx */}
       <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
         <div className="text-center space-y-8">
+          {/*
+            平衡占位：与按钮组同构的隐形副本。删除徽章/副标题后，按钮组在
+            标题下方会把整组重心下拉约 40px，标题视觉上偏上（用户反馈
+            ForJiang 居中）。上方放一个等高隐形副本，flex 居中后标题恰好
+            落在视口正中；响应式断点（按钮竖排/横排）自动跟随，无需魔法
+            数字。invisible + aria-hidden：不显示、不进读屏、不进 Tab 序。
+          */}
+          <div
+            className="invisible flex flex-col sm:flex-row gap-4 justify-center items-center"
+            aria-hidden="true"
+          >
+            <div className="shadow-2xl text-lg px-8 h-12 font-semibold rounded-md" />
+            <div className="text-lg px-8 h-12 font-semibold rounded-md border border-white/40" />
+          </div>
+
           {badge && (
             <div className="flex justify-center">
               <Badge
