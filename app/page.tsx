@@ -1,6 +1,5 @@
 "use client";
 
-import LiquidMetalHero from "@/components/ui/liquid-metal-hero";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,19 +11,18 @@ import type { LightboxItem } from "@/components/lightbox";
 import OriginButton from "@/components/ui/origin-button";
 import RevealText from "@/components/ui/reveal-text";
 import EnterBlock from "@/components/enter-block";
-import ProjectCarousel from "@/components/ui/project-carousel";
 import SiteShell from "@/components/site-shell";
-import VideoPlayer from "@/components/video-player";
 import { LanguageProvider, useLanguage } from "@/components/language-context";
 import { SECTION_BADGE, TEXT_SHADOW, BODY_SHADOW, GLASS_CARD, GLASS_TAG, SECTION_SHELL, trackSpotlight, scrollToSection } from "@/lib/ui-kit";
 import dynamic from "next/dynamic";
 
 /*
- * 灯箱只在点开图片时才出现，按需加载：其代码（双图淡入、滑动翻页、预载
- * 逻辑）不参与首屏。为避免点击后多等一个 chunk，画廊（#gallery）进入
- * 视口时就顺手预载——那时用户还在看封面，点开时模块早已就绪。
- * 类型仍从原模块引入，仅运行期加载被延后。
+ * 首屏加载优化：将非首屏的重型组件改为懒加载，减少首屏 bundle 体积。
+ * Hero 背景动画、项目轮播、视频播放器在用户滚动到对应区块前不会阻塞首屏。
  */
+const LiquidMetalHero = dynamic(() => import("@/components/ui/liquid-metal-hero"));
+const ProjectCarousel = dynamic(() => import("@/components/ui/project-carousel"));
+const VideoPlayer = dynamic(() => import("@/components/video-player"));
 const Lightbox = dynamic(() => import("@/components/lightbox"));
 
 // 插画卡片与图片变体的对应关系（按卡片顺序，取 lib/image-variants.ts 里的 name）

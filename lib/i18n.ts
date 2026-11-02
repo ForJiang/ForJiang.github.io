@@ -26,9 +26,9 @@ export const translations = {
     // 灯箱控件：跟随语言，读屏软件不该在英文模式下报中文
     lightbox: { close: "关闭", prev: "上一张", next: "下一张" },
     hero: {
-      badge: "👋 你好，我是",
+      badge: "",
       title: "ForJiang",
-      subtitle: "web coding...",
+      subtitle: "",
       primaryCta: "查看我的项目 →",
       secondaryCta: "联系我",
     },
@@ -184,9 +184,9 @@ export const translations = {
     },
     lightbox: { close: "Close", prev: "Previous", next: "Next" },
     hero: {
-      badge: "👋 Hi, I'm",
+      badge: "",
       title: "ForJiang",
-      subtitle: "web coding...",
+      subtitle: "",
       primaryCta: "View My Projects →",
       secondaryCta: "Contact Me",
     },
