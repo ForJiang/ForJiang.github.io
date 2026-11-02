@@ -1,3 +1,8 @@
+/**
+ * ForJiang · https://forjiang.github.io
+ * © 2026 ForJiang. 个人主页项目源码。
+ */
+
 // 由 scripts/generate-images.mjs 生成，请勿手改；新增图片后重跑该脚本。
 // 每项提供 AVIF / WebP 两组 srcset、一张小的 <img> 回退图，以及一张无损原图 full
 // （灯箱查看高清原图用，宽度上限 3864px、不足则保持原生宽，WebP q90 有损）。

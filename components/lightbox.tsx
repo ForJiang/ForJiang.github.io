@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * ForJiang · https://forjiang.github.io
+ * © 2026 ForJiang. 个人主页项目源码。
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useLanguage } from "./language-context";

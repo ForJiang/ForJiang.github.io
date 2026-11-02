@@ -1,3 +1,8 @@
+/**
+ * ForJiang · https://forjiang.github.io
+ * © 2026 ForJiang. 个人主页项目源码。
+ */
+
 /** 标签页主图标：32×32 圆角 PNG，内联成 data URI。
  *
  *  浏览器把 favicon 按「页面 URL」缓存在自己的图标数据库里，只把引用换成新的

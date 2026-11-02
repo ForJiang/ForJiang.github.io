@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * ForJiang · https://forjiang.github.io
+ * © 2026 ForJiang. 个人主页项目源码。
+ */
+
 import type { CSSProperties, MouseEventHandler, ReactNode } from "react";
 import { useInViewOnce } from "@/lib/use-in-view";
 import { cn } from "@/lib/utils";

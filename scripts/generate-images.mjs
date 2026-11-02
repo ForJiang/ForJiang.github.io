@@ -1,4 +1,9 @@
 /**
+ * ForJiang · https://forjiang.github.io
+ * © 2026 ForJiang. 个人主页项目源码。
+ */
+
+/**
  * 生成移动端/桌面端响应式图片变体。
  *
  * 用法（需要 sharp）：

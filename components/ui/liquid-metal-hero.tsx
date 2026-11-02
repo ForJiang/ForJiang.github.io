@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * ForJiang · https://forjiang.github.io
+ * © 2026 ForJiang. 个人主页项目源码。
+ */
+
 import type { CSSProperties } from "react";
 import OriginButton from '@/components/ui/origin-button';
 import RevealText from '@/components/ui/reveal-text';

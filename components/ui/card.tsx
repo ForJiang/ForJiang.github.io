@@ -1,3 +1,8 @@
+/**
+ * ForJiang · https://forjiang.github.io
+ * © 2026 ForJiang. 个人主页项目源码。
+ */
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

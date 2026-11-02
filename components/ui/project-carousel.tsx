@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * ForJiang · https://forjiang.github.io
+ * © 2026 ForJiang. 个人主页项目源码。
+ */
+
 import { useCallback, useEffect, useRef, type ReactNode } from "react";
 import type {
   KeyboardEvent as ReactKeyboardEvent,

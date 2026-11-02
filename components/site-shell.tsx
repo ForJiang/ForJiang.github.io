@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * ForJiang · https://forjiang.github.io
+ * © 2026 ForJiang. 个人主页项目源码。
+ */
+
 import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import SiteNav from "./site-nav";

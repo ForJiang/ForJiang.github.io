@@ -1,6 +1,6 @@
 {
-  "name": "personal-website",
-  "version": "0.1.0",
+  "name": "forjiang-personal-website",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -32,5 +32,9 @@
     "postcss": "^8.5.22",
     "postcss-selector-parser": "^7.1.6",
     "glob": "^10.5.0"
-  }
+  },
+  "author": "ForJiang <jianghaoda.1@outlook.com> (https://github.com/ForJiang)",
+  "license": "MIT",
+  "description": "ForJiang 的个人主页：九个纯静态、可离线使用的网页工具 + AI 插画与演示视频。",
+  "homepage": "https://forjiang.github.io"
 }

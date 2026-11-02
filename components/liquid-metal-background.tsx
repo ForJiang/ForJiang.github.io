@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * ForJiang · https://forjiang.github.io
+ * © 2026 ForJiang. 个人主页项目源码。
+ */
+
 import { useEffect, useRef } from "react";
 import { LiquidMetal } from "@paper-design/shaders-react";
 
