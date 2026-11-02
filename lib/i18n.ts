@@ -37,7 +37,7 @@ export const translations = {
       heading: "一个喜欢把想法变成产品的开发者",
       paragraphs: [
         "你好！我是 ForJiang，一名高中生，也是一个热爱编程的学习者。从第一次写下 Hello, World 开始，我就迷上了用代码把想法变成现实的过程。",
-        "过去几年，我一直在学习编程，尝试过前端、后端和一些小项目，也在不断摸索如何把课堂之外的想法做成真正能运行的东西。我尤其享受打磨交互细节、优化性能，以及把复杂问题拆解成简单方案时的成就感。虽然现在还在学习阶段，但我很期待未来能做出更多有意思的作品。",
+        "这几年我一直在写代码，做出了一批纯静态、可离线使用的网页工具——从浏览器端的声音克隆、3D 高斯泼溅，到文件加密、晨昏线世界时钟和 AR 取景器，每一件都从想法一路打磨到真正能用的产品。我尤其享受打磨交互细节、优化性能，以及把复杂问题拆解成简单方案时的成就感。虽然还在学习阶段，但我很期待未来能做出更多有意思的作品。",
         "不写代码的时候，我喜欢摄影、跑步，以及在技术社区分享自己的学习笔记。如果你有有趣的想法，或者愿意一起交流编程，欢迎随时找我聊聊！",
       ],
     },
@@ -195,7 +195,7 @@ export const translations = {
       heading: "A developer who loves turning ideas into products",
       paragraphs: [
         "Hi! I'm ForJiang — a high school student and a passionate programming learner. Ever since writing my first Hello, World, I've been fascinated by turning ideas into reality with code.",
-        "Over the past few years I've been learning programming — trying out frontend, backend and some small projects, and exploring how to turn ideas beyond the classroom into things that actually run. I especially enjoy polishing interaction details, optimizing performance, and the satisfaction of breaking complex problems into simple ones. I'm still learning, but I can't wait to build more interesting things.",
+        "Over the past few years I've been building a collection of fully static, offline-capable web tools — from in-browser voice cloning and 3D Gaussian splatting to file encryption, an astronomical world clock and an AR viewfinder — taking each one from idea to a real, working product. I especially enjoy polishing interaction details, optimizing performance, and the satisfaction of breaking complex problems into simple ones. I'm still learning, but I can't wait to build more interesting things.",
         "When I'm not coding, I enjoy photography, running, and sharing my study notes with the tech community. If you have an interesting idea — or just want to talk code — feel free to reach out!",
       ],
     },
