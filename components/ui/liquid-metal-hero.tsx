@@ -87,13 +87,15 @@ export default function LiquidMetalHero({
             )}
           </div>
 
-          {/* 按钮组入场（标题 → 徽章 → 副标题 → 按钮 的最后一环）：纯 CSS
-              animation + both 填充，样式表生效即开始排队，不等注水（globals.css
-              的 .rise-in）。上浮淡入由这一层负责，缩放反馈交给按钮自身的
-              :active，避免双重缩放 */}
+          {/* 按钮组入场：纯 CSS animation + both 填充，样式表生效即开始排队，
+              不等注水（globals.css 的 .rise-in）。上浮淡入由这一层负责，缩放
+              反馈交给按钮自身的 :active，避免双重缩放。
+              时序压缩：1.25s 延迟是按「标题→徽章→副标题→按钮」四元素编排
+              的，徽章/副标题删除后序列只剩两元素，1.25s 的空档让按钮晚约
+              1 秒才出现（用户感知为加载慢）——收紧到 0.45s。 */}
           <div
             className="rise-in flex flex-col sm:flex-row gap-4 justify-center items-center"
-            style={{ "--enter-delay": "1.25s", "--enter-dur": "0.6s" } as CSSProperties}
+            style={{ "--enter-delay": "0.45s", "--enter-dur": "0.5s" } as CSSProperties}
           >
             {/* 悬停时圆形填充从指针处扩散、文字反色；上浮淡入由这一层负责，
                 缩放反馈交给按钮自身，避免双重缩放 */}

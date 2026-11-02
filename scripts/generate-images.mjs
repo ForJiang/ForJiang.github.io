@@ -71,10 +71,11 @@ for (const name of NAMES) {
   const master = await findMaster(name);
 
   // 母版：等比缩到 FULL_W（源图不足这个宽度时保持原生宽，放大只费体积不出细节），
-  // WebP lossless（灯箱原图，不做有损压缩）
+  // WebP quality 90（有损——肉眼与无损难辨，但单张从 ~7MB 降到 ~1.5MB；
+  // 曾用 lossless，四张 27.8MB 对弱网灯箱加载过重，2026-10 改有损）
   const srcMeta = await sharp(master.buf).metadata();
   const fullW = Math.min(FULL_W, srcMeta.width);
-  const full = await sharp(master.buf).resize({ width: fullW }).webp({ lossless: true }).toBuffer();
+  const full = await sharp(master.buf).resize({ width: fullW }).webp({ quality: 90 }).toBuffer();
   const fullHash = createHash("sha256").update(full).digest("hex").slice(0, 8);
   const fullFile = `${name}-full-${fullHash}.webp`;
   await writeFile(path.join(SRC, fullFile), full);
@@ -102,7 +103,7 @@ for (const name of NAMES) {
 const lines = [];
 lines.push("// 由 scripts/generate-images.mjs 生成，请勿手改；新增图片后重跑该脚本。");
 lines.push("// 每项提供 AVIF / WebP 两组 srcset、一张小的 <img> 回退图，以及一张无损原图 full");
-lines.push(`// （灯箱查看高清原图用，宽度上限 ${FULL_W}px、不足则保持原生宽，WebP lossless）。`);
+lines.push(`// （灯箱查看高清原图用，宽度上限 ${FULL_W}px、不足则保持原生宽，WebP q90 有损）。`);
 lines.push("export const PROJECT_IMAGES = [");
 for (const e of out) {
   lines.push("  {");
