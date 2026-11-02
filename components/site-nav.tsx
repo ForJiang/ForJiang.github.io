@@ -71,13 +71,12 @@ export default function SiteNav() {
     <div data-nav={navKind} className={cn("relative", extraClass)}>
       <button
         onClick={() => setLangOpen(!langOpen)}
-        className="flex items-center gap-1.5 rounded-lg border border-white/25 px-2.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/10"
+        className="p-2 rounded-lg border border-white/25 text-white transition-colors hover:bg-white/10"
         aria-label="Switch language / 切换语言 / 言語切替 / 切換語言"
         aria-expanded={langOpen}
         aria-haspopup="menu"
       >
         <Languages className="h-4 w-4" />
-        {t.langToggle}
       </button>
       {/* 四语下拉：当前语言打勾；点选项切换并收起。常驻渲染（invisible 收起），
           避免挂载时序问题；黑底保证与页面内容叠放时可读 */}

@@ -6,7 +6,6 @@ export type Lang = "zh" | "en" | "ja" | "zh-TW";
  */
 export const translations = {
   zh: {
-    langToggle: "English",
     // 键盘无障碍：跳到主内容的链接文案（视觉隐藏，Tab 聚焦时显现）
     a11y: { skip: "跳到主内容" },
     nav: {
@@ -166,7 +165,6 @@ export const translations = {
     },
   },
   en: {
-    langToggle: "日本語",
     a11y: { skip: "Skip to content" },
     nav: {
       about: "About",
@@ -324,7 +322,6 @@ export const translations = {
     },
   },
   ja: {
-    langToggle: "繁體中文",
     a11y: { skip: "本文へスキップ" },
     nav: {
       about: "自己紹介",
@@ -482,7 +479,6 @@ export const translations = {
     },
   },
   "zh-TW": {
-    langToggle: "简体中文",
     a11y: { skip: "跳到主要內容" },
     nav: {
       about: "關於",
