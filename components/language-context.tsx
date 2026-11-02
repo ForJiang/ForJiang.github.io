@@ -3,10 +3,19 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { translations, type Lang } from "@/lib/i18n";
 
+/** 语言轮换顺序：简体 → English → 日本語 → 繁體 → 简体 */
+const LANG_ORDER: Lang[] = ["zh", "en", "ja", "zh-TW"];
+
+const HTML_LANG: Record<Lang, string> = {
+  zh: "zh-CN",
+  en: "en",
+  ja: "ja",
+  "zh-TW": "zh-TW",
+};
+
 interface LanguageValue {
   lang: Lang;
-  // 两种语言的字典结构相同，取并集类型（typeof translations.zh 是字面量类型，
-  // 装不下 en 的文案）
+  // 四种语言的字典结构相同，取并集类型（字面量类型装不下其他语言的文案）
   t: (typeof translations)[Lang];
   toggleLang: () => void;
 }
@@ -23,7 +32,7 @@ const storage = {
   get(): Lang | null {
     try {
       const v = localStorage.getItem("language");
-      return v === "en" || v === "zh" ? v : null;
+      return LANG_ORDER.includes(v as Lang) ? (v as Lang) : null;
     } catch {
       return null;
     }
@@ -38,9 +47,9 @@ const storage = {
 };
 
 /**
- * 全站语言状态。导航与页面各区块都要同一份语言，所以提到 context；单页站点
- * 包一层 Provider 即可（曾经拆成多页时每个页面根部分别挂），localStorage
- * 保证手动切换过的选择不丢。
+ * 全站语言状态。四种语言轮换：简体中文 → English → 日本語 → 繁體中文。
+ * 导航与页面各区块都要同一份语言，所以提到 context；单页站点包一层
+ * Provider 即可，localStorage 保证手动切换过的选择不丢。
  */
 export function LanguageProvider({ children }: { children: ReactNode }) {
   // 默认英文，且服务端也渲染英文（见 layout 的 <html lang="en">）。两边必须
@@ -53,15 +62,17 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const saved = storage.get();
     if (saved) {
       setLang(saved);
-      document.documentElement.lang = saved === "zh" ? "zh-CN" : "en";
+      document.documentElement.lang = HTML_LANG[saved];
     }
   }, []);
 
   const toggleLang = () => {
-    const next: Lang = lang === "zh" ? "en" : "zh";
+    // 轮换：简体 → English → 日本語 → 繁體 → 简体
+    const idx = LANG_ORDER.indexOf(lang);
+    const next = LANG_ORDER[(idx + 1) % LANG_ORDER.length];
     setLang(next);
     storage.set(next);
-    document.documentElement.lang = next === "zh" ? "zh-CN" : "en";
+    document.documentElement.lang = HTML_LANG[next];
   };
 
   return (

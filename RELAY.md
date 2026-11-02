@@ -115,10 +115,10 @@ personal-website/
 
 ### 3.4 国际化
 
-`lib/i18n.ts` 导出 `translations` 字典, 类型 `Lang = "zh" | "en"`:
+`lib/i18n.ts` 导出 `translations` 字典, 类型 `Lang = "zh" | "en" | "ja" | "zh-TW"`（四语：简体/英/日/繁）:
 - 首帧固定英文（`useState<Lang>("en")`，与 `layout.tsx` 的 `<html lang="en">` 一致，否则注水失败）
 - 挂载后 `useEffect` 只恢复 localStorage 里手动切过的选择，不再跟随浏览器语言
-- 切换按钮在导航栏 (桌面端和移动端都有)，同时改 `document.documentElement.lang`
+- 切换按钮在导航栏 (桌面端和移动端都有)，按序轮换四语，同时改 `document.documentElement.lang`（zh→zh-CN、zh-TW→zh-TW、ja→ja）
 - 所有 UI 文案通过 `t.xxx` 引用, 新增文案需中英都补
 
 ### 3.5 图片与灯箱

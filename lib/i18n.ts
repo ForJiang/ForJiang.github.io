@@ -1,12 +1,12 @@
-export type Lang = "zh" | "en";
+export type Lang = "zh" | "en" | "ja" | "zh-TW";
 
 /**
- * 全站文案字典。中文为主语言；英文用于语言切换模式。
- * 新增文案时两个语言都要补齐。
+ * 全站文案字典。四种语言：简体中文（zh）、English（en）、日本語（ja）、繁體中文（zh-TW）。
+ * 新增文案时四个语言都要补齐。
  */
 export const translations = {
   zh: {
-    langToggle: "EN",
+    langToggle: "English",
     // 键盘无障碍：跳到主内容的链接文案（视觉隐藏，Tab 聚焦时显现）
     a11y: { skip: "跳到主内容" },
     nav: {
@@ -166,7 +166,7 @@ export const translations = {
     },
   },
   en: {
-    langToggle: "中文",
+    langToggle: "日本語",
     a11y: { skip: "Skip to content" },
     nav: {
       about: "About",
@@ -321,6 +321,322 @@ export const translations = {
       subtitle: "Got an idea? The fastest way is to email me directly 🚀",
       emailCta: "Email Me",
       bilibiliCta: "Bilibili",
+    },
+  },
+  ja: {
+    langToggle: "繁體中文",
+    a11y: { skip: "本文へスキップ" },
+    nav: {
+      about: "自己紹介",
+      skills: "スキル",
+      projects: "プロジェクト",
+      videos: "動画",
+      contact: "お問い合わせ",
+      menu: "メニュー",
+    },
+    videos: {
+      badge: "動画",
+      heading: "デモ動画",
+      subtitle: "Bilibili に公開したデモ動画を、ここで直接視聴できます",
+      playCta: "クリックして再生",
+    },
+    lightbox: { close: "閉じる", prev: "前へ", next: "次へ" },
+    hero: {
+      badge: "",
+      title: "ForJiang",
+      subtitle: "",
+      primaryCta: "プロジェクトを見る →",
+      secondaryCta: "お問い合わせ",
+    },
+    about: {
+      badge: "自己紹介",
+      heading: "アイデアを製品に変えるのが好きな開発者",
+      paragraphs: [
+        "こんにちは！ForJiang です。高校生で、プログラミングを愛する学習者です。はじめて Hello, World を書いたときから、コードでアイデアを現実にする過程に魅了されてきました。",
+        "ここ数年、フロントエンド、バックエンド、そして小さなプロジェクトに挑戦しながらプログラミングを学んできました。インタラクションの細部を磨いたり、パフォーマンスを最適化したり、複雑な問題をシンプルに分解する達成感が何よりも好きです。まだ学習の途中ですが、今後もっと面白い作品を作っていくのを楽しみにしています。",
+        "コードを書いていないときは、写真、ランニング、技術コミュニティでの学習ノート共有を楽しんでいます。面白いアイデアがあれば、あるいは一緒にコードについて語りたいときも、いつでも気軽に連絡してください！",
+      ],
+    },
+    skills: {
+      badge: "技術スタック",
+      heading: "私のスキル",
+      subtitle: "プロジェクトで実際に使ったツールと技術。学び続けています",
+      groups: [
+        {
+          title: "🎨 フロントエンドとビジュアライゼーション",
+          tags: ["TypeScript / JavaScript", "Canvas 2D", "SVG アニメーション", "three.js / WebGL", "React / Next.js", "Tailwind CSS"],
+        },
+        {
+          title: "🧠 ブラウザ AI とメディア",
+          tags: ["ONNX Runtime Web", "WebGPU / WASM", "Web Audio API", "WebCrypto / AES-256-GCM", "IndexedDB", "EXIF / GPS / XMP", "ZIP パッケージ", "Python 推論サービス"],
+        },
+        {
+          title: "🛠️ エンジニアリングとアルゴリズム",
+          tags: ["ユニットテスト", "記号微分エンジン", "Meeus 天文アルゴリズム", "透視投影と 3D 数学", "パフォーマンス最適化", "Git / GitHub Actions", "ゼロ依存ビルド"],
+        },
+      ],
+      projects: {
+        badge: "実プロジェクト",
+        heading: "これらの技術が活きたプロジェクト",
+        subtitle: "九つの完全静的、オフラインでも使える Web ツール",
+        demoCta: "デモを見る",
+        prevProject: "前のプロジェクト",
+        nextProject: "次のプロジェクト",
+        items: [
+          {
+            name: "RVC ボイスクローン",
+            desc: "ブラウザ上で完結する RVC ボイスクローン：録音、アップロード、推論、書き出しまですべてページ内で行い、音声はアップロードされません。デュアルエンジン——ONNX Runtime Web によるページ内推論と、ローカル RVC サービス接続の GPU 推理。ピッチ変換や子音保護などの詳細パラメータとプリセットをワンクリック適用、バッチキューを ZIP 書き出し、モデルライブラリはダウンロードとドラッグ＆ドロップ取り込みに対応。",
+            tags: ["JavaScript", "ONNX Runtime", "Web Audio", "IndexedDB", "Python"],
+            repo: "https://github.com/ForJiang/rvc-sound-clone",
+            demo: "https://forjiang.github.io/rvc-sound-clone/",
+          },
+          {
+            name: "画像メタデータクリーナー",
+            desc: "写真に潜む隠れた情報を一括除去：EXIF カメラ情報、撮影時刻、GPS 位置、埋め込みサムネイル、編集履歴、ファイル末尾の隠しデータ。スキャン→除去→検証の流れでメタデータゼロを出力。Canvas 再エンコードと強制セグメント除去の二重対策、ターミナル風ログで処理をリアルタイム表示、オフライン対応、69 件のユニットテスト付き。",
+            tags: ["JavaScript", "Canvas", "EXIF / GPS / XMP", "ZIP"],
+            repo: "https://github.com/ForJiang/image-metadata-cleaner",
+            demo: "https://forjiang.github.io/image-metadata-cleaner/",
+          },
+          {
+            name: "hello 手書きアニメデモ",
+            desc: "ゼロ依存の純静的ページ：黒グレーのボクセル地形を背景に、hello の 3 文字を 3.5 秒かけて一画ずつ手書き描画。ワードマーク自体がライブ光源——楕円減衰で近くのボクセル上面と右面を照らし、ピクセルごとの加算グラデーション光池を重ねます。ワードマークの下には同スタイルのライブ時計。R キーで再生。Apple Hello アニメーションを SVG ストロークで再現、React もビルドもなし。",
+            tags: ["JavaScript", "SVG", "Canvas", "ゼロ依存"],
+            repo: "https://github.com/ForJiang/forjiang-hello",
+            demo: "https://forjiang.github.io/forjiang-hello/",
+          },
+          {
+            name: "画像から 3D ガウススプラット",
+            desc: "ブラウザで 1 枚の画像や動画を回転可能な 3D ガウススプラット点群に変換：Depth Anything V2 がローカルでピクセルごとの深度を推定し、元の色を持つ数十万枚のガウス円盤を生成、three.js でリアルタイム描画。Blender や SuperSplat で使える .ply / .splat 形式で書き出し可能。モデルはセルフホスト、WebGPU fp16 を優先し int8 + WASM へ自動フォールバック、ファイルはブラウザの外に出ません。",
+            tags: ["JavaScript", "ONNX Runtime", "WebGPU", "three.js"],
+            repo: "https://github.com/ForJiang/image-to-splat",
+            demo: "https://forjiang.github.io/image-to-splat/",
+          },
+          {
+            name: "関数グラフジェネレーター",
+            desc: "完全クライアントサイドの関数グラフツール：式を入力すると即座に描画、最大 6 本の曲線を同一グラフに比較表示、20+ 関数ライブラリをワンクリック追加。ホイールズーム、ドラッグ移動、ホバー読み取りに対応。ゼロ依存の自前記号微分エンジンにより 1～8 階導関数をステップ付きで表示、破線で導関数を重ね合わせ、接線方程式も計算。ターミナル風ログがリアルタイム記録、285 件のユニットテストが数値差分との照合で検証済み。",
+            tags: ["JavaScript", "Canvas", "記号微分", "ゼロ依存"],
+            repo: "https://github.com/ForJiang/function-grapher",
+            demo: "https://forjiang.github.io/function-grapher/",
+          },
+          {
+            name: "ファイル暗号化システム",
+            desc: "ゼロ依存のブラウザ版 + Python デスクトップ版。同じ .forjiang 形式でパスワードモードが双方向互通：ファイルごとに AES-256 鍵を 1 つずつ導出し（PBKDF2 60 万回反復）、内容は AES-256-GCM でチャンク分割ストリーミング暗号化、ファイルは端末の外に出ません。デスクトップ版は RSA 公開鍵によるセッション鍵ラップ（暗号化に必要なのは公開鍵のみ）、フォルダ一括処理、CLI とダブルクリック起動に対応。119 件のユニットテスト、ライト/ダーク両対応。",
+            tags: ["JavaScript", "WebCrypto", "Python", "AES-256-GCM"],
+            repo: "https://github.com/ForJiang/forjiang-crypto",
+            demo: "https://forjiang.github.io/forjiang-crypto/",
+          },
+          {
+            name: "ワールドレスクロック",
+            desc: "フルスクリーンの世界時計：自動位置取得（Geolocation → IP 検索 → デフォルト都市の 4 段階フォールバック）後に中央へ秒単位の時刻を表示し、手描きの世界地図上に経度ごとのリアルタイム晨昏線を描きます。Meeus 太陽アルゴリズムを Python と JS の両方で実装、GitHub Pages 静的版はサーバーレス、オフライン対応。",
+            tags: ["JavaScript", "Python", "Canvas", "Meeus 天文アルゴリズム", "ゼロ依存"],
+            repo: "https://github.com/ForJiang/time",
+            demo: "https://forjiang.github.io/time/",
+          },
+          {
+            name: "AR ビューファインダー",
+            desc: "写真やライブカメラの映像の中に、針孔透視投影でアニメキャラクター（または MMD 3D モデル）を地面に立たせて配置：カメラの高さ、被写体との距離と身長、ピッチ、ロール、実効焦点距離、ショットサイズとアスペクト比をすべて調整可能、接触影の方向と濃度、ワンクリックマッティングと一括書き出し、PNG / キャラクターレイヤー / 素材 ZIP / scene.json レシピを出力。計算はすべてブラウザ内、写真はアップロードされません。",
+            tags: ["JavaScript", "three.js", "透視投影", "マッティング", "ライブカメラ"],
+            repo: "https://github.com/ForJiang/arcam",
+            demo: "https://forjiang.github.io/arcam/",
+          },
+          {
+            name: "AL-1S アリス端末",
+            desc: "ブルーアーカイブ · 天童アリスのファンサイト：中/日/英 3 言語のキャラクター端末——プロフィール、戦闘ステータス、スキル、専用武器、絆ストーリー、ボイス再生、MomoTalk チャットシミュレーション、記憶の限界、活動年表、システム起動アニメーション付き。純静的ゼロ依存、GitHub Pages で直接ホスティング。",
+            tags: ["JavaScript", "Canvas", "SVG", "3 言語", "ゼロ依存"],
+            repo: "https://github.com/ForJiang/AL-1S",
+            demo: "https://forjiang.github.io/AL-1S/",
+          },
+        ],
+      },
+    },
+    projects: {
+      badge: "AI イラスト",
+      heading: "イラスト作品",
+      subtitle: "ComfyUI で生成したイラストの習作。順次追加中",
+      viewFull: "高解像度画像を見る",
+      cards: [
+        {
+          title: "朝の光 · のどかな朝",
+          desc: "朝の光が部屋に差し込む中、ミクが木の床でくつろぎ、窓の外では街が目覚めていく。",
+        },
+        {
+          title: "雨の日 · 窓辺で書く",
+          desc: "ガラスを伝って雨粒が流れ落ち、賑やかな通りを背景に、彼女は机で静かに何かを書いている。",
+        },
+        {
+          title: "深夜 · ひと息つく",
+          desc: "暗い部屋では一つの小さなランプだけが灯り、彼女はベッドで一日の疲れを癒やしている。",
+        },
+        {
+          title: "夕暮れ · 窓辺の眺め",
+          desc: "夕暮れが訪れ、街の灯りがともり始める。彼女は掃き出し窓から夜の街を見つめている。",
+        },
+      ],
+    },
+    contact: {
+      badge: "お問い合わせ",
+      heading: "プロジェクトの協力、技術交流、あるいはちょっとした挨拶だけでも大歓迎です！",
+      subtitle: "アイデアはありますか？一番早いのは直接メールでご連絡いただくことです 🚀",
+      emailCta: "メールを送る",
+      bilibiliCta: "ビリビリ",
+    },
+  },
+  "zh-TW": {
+    langToggle: "简体中文",
+    a11y: { skip: "跳到主要內容" },
+    nav: {
+      about: "關於",
+      skills: "技能",
+      projects: "專案",
+      videos: "影片",
+      contact: "聯絡",
+      menu: "開啟選單",
+    },
+    videos: {
+      badge: "影片",
+      heading: "影片示範",
+      subtitle: "發佈在 Bilibili 的示範影片，在這裡就能直接看",
+      playCta: "點擊播放",
+    },
+    lightbox: { close: "關閉", prev: "上一張", next: "下一張" },
+    hero: {
+      badge: "",
+      title: "ForJiang",
+      subtitle: "",
+      primaryCta: "查看我的專案 →",
+      secondaryCta: "聯絡我",
+    },
+    about: {
+      badge: "關於我",
+      heading: "一個喜歡把想法變成產品的開發者",
+      paragraphs: [
+        "你好！我是 ForJiang，一名高中生，也是一個熱愛寫程式的學習者。從第一次寫下 Hello, World 開始，我就迷上了用程式碼把想法變成現實的過程。",
+        "過去幾年，我一直在學習寫程式，嘗試過前端、後端和一些小專案，也不斷摸索如何把課堂之外的想法做成真正能運行的東西。我尤其享受打磨互動細節、優化效能，以及把複雜問題拆解成簡單方案時的成就感。雖然現在還在學習階段，但我很期待未來能做出更多有意思的作品。",
+        "不寫程式的時候，我喜歡攝影、跑步，以及在技術社群分享自己的學習筆記。如果你有趣的想法，或者願意一起交流寫程式，歡迎隨時找我聊聊！",
+      ],
+    },
+    skills: {
+      badge: "技術棧",
+      heading: "我的技術能力",
+      subtitle: "做專案時實際用到的工具與技術，持續學習中",
+      groups: [
+        {
+          title: "🎨 前端與視覺化",
+          tags: ["TypeScript / JavaScript", "Canvas 2D", "SVG 動畫", "three.js / WebGL", "React / Next.js", "Tailwind CSS"],
+        },
+        {
+          title: "🧠 瀏覽器端 AI 與媒體",
+          tags: ["ONNX Runtime Web", "WebGPU / WASM", "Web Audio API", "WebCrypto / AES-256-GCM", "IndexedDB", "EXIF / GPS / XMP", "ZIP 封裝", "Python 推理服務"],
+        },
+        {
+          title: "🛠️ 工程與演算法",
+          tags: ["單元測試", "符號求導引擎", "Meeus 天文演算法", "透視投影與 3D 數學", "效能優化", "Git / GitHub Actions", "零依賴建置"],
+        },
+      ],
+      projects: {
+        badge: "實戰專案",
+        heading: "這些技術落在了這些專案裡",
+        subtitle: "九個純靜態、可離線使用的網頁小工具",
+        demoCta: "線上試用",
+        prevProject: "上一個專案",
+        nextProject: "下一個專案",
+        items: [
+          {
+            name: "RVC 聲音克隆",
+            desc: "瀏覽器端 RVC 聲音克隆：錄音、上傳、推理、匯出全在頁內完成，音訊不上傳。雙引擎——ONNX Runtime Web 頁內推理，或連本機 RVC 服務走 GPU；變調、清音保護等完整參數加預設一鍵套用，批次佇列打包 ZIP，模型庫自帶下載與拖拽匯入。",
+            tags: ["JavaScript", "ONNX Runtime", "Web Audio", "IndexedDB", "Python"],
+            repo: "https://github.com/ForJiang/rvc-sound-clone",
+            demo: "https://forjiang.github.io/rvc-sound-clone/",
+          },
+          {
+            name: "圖片中繼資料清除器",
+            desc: "批次抹掉照片裡的隱藏資訊：EXIF 相機型號、拍攝時間、GPS 定位、內嵌縮圖、修圖痕跡與檔案尾部隱藏資料。先掃描後清除再自檢，輸出零中繼資料；Canvas 重新編碼加強制拆段雙保險，終端風格日誌即時展示過程，離線可用，附 69 項單元測試。",
+            tags: ["JavaScript", "Canvas", "EXIF / GPS / XMP", "ZIP"],
+            repo: "https://github.com/ForJiang/image-metadata-cleaner",
+            demo: "https://forjiang.github.io/image-metadata-cleaner/",
+          },
+          {
+            name: "hello 手寫動畫展示頁",
+            desc: "零依賴純靜態頁：黑灰體素地形背景之上，hello 三個字母逐筆手寫描出（3.5 秒），字標還是即時光源——按橢圓衰減照亮附近體素頂面與右面，再疊一層逐像素加法漸層光池。字標下方掛著同風格即時時鐘，按 R 重播；SVG 描邊復刻 Apple Hello 動畫，無 React、無建置。",
+            tags: ["JavaScript", "SVG", "Canvas", "零依賴"],
+            repo: "https://github.com/ForJiang/forjiang-hello",
+            demo: "https://forjiang.github.io/forjiang-hello/",
+          },
+          {
+            name: "圖生 3D 高斯潑濺",
+            desc: "瀏覽器裡把一張圖片或一段影片變成可旋轉的 3D 高斯潑濺點雲：Depth Anything V2 在本地估出逐像素深度，生成數十萬枚帶原圖顏色的高斯圓盤，three.js 即時渲染，可匯出 .ply / .splat 給 Blender、SuperSplat 使用。模型自架，WebGPU fp16 優先、自動回退 int8 + WASM，檔案不出瀏覽器。",
+            tags: ["JavaScript", "ONNX Runtime", "WebGPU", "three.js"],
+            repo: "https://github.com/ForJiang/image-to-splat",
+            demo: "https://forjiang.github.io/image-to-splat/",
+          },
+          {
+            name: "函數圖像產生器",
+            desc: "純前端函數圖像工具：輸入表達式即時繪製，最多 6 條曲線同圖對比，20+ 函數庫一鍵添加；滾輪縮放、拖拽平移、懸停讀值。零依賴自研符號求導引擎，1–8 階導數帶步驟、虛線疊加導函數、切線方程式，終端風格日誌即時記錄；285 項單元測試用數值差分逐項校驗，防止「看起來對、數值錯」。",
+            tags: ["JavaScript", "Canvas", "符號求導", "零依賴"],
+            repo: "https://github.com/ForJiang/function-grapher",
+            demo: "https://forjiang.github.io/function-grapher/",
+          },
+          {
+            name: "檔案加密系統",
+            desc: "零依賴網頁版 + Python 桌面版，同一 .forjiang 格式、密碼模式雙向互通：每個檔案單獨派生一把 AES-256 金鑰（PBKDF2 60 萬次迭代），內容用 AES-256-GCM 分塊串流加密，檔案不出本機。桌面版額外支援 RSA 公鑰封裝會話金鑰（加密只需公鑰）、整目錄批次、CLI 與雙擊啟動器；119 項單元測試，深淺色自適應。",
+            tags: ["JavaScript", "WebCrypto", "Python", "AES-256-GCM"],
+            repo: "https://github.com/ForJiang/forjiang-crypto",
+            demo: "https://forjiang.github.io/forjiang-crypto/",
+          },
+          {
+            name: "無世界時鐘",
+            desc: "全螢幕世界時鐘：自動定位（Geolocation → IP 定位 → 預設城市，四級回退）後置中顯示秒級時間，並在手繪世界地圖上按經度畫出即時晨昏線。Meeus 太陽演算法同一套公式用 Python 與 JS 雙實現，GitHub Pages 靜態版零伺服器、離線可用。",
+            tags: ["JavaScript", "Python", "Canvas", "Meeus 天文演算法", "零依賴"],
+            repo: "https://github.com/ForJiang/time",
+            demo: "https://forjiang.github.io/time/",
+          },
+          {
+            name: "AR 取景器",
+            desc: "照片或即時相機畫面裡，按針孔透視投影把二次元立繪（或 MMD 3D 模型）貼地擺進場景：相機高度、人物距離身高、俯角滾轉、等效焦距、景別畫幅全套可調，接觸陰影帶方位與濃度，支援一鍵摳圖與批次出圖，匯出 PNG / 立繪層 / 素材包 / scene.json 配方。運算全在瀏覽器裡，照片不上傳。",
+            tags: ["JavaScript", "three.js", "透視投影", "摳圖", "即時相機"],
+            repo: "https://github.com/ForJiang/arcam",
+            demo: "https://forjiang.github.io/arcam/",
+          },
+          {
+            name: "AL-1S 愛麗絲終端",
+            desc: "蔚藍檔案 · 天童愛麗絲主題粉絲站：中/日/英三語的角色終端——角色檔案、戰鬥數值、技能資料、專屬武器、羈絆故事、語音播放、MomoTalk 通訊模擬、記憶局限與活動年表，帶系統啟動動畫。純靜態零依賴，GitHub Pages 直接託管。",
+            tags: ["JavaScript", "Canvas", "SVG", "三語", "零依賴"],
+            repo: "https://github.com/ForJiang/AL-1S",
+            demo: "https://forjiang.github.io/AL-1S/",
+          },
+        ],
+      },
+    },
+    projects: {
+      badge: "AI 繪畫",
+      heading: "一些插畫作品",
+      subtitle: "用 ComfyUI 生成的插畫習作，持續更新中",
+      viewFull: "查看高解析度原圖",
+      cards: [
+        {
+          title: "晨光 · 慵懶的清晨",
+          desc: "清晨的陽光灑進房間，初音未來坐在木地板上小憩，城市在天窗外甦醒。",
+        },
+        {
+          title: "雨天 · 窗邊書寫",
+          desc: "雨滴順著玻璃滑落，窗外是川流不息的街道，她在書桌前安靜地寫著什麼。",
+        },
+        {
+          title: "深夜 · 枕邊休息",
+          desc: "深夜的房間裡只亮著一盞小燈，她躺在被窩裡卸下一天的疲憊。",
+        },
+        {
+          title: "暮色 · 窗前遠眺",
+          desc: "暮色四合，城市的燈火漸次亮起，她站在落地窗前眺望夜色。",
+        },
+      ],
+    },
+    contact: {
+      badge: "聯絡我",
+      heading: "無論是專案合作、技術交流，還是單純打個招呼，都歡迎！",
+      subtitle: "有想法？最快的方式是直接給我寫郵件 🚀",
+      emailCta: "發送郵件",
+      bilibiliCta: "嗶哩嗶哩",
     },
   },
 } as const;
