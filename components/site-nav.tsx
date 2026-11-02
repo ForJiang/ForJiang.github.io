@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import Link from "next/link";
-import { Menu, Languages } from "lucide-react";
+import { Menu, Languages, Check } from "lucide-react";
 import { useLanguage } from "./language-context";
+import type { Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { scrollToSection } from "@/lib/ui-kit";
 
@@ -24,9 +25,18 @@ import { scrollToSection } from "@/lib/ui-kit";
  */
 const NAV_IDS = ["about", "skills", "projects", "videos", "contact"] as const;
 
+/** 语言菜单的固定条目（顺序与轮换顺序一致）：名称用各语言的自我称谓 */
+const LANG_ITEMS: { id: Lang; label: string }[] = [
+  { id: "zh", label: "简体中文" },
+  { id: "en", label: "English" },
+  { id: "ja", label: "日本語" },
+  { id: "zh-TW", label: "繁體中文" },
+];
+
 export default function SiteNav() {
-  const { t, toggleLang } = useLanguage();
+  const { t, lang, setLang } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
 
   const anchorClick = (id: string) => (e: MouseEvent) => {
     e.preventDefault();
@@ -34,15 +44,71 @@ export default function SiteNav() {
     setMenuOpen(false);
   };
 
-  const langButton = (
-    <button
-      onClick={toggleLang}
-      className="flex items-center gap-1.5 rounded-lg border border-white/25 px-2.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/10"
-      aria-label="Switch language / 切换语言"
-    >
-      <Languages className="h-4 w-4" />
-      {t.langToggle}
-    </button>
+  // 点外部或按 Esc 关闭语言菜单；语言菜单开着时才挂监听。
+  // 语言按钮渲染两份（桌面/移动各一），不能用单一 ref 判内外——两个实例
+  // 共享一个 ref 时 ref 指向后渲染的实例，点另一个实例的菜单项会被误判
+  // 成「外部点击」而在 click 之前把菜单关掉（实测点击选项永远不生效）。
+  // 改用 closest 判定：落点在任何一个打开的菜单或其按钮内都不关。
+  useEffect(() => {
+    if (!langOpen) return;
+    const onDown = (e: globalThis.PointerEvent) => {
+      const el = e.target as Element | null;
+      if (el?.closest?.("[role=menu]:not([aria-hidden='true']), [aria-haspopup='menu'][aria-expanded='true']")) return;
+      setLangOpen(false);
+    };
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") setLangOpen(false);
+    };
+    document.addEventListener("pointerdown", onDown, true);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown, true);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [langOpen]);
+
+  const langButton = (extraClass: string, navKind: string) => (
+    <div data-nav={navKind} className={cn("relative", extraClass)}>
+      <button
+        onClick={() => setLangOpen(!langOpen)}
+        className="flex items-center gap-1.5 rounded-lg border border-white/25 px-2.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/10"
+        aria-label="Switch language / 切换语言 / 言語切替 / 切換語言"
+        aria-expanded={langOpen}
+        aria-haspopup="menu"
+      >
+        <Languages className="h-4 w-4" />
+        {t.langToggle}
+      </button>
+      {/* 四语下拉：当前语言打勾；点选项切换并收起。常驻渲染（invisible 收起），
+          避免挂载时序问题；黑底保证与页面内容叠放时可读 */}
+      <div
+        className={cn(
+          "absolute right-0 top-[calc(100%+8px)] min-w-[9rem] rounded-lg border border-white/15 bg-black/90 backdrop-blur-md py-1.5 shadow-2xl transition-opacity duration-150",
+          langOpen ? "opacity-100" : "opacity-0 invisible",
+        )}
+        role="menu"
+        aria-hidden={!langOpen}
+      >
+        {LANG_ITEMS.map((item) => (
+          <button
+            key={item.id}
+            role="menuitem"
+            lang={item.id === "zh" ? "zh-CN" : item.id}
+            onClick={() => {
+              setLang(item.id);
+              setLangOpen(false);
+            }}
+            className={cn(
+              "flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-xs",
+              lang === item.id ? "font-semibold text-white" : "text-white/70 hover:bg-white/10 hover:text-white",
+            )}
+          >
+            {item.label}
+            {lang === item.id && <Check className="h-3.5 w-3.5 shrink-0" />}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 
   return (
@@ -70,12 +136,12 @@ export default function SiteNav() {
                   {t.nav[id]}
                 </Link>
               ))}
-              {langButton}
+              {langButton("hidden md:block", "desktop")}
             </div>
 
             {/* Mobile menu button */}
             <div className="flex items-center gap-3 md:hidden">
-              {langButton}
+              {langButton("md:hidden", "mobile")}
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="p-2 rounded-lg border border-white/25 text-white hover:bg-white/10 transition-colors"

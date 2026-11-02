@@ -18,6 +18,8 @@ interface LanguageValue {
   // 四种语言的字典结构相同，取并集类型（字面量类型装不下其他语言的文案）
   t: (typeof translations)[Lang];
   toggleLang: () => void;
+  /** 直接切换到指定语言（语言菜单用）：state + storage + html lang 三同步 */
+  setLang: (lang: Lang) => void;
 }
 
 const LanguageContext = createContext<LanguageValue | null>(null);
@@ -60,23 +62,24 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // 只恢复用户手动切换过的选择，不再跟随浏览器语言
     const saved = storage.get();
-    if (saved) {
-      setLang(saved);
-      document.documentElement.lang = HTML_LANG[saved];
-    }
+    if (saved) changeLang(saved);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const toggleLang = () => {
-    // 轮换：简体 → English → 日本語 → 繁體 → 简体
-    const idx = LANG_ORDER.indexOf(lang);
-    const next = LANG_ORDER[(idx + 1) % LANG_ORDER.length];
+  const changeLang = (next: Lang) => {
     setLang(next);
     storage.set(next);
     document.documentElement.lang = HTML_LANG[next];
   };
 
+  const toggleLang = () => {
+    // 轮换：简体 → English → 日本語 → 繁體 → 简体
+    const idx = LANG_ORDER.indexOf(lang);
+    changeLang(LANG_ORDER[(idx + 1) % LANG_ORDER.length]);
+  };
+
   return (
-    <LanguageContext.Provider value={{ lang, t: translations[lang], toggleLang }}>
+    <LanguageContext.Provider value={{ lang, t: translations[lang], toggleLang, setLang: changeLang }}>
       {children}
     </LanguageContext.Provider>
   );
