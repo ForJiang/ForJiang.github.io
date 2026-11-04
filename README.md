@@ -1,5 +1,11 @@
 # ForJiang · 个人主页
 
+> ForJiang 的个人主页：九个纯静态、可离线使用的网页工具（RVC 声音克隆/图片元数据清除/图生 3D 高斯泼溅/函数图像生成/hello 手写动画/文件加密/无世界时钟/AR 取景器/爱丽丝终端）+ AI 插画与演示视频；Next.js 静态导出，液态金属着色器背景，四语言切换
+>
+> ForJiang's homepage: nine offline-capable static web tools + AI illustrations & demo videos; Next.js static export, liquid-metal shader background, 4 languages
+
+English intro at the bottom: [English](#english)
+
 基于 **Next.js 14 + TypeScript + Tailwind CSS** 的个人主页：技能与插画之外，收录九个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画演示、文件加密系统、无世界时钟、AR 取景器、AL-1S 爱丽丝终端。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景；**全站没有任何动画库**——逐字揭示、区块入场、按钮填充、灯箱进出全部是纯 CSS transition/animation，进入视口的触发由一个 20 行的自写 IntersectionObserver 钩子完成（`lib/use-in-view.ts`），动画库清退的原因与过程见「Safari 性能专项」和坑 8。
 
 线上地址：**https://forjiang.github.io**
@@ -18,7 +24,7 @@
 | [文件加密系统](https://github.com/ForJiang/forjiang-crypto) | AES-256-GCM 文件加密：零依赖网页版 + Python 桌面版（RSA 公钥封装、目录批量、双击启动器），同一格式、119 项单元测试 | [试用](https://forjiang.github.io/forjiang-crypto/) |
 | [无世界时钟](https://github.com/ForJiang/time) | 全屏世界时钟：四级定位 + 居中秒级时间，手绘世界地图按经度画实时晨昏线（Meeus 算法 Python/JS 双实现） | [试用](https://forjiang.github.io/time/) |
 | [AR 取景器](https://github.com/ForJiang/arcam) | 照片或实时相机里把立绘/MMD 3D 模型按针孔透视贴地摆放，接触阴影、批量出图、一键抠图、导出配方 | [试用](https://forjiang.github.io/arcam/) |
-| [AL-1S 爱丽丝终端](https://github.com/ForJiang/AL-1S) | 蔚蓝档案·天童爱丽丝主题粉丝站：中/日/英三语角色终端（档案/数值/技能/语音/MomoTalk 模拟），纯静态零依赖 | [试用](https://forjiang.github.io/AL-1S/) |
+| [AL-1S 爱丽丝终端](https://github.com/ForJiang/AL-1S) | 蔚蓝档案·天童爱丽丝主题粉丝站：简体中文/繁體中文/日本語/English 四语言角色终端（按浏览器语言自动跳转；档案/数值/技能/语音/MomoTalk 模拟），纯静态零依赖 | [试用](https://forjiang.github.io/AL-1S/) |
 
 ## 功能
 
@@ -288,3 +294,56 @@ iMessage 对链接预览缓存很凶：部署后老会话里可能仍是旧样�
 | 逐字 blur 过渡 | filter 过渡不能上合成器 | 长文本（>48 单元，`BLUR_UNIT_CAP`）自动不用 blur，只保留 opacity+位移 |
 
 着色器与 backdrop-blur 在空闲时都不贵，**不要预先优化它们**——先测量再动手。长文本弃用 blur 后视觉差别很小（仍是淡入 + 上浮），短标题保留完整模糊效果。
+
+---
+
+## English
+
+**ForJiang's homepage** — live at **https://forjiang.github.io** — is a single-page personal site (Hero / About / Skills / Projects / Illustrations / Videos / Contact / Footer) built with **Next.js 14 + TypeScript (strict) + Tailwind CSS** and statically exported (`output: "export"`) to GitHub Pages. Beyond skills, it collects **nine pure-static, offline-capable web tools**, each deployed standalone on GitHub Pages, plus AI illustrations and demo videos. The whole site uses [Paper Design's LiquidMetal fluid-metal shader](https://shaders.paper.design) as a fixed background and **contains no animation library at all** — per-character reveal, block entrances, button fills and lightbox transitions are all pure CSS transition/animation, triggered on viewport entry by a self-written 20-line IntersectionObserver hook (`lib/use-in-view.ts`).
+
+### Included projects
+
+Besides the main site, all nine tools are deployed standalone on GitHub Pages — fully static and usable offline:
+
+| Project | One-liner | Live |
+| --- | --- | --- |
+| [RVC Voice Cloning](https://github.com/ForJiang/rvc-sound-clone) | In-browser voice conversion of a recording: ONNX Runtime Web in-page inference + a local GPU engine, one-click presets for the full parameter set, batch export to ZIP | [Try it](https://forjiang.github.io/rvc-sound-clone/) |
+| [Image Metadata Cleaner](https://github.com/ForJiang/image-metadata-cleaner) | Batch-erases EXIF / GPS / thumbnails / trailing hidden data — scan first, clean, then self-verify; 69 unit tests | [Try it](https://forjiang.github.io/image-metadata-cleaner/) |
+| [Image-to-3D Gaussian Splatting](https://github.com/ForJiang/image-to-splat) | Image / video → local depth estimation → interactive Gaussian point cloud; exports .ply / .splat for Blender | [Try it](https://forjiang.github.io/image-to-splat/) |
+| [Function Grapher](https://github.com/ForJiang/function-grapher) | Multiple curves in one plot + zero-dependency symbolic differentiation (orders 1–8, with steps) and tangent-line equations; 260 unit tests | [Try it](https://forjiang.github.io/function-grapher/) |
+| [hello Handwriting Animation](https://github.com/ForJiang/forjiang-hello) | A zero-dependency recreation of Apple's Hello: stroke-by-stroke handwriting over a voxel terrain, the wordmark is a real-time light source | [Watch](https://forjiang.github.io/forjiang-hello/) |
+| [File Encryption System](https://github.com/ForJiang/forjiang-crypto) | AES-256-GCM file encryption: zero-dependency web app + Python desktop app (RSA public-key wrapping, batch directories, double-click launcher), one shared format, 119 unit tests | [Try it](https://forjiang.github.io/forjiang-crypto/) |
+| [World Clock (无世界时钟)](https://github.com/ForJiang/time) | Full-screen world clock: four-level location + a centered, second-level time display; a hand-drawn world map renders the real-time day/night terminator by longitude (Meeus algorithm, dual Python/JS implementation) | [Try it](https://forjiang.github.io/time/) |
+| [AR Viewfinder](https://github.com/ForJiang/arcam) | Places character art / MMD 3D models into a photo or the live camera with pinhole perspective, grounded on the floor: contact shadows, batch output, one-click matting, exportable recipes | [Try it](https://forjiang.github.io/arcam/) |
+| [AL-1S Alice Terminal](https://github.com/ForJiang/AL-1S) | Blue Archive · Tendo Alice fan site: a character terminal in four languages (简体中文 / 繁體中文 / 日本語 / English, auto-redirect by browser language; profile / stats / skills / voice / MomoTalk simulator), fully static with zero dependencies | [Try it](https://forjiang.github.io/AL-1S/) |
+
+### Feature highlights
+
+- **Liquid-metal shader background** fixed site-wide (`@paper-design/shaders-react`), visible through the entire scroll, with quality auto-adaptation for weaker GPUs.
+- **Zero animation libraries**: per-character reveal, block entrances, pointer-spreading button fills and the lightbox are all pure CSS; framer-motion was removed entirely (First Load JS 146kB → 120kB), and viewport triggers use a self-written 20-line IntersectionObserver hook.
+- **Site-wide per-character text reveal**: each unit transitions from transparent + shifted down (+ blur on short text) with staggered delays, driven purely by CSS transitions; spacing only appears where the source text actually has whitespace (none between Chinese characters, preserved between English words and at CJK/Latin boundaries).
+- **Four languages**: 简体中文 / English / 日本語 / 繁體中文 — English by default; the nav button cycles through them in order and a manual choice is remembered.
+- **Full-screen illustration lightbox**: the cached cover shows immediately (light blur transition) while the 3864×2176 ComfyUI-native original WebP (q90, ~0.5–1 MB each) loads in the background; swipe / arrow-key navigation, two-level preloading, Save-Data awareness, and a graceful fallback if the original fails to load.
+- **Responsive illustration covers**: `<picture>` + `srcset` with AVIF → WebP → 480px-WebP fallback at a fixed 16:9 ratio; the layout is fully responsive with dedicated iOS Safari viewport/toolbar handling.
+- **Keyboard accessibility**: a "skip to content" link as the first focusable element, one site-wide `:focus-visible` outline, a focus-trapped lightbox modal (Tab loops inside, Esc closes and restores focus to the opening cover), language-aware `aria-label`s, and guarded localStorage access.
+- **Progressive enhancement**: a `<noscript>` stylesheet paints the final state for visitors with JS disabled — all text stays readable and SEO is unaffected.
+- **SEO**: `app/sitemap.ts` / `app/robots.ts` generate `sitemap.xml` and `robots.txt` at build time, native to the static export.
+- **Click-to-play video**: the Bilibili player iframe (with `autoplay=1`) is injected only after a click on the poster + play button, so visitors who don't watch never download the multi-MB player; `preconnect` is still established ahead of time.
+- **Infinite project carousel**: transform-driven, cards rendered three times with silent whole-track re-wrapping — inertial flings never hit a hard edge in either direction.
+- **Safari / iOS performance work** measured with Playwright WebKit: compositor-only CSS animations, large-area `backdrop-blur` disabled on WebKit cards, and blur auto-dropped beyond 48 reveal units.
+
+The full Chinese document above also covers the image-variant generation script (`scripts/generate-images.mjs`), favicon replacement with content-hashed filenames, Open Graph preview-card generation, 15 field-tested pitfalls of the reveal animation, and a Safari performance profile.
+
+### Run locally
+
+Requires Node.js 18.17+:
+
+```bash
+npm install
+npm run dev
+# open http://localhost:3000
+```
+
+### Deployment
+
+The repo ships `.github/workflows/deploy.yml`: every push to `main` runs `npm install && npm run build` (static export to `out/`) on GitHub Actions and publishes to GitHub Pages — **deploying requires no local Node.js**. Note that the Pages publishing source must be set to **"GitHub Actions"** (`build_type: workflow`); otherwise Pages publishes the `main` branch root (the old static `index.html`) instead of the built Next.js site.
