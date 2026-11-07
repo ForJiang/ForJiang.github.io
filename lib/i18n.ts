@@ -129,8 +129,8 @@ export const translations = {
           },
           {
             name: "AL-1S 爱丽丝终端",
-            desc: "蔚蓝档案 · 天童爱丽丝主题粉丝站：中/日/英三语的角色终端——角色档案、战斗数值、技能资料、专属武器、羁绊故事、语音播放、MomoTalk 通讯模拟、记忆局限与活动年表，带系统启动动画。纯静态零依赖，GitHub Pages 直接托管。",
-            tags: ["JavaScript", "Canvas", "SVG", "三语", "零依赖"],
+            desc: "蔚蓝档案 · 天童爱丽丝主题粉丝站：中/日/英/繁四语的角色终端——角色档案、战斗数值、技能资料、专属武器、羁绊故事、语音播放、MomoTalk 通讯模拟、记忆局限与活动年表，带系统启动动画。纯静态零依赖，GitHub Pages 直接托管。",
+            tags: ["JavaScript", "Canvas", "SVG", "四语", "零依赖"],
             repo: "https://github.com/ForJiang/AL-1S",
             demo: "https://forjiang.github.io/AL-1S/",
           },
@@ -286,8 +286,8 @@ export const translations = {
           },
           {
             name: "AL-1S Aris Terminal",
-            desc: "A Blue Archive fan terminal for Tendou Aris, in Chinese, Japanese and English: character profile, combat stats, skills, exclusive weapon, bond stories, voice playback, a MomoTalk chat simulation, memory limits and an event timeline — with a system boot-up animation. Pure static, zero dependencies, hosted straight from GitHub Pages.",
-            tags: ["JavaScript", "Canvas", "SVG", "Trilingual", "Zero-dep"],
+            desc: "A Blue Archive fan terminal for Tendou Aris, in four languages (Simplified Chinese, Japanese, English and Traditional Chinese): character profile, combat stats, skills, exclusive weapon, bond stories, voice playback, a MomoTalk chat simulation, memory limits and an event timeline — with a system boot-up animation. Pure static, zero dependencies, hosted straight from GitHub Pages.",
+            tags: ["JavaScript", "Canvas", "SVG", "Multilingual", "Zero-dep"],
             repo: "https://github.com/ForJiang/AL-1S",
             demo: "https://forjiang.github.io/AL-1S/",
           },
