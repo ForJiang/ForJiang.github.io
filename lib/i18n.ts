@@ -51,15 +51,15 @@ export const translations = {
       subtitle: "做项目时实际用到的工具与技术，持续学习中",
       groups: [
         {
-          title: "🎨 前端与可视化",
+          title: "前端与可视化",
           tags: ["TypeScript / JavaScript", "Canvas 2D", "SVG 动画", "three.js / WebGL", "React / Next.js", "Tailwind CSS"],
         },
         {
-          title: "🧠 浏览器端 AI 与媒体",
+          title: "浏览器端 AI 与媒体",
           tags: ["ONNX Runtime Web", "WebGPU / WASM", "Web Audio API", "WebCrypto / AES-256-GCM", "IndexedDB", "EXIF / GPS / XMP", "ZIP 打包", "Python 推理服务"],
         },
         {
-          title: "🛠️ 工程与算法",
+          title: "工程与算法",
           tags: ["单元测试", "符号求导引擎", "Meeus 天文算法", "透视投影与 3D 数学", "性能优化", "Git / GitHub Actions", "零依赖构建"],
         },
       ],
@@ -208,15 +208,15 @@ export const translations = {
       subtitle: "Tools and technologies I actually used in my projects, always learning",
       groups: [
         {
-          title: "🎨 Frontend & Visualization",
+          title: "Frontend & Visualization",
           tags: ["TypeScript / JavaScript", "Canvas 2D", "SVG Animation", "three.js / WebGL", "React / Next.js", "Tailwind CSS"],
         },
         {
-          title: "🧠 In-browser AI & Media",
+          title: "In-browser AI & Media",
           tags: ["ONNX Runtime Web", "WebGPU / WASM", "Web Audio API", "WebCrypto / AES-256-GCM", "IndexedDB", "EXIF / GPS / XMP", "ZIP Packaging", "Python Inference Service"],
         },
         {
-          title: "🛠️ Engineering & Algorithms",
+          title: "Engineering & Algorithms",
           tags: ["Unit Testing", "Symbolic Differentiation", "Meeus Solar Algorithms", "Projection & 3D Math", "Performance", "Git / GitHub Actions", "Zero-dependency Builds"],
         },
       ],
@@ -365,15 +365,15 @@ export const translations = {
       subtitle: "プロジェクトで実際に使ったツールと技術。学び続けています",
       groups: [
         {
-          title: "🎨 フロントエンドとビジュアライゼーション",
+          title: "フロントエンドとビジュアライゼーション",
           tags: ["TypeScript / JavaScript", "Canvas 2D", "SVG アニメーション", "three.js / WebGL", "React / Next.js", "Tailwind CSS"],
         },
         {
-          title: "🧠 ブラウザ AI とメディア",
+          title: "ブラウザ AI とメディア",
           tags: ["ONNX Runtime Web", "WebGPU / WASM", "Web Audio API", "WebCrypto / AES-256-GCM", "IndexedDB", "EXIF / GPS / XMP", "ZIP パッケージ", "Python 推論サービス"],
         },
         {
-          title: "🛠️ エンジニアリングとアルゴリズム",
+          title: "エンジニアリングとアルゴリズム",
           tags: ["ユニットテスト", "記号微分エンジン", "Meeus 天文アルゴリズム", "透視投影と 3D 数学", "パフォーマンス最適化", "Git / GitHub Actions", "ゼロ依存ビルド"],
         },
       ],
@@ -522,15 +522,15 @@ export const translations = {
       subtitle: "做專案時實際用到的工具與技術，持續學習中",
       groups: [
         {
-          title: "🎨 前端與視覺化",
+          title: "前端與視覺化",
           tags: ["TypeScript / JavaScript", "Canvas 2D", "SVG 動畫", "three.js / WebGL", "React / Next.js", "Tailwind CSS"],
         },
         {
-          title: "🧠 瀏覽器端 AI 與媒體",
+          title: "瀏覽器端 AI 與媒體",
           tags: ["ONNX Runtime Web", "WebGPU / WASM", "Web Audio API", "WebCrypto / AES-256-GCM", "IndexedDB", "EXIF / GPS / XMP", "ZIP 封裝", "Python 推理服務"],
         },
         {
-          title: "🛠️ 工程與演算法",
+          title: "工程與演算法",
           tags: ["單元測試", "符號求導引擎", "Meeus 天文演算法", "透視投影與 3D 數學", "效能優化", "Git / GitHub Actions", "零依賴建置"],
         },
       ],
