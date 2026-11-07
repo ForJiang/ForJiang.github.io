@@ -166,6 +166,27 @@ h4 {
 }
 
 /*
+ * 图片擦除揭示（components/img-reveal.tsx，方法引用自 AL-1S 项目）：进入视
+ * 口后 clip-path 从左到右扫出 + 1.06→1 缩放回落。clip-path 与揭示缩放都写
+ * 在 img 上——画廊卡的悬停放大已外移到 .img-reveal 包装层（page.tsx），
+ * img 的 transform 由揭示独占，两层互不覆写；1.06 的溢出由外层 aspect-video
+ * 容器的 overflow-hidden 裁掉。transition 只写在 play 态，初始态不带过渡，
+ * 刷新/回滚时不会反向播放。
+ */
+.img-reveal img {
+  clip-path: inset(0 100% 0 0);
+  transform: scale(1.06);
+}
+
+.img-reveal-play img {
+  clip-path: inset(0 0 0 0);
+  transform: scale(1);
+  transition:
+    clip-path 0.9s cubic-bezier(0.87, 0, 0.13, 1),
+    transform 0.9s cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+/*
  * Hero 按钮组入场：标题 → 副标题之后接按钮（1.25s 延迟）。它不在视口滚动
  * 流程里（首屏必现），所以用纯 CSS animation + both 填充——样式表一生效就
  * 开始排队，比等注水再由 JS 触发更早、也不依赖任何脚本。
@@ -229,6 +250,13 @@ h4 {
   }
   .rise-in {
     animation: none;
+  }
+  .img-reveal img {
+    clip-path: none;
+    transform: none;
+  }
+  .img-reveal-play img {
+    transition: none;
   }
   .origin-fill {
     transition: none;

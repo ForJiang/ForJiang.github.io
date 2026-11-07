@@ -16,6 +16,7 @@ import type { LightboxItem } from "@/components/lightbox";
 import OriginButton from "@/components/ui/origin-button";
 import RevealText from "@/components/ui/reveal-text";
 import EnterBlock from "@/components/enter-block";
+import ImgReveal from "@/components/img-reveal";
 import SiteShell from "@/components/site-shell";
 import { LanguageProvider, useLanguage } from "@/components/language-context";
 import { SECTION_BADGE, TEXT_SHADOW, BODY_SHADOW, GLASS_CARD, GLASS_TAG, SECTION_SHELL, trackSpotlight, scrollToSection } from "@/lib/ui-kit";
@@ -409,7 +410,12 @@ function HomeContent() {
                         时 object-cover 几乎不裁切；此前 flex-1 + min-h 让比例随卡片
                         高度浮动（手机上接近 1:1，左右裁掉一大截）。 */}
                     <div className="relative aspect-video overflow-hidden shrink-0">
+                      {/* 揭示包装（方法引用自 AL-1S：进视口 clip-path 从左到右
+                          扫出）。悬停放大从这里挂而不是 img——scale-105 留在
+                          img 上会和揭示动画的 1.06→1 缩放互写 transform，
+                          0.9s 揭示过渡会吞掉悬停 0.5s 的手感 */}
                       {img && (
+                      <ImgReveal className="h-full w-full transition-transform duration-500 group-hover:scale-105">
                       <picture>
                         {img.avif && (
                           <source
@@ -442,9 +448,10 @@ function HomeContent() {
                               setViewing(idx);
                             }
                           }}
-                          className="h-full w-full cursor-zoom-in object-cover transition-transform duration-500 group-hover:scale-105"
+                          className="h-full w-full cursor-zoom-in object-cover"
                         />
                       </picture>
+                      </ImgReveal>
                       )}
                     </div>
                     {/* 文字区缩小一档：标题 18px（CardTitle 默认 24px 在窄卡里
