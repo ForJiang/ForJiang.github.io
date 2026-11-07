@@ -247,7 +247,7 @@ function HomeContent() {
                 delay={idx * 0.1}
               >
                 <Card
-                  className={`group relative h-full overflow-hidden ${GLASS_CARD}`}
+                  className={`group relative h-full overflow-hidden [contain:content] ${GLASS_CARD}`}
                   onPointerMove={trackSpotlight}
                 >
                   <span
@@ -317,7 +317,7 @@ function HomeContent() {
                   className="w-[min(30rem,85vw)] shrink-0"
                 >
                   <Card
-                    className={`group relative h-full flex flex-col overflow-hidden ${GLASS_CARD}`}
+                    className={`group relative h-full flex flex-col overflow-hidden [contain:content] ${GLASS_CARD}`}
                     onPointerMove={trackSpotlight}
                   >
                     <span
@@ -403,7 +403,7 @@ function HomeContent() {
                   className="h-full"
                   onMouseEnter={() => prefetchFull(idx)}
                 >
-                  <Card className={`group h-full flex flex-col overflow-hidden ${GLASS_CARD}`}>
+                  <Card className={`group h-full flex flex-col overflow-hidden [contain:content] ${GLASS_CARD}`}>
                     {/* 封面图：AVIF → WebP → JPEG 逐级回退，按视口宽度取合适档位。
                         固定 aspect-video（16:9）：插画母版就是 16:9 附近，容器同比例
                         时 object-cover 几乎不裁切；此前 flex-1 + min-h 让比例随卡片
