@@ -34,7 +34,7 @@
     "glob": "^10.5.0"
   },
   "author": "ForJiang <jianghaoda.1@outlook.com> (https://github.com/ForJiang)",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "description": "ForJiang 的个人主页：九个纯静态、可离线使用的网页工具 + AI 插画与演示视频。",
   "homepage": "https://forjiang.github.io"
 }
