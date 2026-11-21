@@ -1,10 +1,10 @@
 # ForJiang · 个人主页
 
-> 个人主页：九个可离线使用的静态网页工具 + AI 插画与视频
+> 个人主页：十个可离线使用的静态网页工具 + AI 插画与视频
 >
-> Personal homepage: nine offline-capable static web tools + AI art & videos
+> Personal homepage: ten offline-capable static web tools + AI art & videos
 
-基于 **Next.js 14 + TypeScript + Tailwind CSS** 的个人主页：技能与插画之外，收录九个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画演示、文件加密系统、无世界时钟、AR 取景器、AL-1S 爱丽丝终端。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景；**全站没有任何动画库**——逐字揭示、区块入场、按钮填充、灯箱进出全部是纯 CSS transition/animation，进入视口的触发由一个 20 行的自写 IntersectionObserver 钩子完成（`lib/use-in-view.ts`），动画库清退的原因与过程见「Safari 性能专项」和坑 8。
+基于 **Next.js 14 + TypeScript + Tailwind CSS** 的个人主页：技能与插画之外，收录十个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画演示、文件加密系统、无世界时钟、AR 取景器、AL-1S 爱丽丝终端、Token 可视化。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景；**全站没有任何动画库**——逐字揭示、区块入场、按钮填充、灯箱进出全部是纯 CSS transition/animation，进入视口的触发由一个 20 行的自写 IntersectionObserver 钩子完成（`lib/use-in-view.ts`），动画库清退的原因与过程见「Safari 性能专项」和坑 8。
 
 线上地址：**https://forjiang.github.io**
 
@@ -23,6 +23,7 @@
 | [无世界时钟](https://github.com/ForJiang/time) | 全屏世界时钟：四级定位 + 居中秒级时间，手绘世界地图按经度画实时晨昏线（Meeus 算法 Python/JS 双实现） | [试用](https://forjiang.github.io/time/) |
 | [AR 取景器](https://github.com/ForJiang/arcam) | 照片或实时相机里把立绘/MMD 3D 模型按针孔透视贴地摆放，接触阴影、批量出图、一键抠图、导出配方 | [试用](https://forjiang.github.io/arcam/) |
 | [AL-1S 爱丽丝终端](https://github.com/ForJiang/AL-1S) | 蔚蓝档案·天童爱丽丝主题粉丝站：中/日/英/繁四语角色终端（档案/数值/技能/语音/MomoTalk 模拟），纯静态零依赖 | [试用](https://forjiang.github.io/AL-1S/) |
+| [Token 可视化](https://github.com/ForJiang/token) | 把一句话拆成一个个 Token 的可视化：真实 GPT 词表（o200k/cl100k/p50k/r50k）本地切分、悬停读 Token ID、关系图谱，四语界面 | [试用](https://forjiang.github.io/token/) |
 
 ## 功能
 
