@@ -1,5 +1,9 @@
 # ForJiang · 个人主页
 
+> 个人主页：九个可离线使用的静态网页工具 + AI 插画与视频
+>
+> Personal homepage: nine offline-capable static web tools + AI art & videos
+
 基于 **Next.js 14 + TypeScript + Tailwind CSS** 的个人主页：技能与插画之外，收录九个纯静态、可离线使用的网页工具——RVC 声音克隆、图片元数据清除器、图生 3D 高斯泼溅、函数图像生成器、hello 手写动画演示、文件加密系统、无世界时钟、AR 取景器、AL-1S 爱丽丝终端。全站使用 [Paper Design 的 LiquidMetal 流体金属着色器](https://shaders.paper.design) 做固定背景；**全站没有任何动画库**——逐字揭示、区块入场、按钮填充、灯箱进出全部是纯 CSS transition/animation，进入视口的触发由一个 20 行的自写 IntersectionObserver 钩子完成（`lib/use-in-view.ts`），动画库清退的原因与过程见「Safari 性能专项」和坑 8。
 
 线上地址：**https://forjiang.github.io**
@@ -288,3 +292,7 @@ iMessage 对链接预览缓存很凶：部署后老会话里可能仍是旧样�
 | 逐字 blur 过渡 | filter 过渡不能上合成器 | 长文本（>48 单元，`BLUR_UNIT_CAP`）自动不用 blur，只保留 opacity+位移 |
 
 着色器与 backdrop-blur 在空闲时都不贵，**不要预先优化它们**——先测量再动手。长文本弃用 blur 后视觉差别很小（仍是淡入 + 上浮），短标题保留完整模糊效果。
+
+## License
+
+本项目以 [GPL-3.0](LICENSE) 许可发布 © 2026 ForJiang / Released under the [GPL-3.0](LICENSE).
