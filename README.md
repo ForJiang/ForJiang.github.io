@@ -125,6 +125,8 @@ npm run dev
 
 > **Pages 的发布来源必须是「GitHub Actions」**（对应 API 的 `build_type: workflow`）。如果它被改成分支部署，GitHub Pages 会直接发布 `main` 根目录——线上会变成仓库里那个旧版 `index.html`，而不是这里构建的 Next.js 站点，Actions 的部署记录虽显示成功但不生效。若线上内容看起来不像本站（比如带 emoji favicon 的纯静态页），先去 **Settings → Pages** 确认来源。
 
+English intro at the bottom: [English](#english)
+
 ## 插画图片工作流
 
 封面图不手工维护多份尺寸，改用脚本生成：
@@ -297,3 +299,24 @@ iMessage 对链接预览缓存很凶：部署后老会话里可能仍是旧样�
 ## License
 
 本项目以 [GPL-3.0](LICENSE) 许可发布 © 2026 ForJiang / Released under the [GPL-3.0](LICENSE).
+
+---
+
+## English
+
+**ForJiang's personal homepage** — built with **Next.js 14 + TypeScript + Tailwind CSS** as a fully static export. Beyond skills and illustrations, it hosts **ten offline-capable static web tools**. Live: **https://forjiang.github.io**
+
+| Tool | One-liner | Live |
+| --- | --- | --- |
+| [RVC Voice Cloning](https://github.com/ForJiang/rvc-sound-clone) | In-browser recording and voice conversion: ONNX Runtime Web inference + local GPU engine, full parameter presets, batch ZIP export | [Try](https://forjiang.github.io/rvc-sound-clone/) |
+| [Image Metadata Cleaner](https://github.com/ForJiang/image-metadata-cleaner) | Batch-strip EXIF / GPS / thumbnails / trailing hidden data, scan → clean → verify, 69 unit tests | [Try](https://forjiang.github.io/image-metadata-cleaner/) |
+| [Image to 3D Gaussian Splatting](https://github.com/ForJiang/image-to-splat) | Photo / video → local depth estimation → interactive Gaussian-splat point cloud, export .ply / .splat to Blender | [Try](https://forjiang.github.io/image-to-splat/) |
+| [Function Grapher](https://github.com/ForJiang/function-grapher) | Multi-curve plotting + zero-dependency symbolic differentiation (1st–8th order with steps) and tangent equations, 260 unit tests | [Try](https://forjiang.github.io/function-grapher/) |
+| [Token Visualizer](https://github.com/ForJiang/token) | Visualize how a sentence is split into tokens: real GPT vocabularies split locally, hover for IDs, token relationship graphs | [Try](https://forjiang.github.io/token/) |
+| [hello Handwriting Animation](https://github.com/ForJiang/forjiang-hello) | Zero-dependency Apple Hello replica: strokes drawn over voxel terrain, the wordmark is a live light source | [Watch](https://forjiang.github.io/forjiang-hello/) |
+| [File Encryption System](https://github.com/ForJiang/forjiang-crypto) | AES-256-GCM file encryption: zero-dependency web edition + Python desktop edition (RSA key wrapping, batch directories, double-click launcher) | [Try](https://forjiang.github.io/forjiang-crypto/) |
+| [World Clock](https://github.com/ForJiang/time) | Fullscreen world clock: 4-level geolocation + centered second-level time, hand-drawn world map with a live day/night terminator by longitude (Meeus algorithm, Python/JS dual implementation) | [Try](https://forjiang.github.io/time/) |
+| [AR Viewfinder](https://github.com/ForJiang/arcam) | Place character art / MMD 3D models into photos or the live camera with pinhole perspective: contact shadows, batch rendering, one-click matting, recipe export | [Try](https://forjiang.github.io/arcam/) |
+| [AL-1S Terminal](https://github.com/ForJiang/AL-1S) | Blue Archive Tendou Aris fan site: 4-language character terminal (profile / stats / skills / voice / MomoTalk simulator), pure static zero-dependency | [Try](https://forjiang.github.io/AL-1S/) |
+
+License: [GPL-3.0](LICENSE) © 2026 ForJiang
